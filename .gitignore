@@ -1,0 +1,9 @@
+.DS_Store
+*.aux
+*.lof
+*.log
+*.lol
+*.lot
+*.pdf
+*.toc
+*~

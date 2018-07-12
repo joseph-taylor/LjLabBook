@@ -1,0 +1,129 @@
+\section{BASH}
+
+Everything in UNIX is either a file or a process.
+Processes can take additional options.
+
+Basics.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{cd} -- change directory.
+& \texttt{ls} -- list the files/directories.
+& \texttt{pwd} -- print working directory.
+& \texttt{mkdir} -- make directory.
+& \texttt{touch} -- create file.
+& \texttt{rm, rmdir} -- remove.
+& \texttt{cp} -- copy
+& \texttt{mv} -- move (rename)
+& \texttt{echo} -- print to command line.
+& \texttt{wc} -- word count.
+\end{easylist}
+
+Other.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{file <file>} -- tells you what type of file it is.
+& \texttt{readlink -f <file>} -- returns full path to file. 
+& \texttt{tar} -- (un)compress files and directories. 
+& \texttt{du -sh} -- check the disk usage.
+& \texttt{df [path]} -- reports on amount of available disk space.
+& \texttt{ps [ux[ww]]} -- gives you info abouts your processes. 
+& \texttt{top} -- gives you info abouts the systems processes.
+& \texttt{who} -- see who is on the system with you.
+& \texttt{chmod X$\pm$Y} -- change permissions. X = u:user, g:group, o:other, a:all. Y = r:read, w:write, x:execute.
+& \texttt{<command> --help, man <command>} -- how to use a command.
+& \texttt{say <quote>} -- voice output from the terminal.
+& \texttt{open -a [application] filename} -- open a file.
+& \texttt{date} -- displays the date and time.
+& \texttt{echo one two three | xargs mkdir} -- xargs allows tools to accept standard input as arguments.
+\end{easylist}
+
+Navigation.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{/} -- root directory.
+& \texttt{./} -- current directory, alias for \$PWD.
+& \texttt{../} -- parent directory.
+& $\sim$ -- home directory, alias for \$HOME.
+& \texttt{-} -- previous directory, alias for \$OLDPWD.
+& \texttt{dirs} -- directory stack. By default the first value is \$PWD. \verb!-c! cleans stack. \verb!-v! shows enumerated version, cd into them using \verb!cd! $\sim$\verb!n!.
+& \texttt{pushd .} -- add current directory to stack. 
+& \texttt{*} -- wildcards for file and directory names.
+& \texttt{?} -- single character wildcards.
+& \texttt{Tab} -- auto complete until an ambiguity arises.
+& \texttt{Tab $\rightarrow$ Tab} -- displays the ambiguities.
+\end{easylist}
+
+Text.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{cat, head, tail} -- display text file (top, bottom).
+& \texttt{more} -- scroll through text file (space bar for next page).
+& \texttt{sort <stream/file>} -- sort text.
+& \texttt{diff} -- differences between files.
+& \texttt{command > file} -- redirect standard output to a file (use \verb!>&! to include errors).
+& \texttt{command >> file} -- append standard output to a file.
+& \texttt{command1 | command2} -- pipe output of command1 to input of command2.
+\end{easylist}
+
+History and Kill.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& $\uparrow$ and $\downarrow$ -- scroll command history.
+& \texttt{history} -- show command history (use grep to filter).
+& \texttt{CNTRL R} -- navigate bash history (press repeatedly to search further back).
+& \texttt{clear} -- clears the screen.
+& \texttt{CNTRL C} -- kill a foreground process in the foreground.
+& \texttt{CNTRL Z} -- put a foreground process in the background. Use \& at end of command to do this automatically.
+& \texttt{bg} -- look at background processes, provides a job number.
+& \texttt{fg \% <jobNumber>} -- put background process in foreground.
+& \texttt{kill \% <jobNumber>} -- kill background process.
+\end{easylist}
+
+Very Useful, Can Never Remember.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{sed} -- \textbf{s}tream \textbf{ed}itor. 
+& \texttt{sed 's/old/new/[g]' <stream/file>} -- sed for substitution (g is for global replacement). \verb!-i! for in-file replacement. you can use different delimiters.
+& \texttt{find <directory> -name <file name>} -- find the path to a file. Searches recursively by default. Other options exist e.g. file size.
+& \texttt{grep <expression> <stream/file>} -- search text file for an expression. \verb!-i! ignores case. \verb!-r! searches recursively.
+\end{easylist}
+
+Secure Shell.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{scp <local path> <user>@<hostname>:<destination path>} -- secure copy.
+& \texttt{ssh <user>@<hostname>} -- secure shell, to log in to a remote server.
+& \texttt{sshfs <user>@<hostname>:/path/to/base/ <locMountDir> -o volname=NAME} -- secure shell file system.
+& \texttt{display <image file>} -- view things in ssh.
+& \texttt{exit} -- exit ssh session.
+\end{easylist}
+
+Screen.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{screen} -- start screen session (environments are not transferred over). 
+& \texttt{CtrlA+D} -- detach screen session. 
+& \texttt{CtrlA+D or exit} -- kill screen session. 
+& \texttt{screen -r} -- reattach screen session. 
+& \texttt{screen -ls} -- list screen sessions. 
+& \texttt{screen -X -S <sessionid> kill} -- kill screen session without attaching it. 
+\end{easylist}
+
+
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+Environment Variables And Loops.
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{env} -- print environmental variables. PATH is a colon seperated list of dirs that your shell searches for an executable.
+& \texttt{export PATH="/path/to/bin:\$PATH"} -- example of setting an environmental variable.
+& \texttt{myvar=123abc} -- example of declaring a variable (string only).
+& \texttt{echo \$myvar} -- example of using variable.
+& \texttt{for myvar in *.pdf; do ls \$myvar; echo; done} -- specific example of for loop.
+& \texttt{while true; do <command1>; <command2>; etc; done} -- run a command periodically.
+& \texttt{alias <shortcut>="<regularExpression>"} -- alias commands.
+& \texttt{source <shell file>} -- evaluates the file.
+& \texttt{.bashrc OR .bash\_profile} -- for permanent aliases and setting of variables.
+\end{easylist}
+
+\newpage

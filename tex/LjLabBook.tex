@@ -1,0 +1,134 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% run with $ pdflatex LjLabBook.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, dvipsnames, svgnames]{cmspaper} % dvipsnames, svgnames allows more colours to be used
+\usepackage{palatino} % this is the font of the main text
+
+\usepackage{mathtools} % includes the "amsmath" package and other mathematical symbols and environments
+\usepackage{microtype} % for font and line spacing. fewer overfull/underfull hbox warnings
+\usepackage{texnames}
+\usepackage[utf8]{inputenc}
+\usepackage{physics} % for physics symbols, such as differential symbols
+\usepackage{courier} % font for code
+\usepackage{float} % to fix figures in place
+\usepackage{graphicx} % so I can use \includegraphics, etc.
+\usepackage{cprotect} % so I can use \verb and other commands within captions
+\usepackage{amssymb} % for an extended library of mathematical symbols
+\usepackage{bbold} % for mathematical symbols like the characters for special sets
+\usepackage[ampersand]{easylist} % for bullet points and lists, etc. New entry starts with & character
+\usepackage{cancel} % for strike-throughs for missing energy/momentum, etc.
+\usepackage{maybemath} % required for hepparticles
+\usepackage{hepparticles} % required for hepnicenames
+\usepackage{hepnicenames} % standard symbols for HEP particles
+\usepackage{wasysym} % for more mathematical and astronomical symbols
+\usepackage{pdfpages} % to insert PDF documents within this document
+\usepackage{spverbatim} % for linebreaks in the verbatim environment
+\usepackage{tabularx} % for multii-line cells in tables
+\usepackage{multirow} % for nested rows in tables
+\usepackage{siunitx} % for aligning numbers properly in tables (column type is "S")
+\usepackage[normalem]{ulem} % for underlining over multiple lines. Need "normalem" option otherwise \emph underlines
+\usepackage{pdflscape} % for landscape-oriented tables
+
+\usepackage{array} % for more flexibility with tables
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}} % for text in table cells to be centred
+
+\usepackage{color} % for more colours
+\usepackage{xcolor} % for even more colours (see https://en.wikibooks.org/wiki/LaTeX/Colors for more info)
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\usepackage{listings} % for displaying code
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color
+  % frame=single,		% adds a border around the code
+  basicstyle=\normalsize\ttfamily,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  % language=C++,                 % the language of the code
+  otherkeywords={*,...},           % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  % identifierstyle=\color{orange},	% identifier style
+  literate={~} {$\sim$}{1},		% sets the ~ character as it looks in code, not in normal text 
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+\usepackage{tocloft} % for table of contents, figures, tables
+\renewcommand{\listfigurename}{Figures} % rename List of Figures heading
+\renewcommand{\listtablename}{Tables} % rename List of Tables heading
+\renewcommand{\lstlistlistingname}{Source code and scripts} % rename List of Listings heading
+\renewcommand\cftsecafterpnum{\vskip10pt} % change line spacing after each section entry
+\renewcommand\cftfigafterpnum{\vskip10pt} % change line spacing after each Figure entry
+\renewcommand\cfttabafterpnum{\vskip10pt} % change line spacing after each Table entry
+\renewcommand\cftbeforesubsecskip{-5pt} % reduce line spacing between section and subsection entry
+\renewcommand\cftsubsecafterpnum{\vskip10pt} % change line spacing after each subsection entry
+\renewcommand\cftbeforesubsubsecskip{-5pt} % reduce line spacing between subsection and subsubsection entry
+\renewcommand\cftsubsubsecafterpnum{\vskip10pt} % change line spacing after each subsubsection entry
+
+\renewcommand{\arraystretch}{1.2} % increase vertical space between rows in a table
+
+\begin{large} % these allow my listings to be added like list of tables/figures (with the same appearance)
+\makeatletter
+\begingroup\let\newcounter\@gobble\let\setcounter\@gobbletwo
+  \globaldefs\@ne \let\c@loldepth\@ne \let\l@lstlisting\l@figure
+  \newlistof{listings}{lol}{\lstlistlistingname}
+\endgroup
+\let\l@lstlisting\l@listings
+\AtBeginDocument{\addtocontents{lol}{\protect\addvspace{15pt}}}
+\makeatother
+\renewcommand{\lstlistoflistings}{\listoflistings}
+\end{large}
+
+\begin{document}
+
+\begin{titlepage}
+
+   \cmsnote{LjLabBook}
+   \date{\today}
+
+  \title{HOW TO 9+t \Longrightarrow \bf{5+t}}
+
+  \begin{Authlist}
+    Joe Taylor
+  \end{Authlist}
+
+\end{titlepage}
+
+\pagenumbering{roman} % use Roman numerals in contents pages
+\tableofcontents % adds a contents page
+% \listoffigures % includes a list of figures in contents
+% \listoftables % includes a list of tables in contents
+% \lstlistoflistings % includes a list of listings (e.g. code)
+
+\newpage
+\pagenumbering{arabic} % change page numbering back to Arabic numbers
+
+
+% Include all modules for LjLabBook.
+% Paths are relative to directory of *this* file.
+% Tip - comment out modules you are not editing.
+
+\input{./modules/navigation.tex}
+\input{./modules/bash.tex}
+\input{./modules/emacs.tex}
+\input{./modules/sublime.tex}
+\input{./modules/github.tex}
+
+\end{document}

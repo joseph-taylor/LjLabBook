@@ -86,7 +86,7 @@ Reversing Changes in Git.
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git checkout -- <file>} -- undo uncommited changes to a file (-- avoids conflict with branch names).
 & \texttt{git checkout <commitLabel>} --  detached HEAD state: can view state of old commit but you are not on a branch. Branch off if you want to work from here.
-& \texttt{git revert <commitLabel>} -- reverses \bf{the changes of} the stated commit. This change happens in the form of a new commit. Just exit the emacs situation.
+& \texttt{git revert <commitLabel>} -- reverses \textbf{the changes of} the stated commit. This change happens in the form of a new commit. Just exit the emacs situation.
 & \texttt{git reset <commitLabel>} -- moves a branch back in time to an older commit. The commits that were on top of it no longer exist. Not good when collaborating.
 \end{easylist}
 
@@ -98,5 +98,13 @@ Git to GitHub.
 & \texttt{git push <remoteName> <branchName>} -- push commits on the local branch to the remote branch.
 & \texttt{git pull <remoteName> <branchName>} -- pull commits on remote branch to the local branch.
 \end{easylist}
+
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+Useful Webpages
+\begin{itemize}
+  \item \texttt{https://learngitbranching.js.org/} - practise git branching conceputally.
+  \item \texttt{https://help.github.com/articles/connecting-to-github-with-ssh/} - Connecting to GitHub with SSH.
+\end{itemize}
 
 \newpage

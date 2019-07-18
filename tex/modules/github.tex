@@ -64,7 +64,8 @@ Git Branching
 (note that you get conflicts when changes are made to the same files):
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& \texttt{git checkout -b <newBranchName>} -- create new branch and change to it.
+& \texttt{git checkout -b <newBranchName>} -- create new branch and change to it
+\newline (modifications in the repo \textbf{are} carried over).
 & \texttt{git checkout <oldBranchName>} -- change to an existing branch.
 & \texttt{git merge <branchNameToMerge> [-m "message"]} -- merge changes from stated branch into current branch.
 & \texttt{git branch -d <branchNameToDelete>} -- delete branch (can only do this if the changes are merged).
@@ -73,18 +74,18 @@ Git Branching
 Git Stashing
 (if you want to change branch, but don't want to commit current work first):
 \begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
 & \texttt{git stash} -- saves your changes and goes back to the HEAD commit.
 & \texttt{git stash list} -- look at your stored stashes.
-& \texttt{git stash apply [stash@{N}]} -- apply a stash. If you have more than one stash you should name it.
+& \texttt{git stash apply [stash@\{N\}]} -- apply a stash. If you have more than one stash you should name it.
 & \texttt{git stash clear} -- remove all stashes.
-& \texttt{git stash drop <stash@{N}>} -- remove a specific stash.
+& \texttt{git stash drop <stash@\{N\}>} -- remove a specific stash.
 \end{easylist}
 
 Reversing Changes in Git:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& \texttt{git checkout -- <file>} -- undo uncommited changes to a file (-- avoids conflict with branch names).
+& \texttt{git checkout -- <file>} -- undo uncommited changes to a file (the \texttt{--} avoids conflict with branch names).
 & \texttt{git checkout <commitLabel>} --  detached HEAD state: can view state of old commit but you are not on a branch. Branch off if you want to work from here.
 & \texttt{git revert <commitLabel>} -- reverses \textbf{the changes of} the stated commit. This change happens in the form of a new commit. Just exit the emacs situation.
 & \texttt{git reset <commitLabel>} -- moves a branch back in time to an older commit. The commits that were on top of it no longer exist. Not good when collaborating.
@@ -96,8 +97,8 @@ Git to GitHub:
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git remote [-v]} -- print the GitHub remotes for the repo.
 & \texttt{git remote add <remoteName> git@github.com:joseph-taylor/LjLabBook.git} -- create a new remote.
-& \texttt{git push <remoteName> <branchName>} -- push commits on the local branch to the remote branch.
-& \texttt{git pull <remoteName> <branchName>} -- pull commits on remote branch to the local branch.
+& \texttt{git push <remoteName> <branchName>} -- push commits on the local branch to the remote branch (you don't have to be on that branch).
+& \texttt{git pull <remoteName> <branchName>} -- pull commits on remote branch to the local branch (you don't have to be on that branch).
 \end{easylist}
 
 \vspace{\baselineskip}
@@ -106,7 +107,7 @@ Useful Webpages
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{https://learngitbranching.js.org/} - practise git branching conceputally.
-& \texttt{https://help.github.com/articles/connecting-to-github-with-ssh/} - Connecting to GitHub with SSH.
+& \texttt{https://help.github.com/articles/connecting-to-github-with-ssh/} - connecting to GitHub with SSH.
 \end{easylist}
 
 \newpage

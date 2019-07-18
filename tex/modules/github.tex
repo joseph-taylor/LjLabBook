@@ -4,32 +4,31 @@ Git is a version control system.
 GitHub is the online store.
 
 \vspace{\baselineskip}
-GitHub -- i.e. online.
-\begin{itemize}
-\item
-To setup a new repository online you must first create an empty repo on GitHub.
-In your local repo you can then set this new GitHub repo as your remote.
-% And then you're off.
-
-\item
-If you want to collaborate on an existing repo you should fork this repo to your account.
-To get it locally you should then clone your GitHub version of the repo.
-
-\item
-If you want to merge your code with a collaborator on GitHub use the 'New Pull Request' button.
-\end{itemize}
-
-
-Git Setup.
+GitHub -- i.e. online:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& \texttt{git init [projectDir]} -- set up git. You will be on a branch called 'master'.
-& \texttt{git clone git@github.com:joseph-taylor/LjLabBook.git <localRepoName>} -- clone a repo to local from GitHub. This will automatically set a remote called 'origin'.
-& \texttt.gitignore -- text file telling git what files to ignore.
+&
+To setup a new repository online you must first create an \textbf{empty} repo on GitHub.
+In your local repo, you can then set this new GitHub repo as the remote.
+% And then you're off.
+&
+If you want to collaborate on an existing repo, you should fork this repo to your account.
+To get it locally you should then clone the GitHub version of the repo.
+&
+If you want to merge your code with a collaborator on GitHub, use the `New Pull Request' button.
+\end{easylist}
+
+Git Setup:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{git init [projectDir]} -- setup git. You will be on a branch called `master'.
+& \texttt{git clone git@github.com:joseph-taylor/LjLabBook.git <localRepoName>} -- clone a repo to local from GitHub.
+This will automatically set a remote called `origin'.
+& \texttt{.gitignore} -- text file telling git what files to ignore.
 & \texttt{git config --global core.editor "emacs -nw"} -- set emacs as default git text editor.
 \end{easylist}
 
-Git Basics.
+Git Basics:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git status} -- prints the status of your branch.
@@ -40,38 +39,39 @@ Git Basics.
 & \texttt{git commit [-m "message"]} -- commit the changes.
 \end{easylist}
 
-Git Commit Labels.
+Git Commit Labels:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& Each commit is labelled by a commit hash. Use \texttt{git log} to find them.
+& Each commit is labelled by a commit hash. Use \texttt{git} \texttt{log} to find them.
 & \texttt{HEAD} -- a special label referring to your current commit on your current branch.
 & \texttt{commitLabel\^{}} -- refers to a NEW label, one commit before the label provided.
 & \texttt{commitLabel\^{}\^{}} -- refers to a NEW label, two commits before the label provided.
 & \texttt{commitLabel$\sim$N} -- refers to a NEW label, N commits before the label provided.
 \end{easylist}
 
-Git Useful.
+\newpage
+Git Useful:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& \texttt{git diff <file>} -- diff between file and version from last commit.
-& \texttt{git diff <commitLabel> <file>} -- diff between file and version from the stated commit.
-& \texttt{git diff <commitLabelOne> <commitLabelTwo> <file>} -- diff of file between two different commits.
+& \texttt{git diff <file>} -- diff between current file and version from last commit.
+& \texttt{git diff <commitLabel> <file>} -- diff between current file and version from the stated commit.
+& \texttt{git diff <commitLabelOne> <commitLabelTwo> <file>} -- diff between file for two different commits.
 & \texttt{git log} -- log of git commit messages and hashes.
 & \texttt{git help <command>} -- git help pages.
 \end{easylist}
 
-Git Branching.
-you get conflicts when changes are made to the same files.
+Git Branching
+(note that you get conflicts when changes are made to the same files):
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git checkout -b <newBranchName>} -- create new branch and change to it.
 & \texttt{git checkout <oldBranchName>} -- change to an existing branch.
 & \texttt{git merge <branchNameToMerge> [-m "message"]} -- merge changes from stated branch into current branch.
-& \texttt{git branch -d <branchNameToDelete>} -- delete branch (can only do if changes are merged).
+& \texttt{git branch -d <branchNameToDelete>} -- delete branch (can only do this if the changes are merged).
 \end{easylist}
 
-Git Stashing.
-If you want to change branch, but don't want to commit current work first.
+Git Stashing
+(if you want to change branch, but don't want to commit current work first):
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git stash} -- saves your changes and goes back to the HEAD commit.
@@ -81,7 +81,7 @@ If you want to change branch, but don't want to commit current work first.
 & \texttt{git stash drop <stash@{N}>} -- remove a specific stash.
 \end{easylist}
 
-Reversing Changes in Git.
+Reversing Changes in Git:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git checkout -- <file>} -- undo uncommited changes to a file (-- avoids conflict with branch names).
@@ -90,7 +90,8 @@ Reversing Changes in Git.
 & \texttt{git reset <commitLabel>} -- moves a branch back in time to an older commit. The commits that were on top of it no longer exist. Not good when collaborating.
 \end{easylist}
 
-Git to GitHub.
+\newpage
+Git to GitHub:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git remote [-v]} -- print the GitHub remotes for the repo.
@@ -102,9 +103,10 @@ Git to GitHub.
 \vspace{\baselineskip}
 \vspace{\baselineskip}
 Useful Webpages
-\begin{itemize}
-  \item \texttt{https://learngitbranching.js.org/} - practise git branching conceputally.
-  \item \texttt{https://help.github.com/articles/connecting-to-github-with-ssh/} - Connecting to GitHub with SSH.
-\end{itemize}
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+& \texttt{https://learngitbranching.js.org/} - practise git branching conceputally.
+& \texttt{https://help.github.com/articles/connecting-to-github-with-ssh/} - Connecting to GitHub with SSH.
+\end{easylist}
 
 \newpage

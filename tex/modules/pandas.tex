@@ -1,0 +1,48 @@
+\section{PANDAS}
+
+\texttt{axis=0} (default) represents rows.
+\newline
+\texttt{axis=1} represents columns.
+\newline
+
+Read/Write:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{df.to\_csv(\textquotesingle filename.csv\textquotesingle )} -- write to a CSV file.
+& \texttt{pd.read\_csv(\textquotesingle filename.csv\textquotesingle )} -- read from a CSV file.
+\end{easylist}
+
+Object Creation:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{s = pd.Series([1, 2, 3, 4])} -- create a series (1D).
+& \texttt{s = pd.Series([1, 2, 3, 4], index=[\textquotesingle A\textquotesingle , \textquotesingle B\textquotesingle , \textquotesingle C\textquotesingle , \textquotesingle D\textquotesingle ])}
+& \texttt{df = pd.DataFrame([[1,2,3],[4,5,6]])} -- create a dataframe (2D).
+& \texttt{df = pd.DataFrame(np.random.randn(2,2), index=[\textquotesingle v01\textquotesingle , \textquotesingle v02\textquotesingle ], columns=[\textquotesingle A\textquotesingle , \textquotesingle B\textquotesingle ])}
+& \texttt{df = pd.DataFrame(\{\textquotesingle A\textquotesingle :[33,22,11], \textquotesingle B\textquotesingle :[\textquotesingle baa\textquotesingle , \textquotesingle moo\textquotesingle , \textquotesingle grr\textquotesingle ]\}) }
+\end{easylist}
+
+Viewing Data:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{df.head()} -- typical head.
+& \texttt{df.tail(10)} -- typical tail.
+& \texttt{df.index} -- get dataframe index object.
+& \texttt{df.columns} -- get dataframe columns object.
+& \texttt{df.shape} -- shape of dataframe.
+& \texttt{df.size} -- number of dataframe elements.
+& \texttt{df.describe()} -- quick statistical summary.
+& \texttt{df.T} -- transpose your data.
+& \texttt{df.sort\_index(axis=1)} -- sort by axis (columns).
+& \texttt{df.sort\_index(ascending=False)} -- sort by axis (rows).
+& \texttt{df.sort\_values(by=\textquotesingle B\textquotesingle)} -- sort by values.
+\end{easylist}
+
+Misc:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{df.dtypes} -- TODO.
+& \texttt{df.to\_numpy()} -- TODO.
+\end{easylist}
+
+\newpage

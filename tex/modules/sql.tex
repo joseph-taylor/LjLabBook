@@ -1,0 +1,124 @@
+\section{SQL}
+
+% \vspace{\baselineskip}
+Creating Tables:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{CREATE TABLE customers (id INTEGER PRIMARY KEY \textit{AUTOINCREMENT},\newline name TEXT, age INTEGER, weight REAL);}
+\end{easylist}
+
+% \vspace{\baselineskip}
+Inserting Data:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{INSERT INTO customers VALUES (73, "Brian", 33, 67.5);}
+& \texttt{INSERT INTO customers (name, weight) VALUES ("Brian", 67.5);}
+\end{easylist}
+
+\vspace{\baselineskip}
+Querying Data:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{SELECT * FROM customers;}
+& \texttt{SELECT * FROM customers LIMIT 5;}
+& \texttt{SELECT age, name FROM customers;}
+& \texttt{SELECT name, age + weight AS "calculation" FROM customers;}
+\newline
+& \texttt{SELECT * FROM customers WHERE age > 21;}
+& \texttt{SELECT * FROM customers WHERE age > 21 AND age < 30;}
+& \texttt{SELECT * FROM customers WHERE age > 21 OR name="Brian";}
+& \texttt{SELECT * FROM customers WHERE NOT name="Brian";}
+\newline
+& \texttt{SELECT * FROM customers WHERE name IN ("Bill", "Bob", "Brian");}
+& \texttt{SELECT * FROM customers WHERE name LIKE "B\%";}
+& \texttt{SELECT * FROM customers WHERE type IN (SELECT name FROM favorites);}
+\newline
+& \texttt{SELECT * FROM customers ORDER BY age DESC;}
+& \texttt{SELECT * FROM customers WHERE weight < 80.0 ORDER BY age;}
+\newline
+& \texttt{SELECT name,\newline
+>~~~CASE\newline
+>~~~~~~~WHEN age > 65 THEN "OAP"\newline
+>~~~~~~~WHEN age > 18 THEN "adult"\newline
+>~~~~~~~ELSE "minor"\newline
+>~~~END AS "ageType"\newline
+>~~~FROM customers;}
+\end{easylist}
+
+\newpage
+Aggregating Data:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{SELECT SUM(weight) AS "totalWeight" FROM customers;}
+& \texttt{SELECT \textbf{name}, COUNT(*) FROM students GROUP BY \textbf{name};}
+\newline
+& \texttt{SELECT \textbf{name}, MAX(age) AS "maxAge"\newline
+>~~~FROM customers \textit{WHERE weight > 40.0}\newline
+>~~~GROUP BY \textbf{name}\newline
+>~~~HAVING maxAge > 50;}
+% >~~~\textit{ORDER BY maxAge;}\newline
+\newline
+& \texttt{SELECT name,\newline
+>~~~~~~weight/(SELECT SUM(weight) FROM customers) AS "fracWeight"\newline
+>~~~FROM customers;}
+\end{easylist}
+
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+Inner Join:\newline
+\textit{Returns records that have matching values in both tables.\newline
+Table order does not matter.}
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{SELECT * FROM students\newline
+>~~~JOIN student\char`_grades\newline
+>~~~ON students.id = student\char`_grades.student\char`_id;}
+\end{easylist}
+
+\vspace{\baselineskip}
+Outer Join:\newline
+\textit{Returns all records from the left table (first listed), and the matched records from the right table.\newline
+Table order DOES matter.}
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{SELECT students.first\char`_name, students.last\char`_name, student\char`_projects.title\newline
+>~~~FROM students\newline
+>~~~LEFT OUTER JOIN student\char`_projects\newline
+>~~~ON students.id = student\char`_projects.student\char`_id;}
+\end{easylist}
+
+\vspace{\baselineskip}
+Self Join:\newline
+\textit{Use an alias to perform self joins.}
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{SELECT students.name, \textbf{buddies}.email AS "buddy\char`_email"\newline
+>~~~FROM students\newline
+>~~~JOIN students \textbf{buddies}\newline
+>~~~ON students.buddy\char`_id = \textbf{buddies}.id;}
+\end{easylist}
+
+\newpage
+Updating Data:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{UPDATE customers SET age = 33 WHERE id = 73;}
+\end{easylist}
+
+\vspace{\baselineskip}
+Deleting Data:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{DELETE FROM customers WHERE id = 73;}
+\end{easylist}
+
+\vspace{\baselineskip}
+Add Column to Table:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{ALTER TABLE customers ADD nickname TEXT;}
+\end{easylist}
+
+\newpage

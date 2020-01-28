@@ -1,0 +1,57 @@
+\section{Machine Learning}
+
+\begin{itemize}
+\item
+How do you want to frame the problem?\newline
+Regression $\rightarrow$ target value?
+Classification $\rightarrow$ target value?\newline
+What features do you hypothesize to be good predictors?
+
+\item
+Setup workspace and version control.\newline
+Track all SQL and python (inc. jupyter notebook) files.
+
+\item
+Write a SQL query to get the desired dataset(s).
+\textit{It would be neater as a single SQL file.}\newline
+Save the dataset in a time-stamped directory.
+Copy the SQL file here as a reference.
+
+\item
+\textbf{Jupyter notebook one (loading and exploration)}\newline
+\textit{Tip: try to keep notebooks neat, documented, and written in fairly big blocks.}\newline
+\textit{Tip: use a version index to keep tabs of iterations.}\newline
+Load data.\newline
+Drop unwanted columns.\newline
+Perform manipulations (e.g. merging tables and dropping duplicates).\newline
+Clean data (e.g. deal with null entries).\newline
+\textit{Perform lots of sanity checks along the way.}\newline
+\newline
+Divide dataset into training and test sets.\newline
+Create a copy of the training set and use to gain insights. You could look at:\newline
+- Distributions of predictors (you might need to transform predictors).\newline
+- Distributions and correlations between predictors and targets.\newline
+- Predictor combinations.\newline
+\textit{You might now want to add new features or refine existing features and, thus, iterate.}
+
+\item
+\textbf{Jupyter notebook two (training and evaluation)}\newline
+\textit{Use the first notebook to neatly create the training and test sets.}\newline
+Create a copy of the training set predictors.\newline
+Create a separate copy of the training set targets.\newline
+\newline
+Create and apply a pipeline to the training set predictors:\newline
+- Encode categorical attributes.\newline
+- Feature scale numerical attributes.\newline
+- Apply custom transformations.\newline
+\newline
+Train some different models. For each model:\newline
+- Train and evaluate.\newline
+- Cross-validate.\newline
+- Fine tune model hyperparameters (then repeat the above steps).\newline
+- Analyze final model (e.g. study the importance of each feature for making predictions).\newline
+\newline
+Evaluate final model on the test set.
+\end{itemize}
+
+\newpage

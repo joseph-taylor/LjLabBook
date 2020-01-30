@@ -121,4 +121,43 @@ Add Column to Table:
 & \texttt{ALTER TABLE customers ADD nickname TEXT;}
 \end{easylist}
 
+\vspace{\baselineskip}
+\underline{Window Functions:}\newline
+They perform calculations over a set of rows.
+They are indicated by the OVER clause.\newline
+\newline
+Here is what it all means:\newline
+OVER = using all rows\newline
+PARTITION BY = with the same...\newline
+ORDER BY = applying function sequentially ordered by...
+% 
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{SELECT firstname, lastname, date\char`_started,\newline
+>~~~COUNT(*) OVER (PARTITION BY year(date\char`_started)) AS NumPerYear\newline
+>~~~FROM Employee;}
+\end{easylist}
+
+
+
 \newpage
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -122,6 +122,16 @@ Add Column to Table:
 \end{easylist}
 
 \vspace{\baselineskip}
+The WITH clause is an optional prefix for SELECT.
+You can then use the results in the main SELECT statement:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{WITH query\char`_name (column\char`_name1, ...) AS\newline
+>~~~(SELECT ...)\newline
+SELECT ...}
+\end{easylist}
+
+\vspace{\baselineskip}
 \underline{Window Functions:}\newline
 They perform calculations over a set of rows.
 They are indicated by the OVER clause.\newline
@@ -138,26 +148,4 @@ ORDER BY = applying function sequentially ordered by...
 >~~~FROM Employee;}
 \end{easylist}
 
-
-
 \newpage
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

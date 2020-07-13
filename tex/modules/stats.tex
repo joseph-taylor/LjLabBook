@@ -1,5 +1,45 @@
 \section{Statistics}
 
+\textbf{Basics}
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+\vspace{-2.0mm}
+& Data types = discrete numerical, continuous numerical, and categorical.
+\vspace{-3.5mm}
+& Cardinality = the number of distinct elements in a set.
+\vspace{-3.5mm}
+& A statistic summarizes a sample of data, whereas a parameter summarizes the population.
+\vspace{-5.0mm}
+& Sample mean:
+\vspace{-5.0mm}
+\begin{equation}
+\bar{x} = \frac{1}{n} \sum_{i} x_i
+\end{equation}
+\vspace{-5.0mm}
+& Population mean:
+\vspace{-5.0mm}
+\begin{equation}
+\mu = \frac{1}{n} \sum_{i} x_i
+\end{equation}
+\vspace{-5.0mm}
+& Sample variance:
+\vspace{-5.0mm}
+\begin{equation}
+s^2 = \frac{1}{n-1} \sum_{i} (x_i - \bar{x})^2
+\end{equation}
+\vspace{-5.0mm}
+& Population variance:
+\vspace{-5.0mm}
+\begin{equation}
+\sigma^2 = \frac{1}{n} \sum_{i} (x_i - \bar{x})^2
+\end{equation}
+\vspace{-5.0mm}
+& Median = $50^{\textrm{th}}$ percentile.
+\vspace{-3.5mm}
+& Visual representations = histograms, time series, and scatter plots.
+
+
+\end{easylist}
 
 \textbf{Binomial Distribution}
 \newline
@@ -214,9 +254,9 @@ Here is how you do it:
 \item
 \textbf{Set up null and alternative hypotheses.}
 \newline
-Examples of null hypothesis...~~~~~~~~~~~~~~$H_0$:~$\mu = 5$,~~~$H_0$:~$p_A = p_B$
+Examples of null hypothesis...~~~~~~~~~~~~$H_0$:~$\mu = 5$,~~$H_0$:~$p_A = p_B$~~(always `equals').
 \newline
-Examples of alternative hypothesis...~~~$H_a$:~$\mu \neq 5$,~~~$H_a$:~$p_A < p_B$
+Examples of alternative hypothesis...~~$H_a$:~$\mu \neq 5$,~~$H_a$:~$\mu < 5$,~~$H_a$:~$p_A \neq p_B$,~~$H_a$:~$p_A > p_B$
 \item
 \textbf{Collect data via a random sample.}
 \item
@@ -294,8 +334,33 @@ z = \frac{(\hat{p}_1-\hat{p}_2)-0}{\sqrt{\hat{p}(1-\hat{p})(\frac{1}{n_1}+\frac{
 
 \item
 \textbf{Find the p-value for your test statistic.}
+\newline
+A p-value is the probability of getting results at least as strong as yours if $H_0$,
+the null hypothesis, were true.
+
+It is determined from the test statistic. It also depends on $H_a$ (the alternative hypothesis):
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1.00\textwidth]{./images/p_value_edit.jpg}
+% \caption{
+% % TODO
+% }
+\label{fig:p_value}
+\end{figure}
+
 \item
 \textbf{Decide whether or not to reject $H_0$ based on your p-value.}
+\newline
+If your p-value is less than a \underline{predetermined} significance level ($\alpha$),
+then you have enough evidence reject $H_0$. The result is said to be \textit{statistically significant},
+i.e. the result is too rare to have occurred by chance if $H_0$ was true.
+% 
+If your p-value is greater than $\alpha$, you cannot reject $H_0$.
+Note that this is different to saying that $H_0$ is true.
+
+A typical significance level is $\alpha = 0.05$.
+
 \end{enumerate}
 
 

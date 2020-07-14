@@ -6,8 +6,6 @@
 \vspace{-2.0mm}
 & Data types = discrete numerical, continuous numerical, and categorical.
 \vspace{-3.5mm}
-& Cardinality = the number of distinct elements in a set.
-\vspace{-3.5mm}
 & A statistic summarizes a sample of data, whereas a parameter summarizes the population.
 \vspace{-5.0mm}
 & Sample mean:
@@ -36,8 +34,24 @@ s^2 = \frac{1}{n-1} \sum_{i} (x_i - \bar{x})^2
 \vspace{-5.0mm}
 & Median = $50^{\textrm{th}}$ percentile.
 \vspace{-3.5mm}
+& Cardinality = the number of distinct elements in a set (e.g. used for categorical data).
+\vspace{-3.5mm}
 & Visual representations = histograms, time series, and scatter plots.
-
+\vspace{-3.5mm}
+& Observational study: data where no variable is controlled. You cannot determine causality.
+\vspace{-8.5mm}
+& Experiment: data where the variable of interest is controlled. You can determine causality.
+\vspace{-8.5mm}
+& Correlation:
+\vspace{-5.0mm}
+\begin{equation}
+\rho_{xy} = \frac{\textrm{cov}(x,y)}{\sigma_x \sigma_y}~~~~~~\textrm{where:}~~\textrm{cov}(x,y) = \frac{1}{n} \sum_{i} (x_i - \bar{x}) (y_i - \bar{y})
+\end{equation}
+\vspace{-5.0mm}
+& Confounding factor = a variable which influences both the independent and dependent variable, creating a spurious relationship.
+E.g.\ icecream sales are correlated to shark attacks, even though they are not causally related.
+Both variables are driven by temperature.
+\newline
 
 \end{easylist}
 
@@ -103,6 +117,7 @@ p(-1 < z < +1) = \int_{-1}^{+1} f(z) \, dz \, = 68.27\%
 \\ p(-3 < z < +3) = \int_{-3}^{+3} f(z) \, dz \, = 99.73\%
 \end{array}
 \end{equation}
+\newline
 
 \vspace{+3.5mm}
 \textbf{t- Distribution}
@@ -116,6 +131,8 @@ f_{\nu}(t) = \frac{\Gamma(\frac{\nu + 1}{2})}{\sqrt{\nu \pi} \Gamma(\frac{\nu}{2
 It has a wider distribution than the z-distribution,
 however, in the limit $\nu \rightarrow \infty$ it becomes the z-distribution.
 The t-distribution is typically used when analyzing the mean of a population.
+\newline
+\newline
 
 \vspace{+3.5mm}
 \textbf{Central Limit Theorem}
@@ -137,7 +154,7 @@ If $x$ has a normal distribution.
 \vspace{-3mm}
 If the sample size is large enough $(n > 30)$,
 regardless of the distribution of $x$.\newline
-$\rightarrow$ This is the Central Limit Theorem.
+$\rightarrow$ \underline{This is the Central Limit Theorem.}
 \end{enumerate}
 %
 \vspace{-3.5mm}
@@ -145,7 +162,8 @@ The z-score is as follows:
 \begin{equation}
 z = \frac{\bar{x}-\mu_{\bar{x}}}{\sigma_{\bar{x}}} = \frac{\bar{x}-\mu_x}{\sigma_x / \sqrt{n}} 
 \end{equation}
-
+\newline
+\newline
 
 \vspace{+3.5mm}
 \textbf{Confidence Intervals}
@@ -162,6 +180,7 @@ $~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~$ captures the parameter (e.g. for 95\% confi
 & To find the sample size required,
 substitute $\mu - x$ for the desired MOE, and solve for $n$.
 \end{easylist}
+\vspace{+5.0mm}
 
 \underline{Population Mean}, when:
 \begin{easylist}[itemize]
@@ -243,7 +262,7 @@ p_{\textrm{estimate}} = \hat{p} \pm z^{*} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
 (p_1 - p_2)_{\textrm{estimate}} = (\hat{p}_1 - \hat{p}_2) \pm z^{*} \sqrt{\frac{\hat{p}_1(1-\hat{p}_1)}{n_1}+ \frac{\hat{p}_2(1-\hat{p}_2)}{n_2}}
 \end{equation}
 
-\vspace{+3.5mm}
+\vspace{+13.0mm}
 \textbf{Hypothesis Testing}
 \newline
 A hypothesis test is a statistical procedure that's designed to test a claim (typically about a population parameter).

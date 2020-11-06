@@ -1,0 +1,1068 @@
+\section{Scikit-Learn}
+
+Jupyter notebook examples can be found here: \textit{https://github.com/ageron/handson-ml2}\newline
+
+\textbf{Introduction}
+
+What is Machine Learning?
+\begin{itemize}
+\vspace{-4.0mm}
+\item
+ML is about making machines get better at some task by learning from data,
+instead of having to explicitly code rules.
+\item
+A computer program is said to learn from experience E with respect to some task T and some performance measure P,
+if its performance on T, as measured by P, improves with experience E.
+\end{itemize}
+
+\vspace{-4.0mm}
+Jargon:
+\begin{itemize}
+\vspace{-4.0mm}
+\item
+\textbf{Regression:} predicting values using features/predictors.
+\item
+\textbf{Classification:} predicting classifications using features/predictors.
+\item
+\textbf{Supervised learning:}
+the training data includes the desired solutions, called labels.\newline
+\textit{The label is either a target value or a classification.}
+\item
+\textbf{Unsupervised learning:}
+the training data is unlabeled.\newline
+\textit{E.g. clustering, anomaly detection, visualization, and dimensionality reduction.}
+\item
+\textbf{Semi-supervised learning:}
+the training data is partially labeled.\newline
+\textit{This is normally performed by a combination of unsupervised and supervised algorithms.}
+\item
+\textbf{Reinforcement learning:}
+the agent observes the environment, selects/performs actions, and gets rewards/penalties in return.
+Over time it learns the best strategy to maximize reward.
+\item
+\textbf{Batch/Offline learning:}
+process all the data in one go.
+\item
+\textbf{Online learning:}
+the system is trained incrementally by feeding it data sequentially.
+\item
+\textbf{Data mining:}
+applying ML techniques to dig into large amounts of data
+to help discover patterns that were not immediately apparent.
+\item
+\textbf{Cost function:}
+measures how bad your model is.
+\item
+\textbf{Hyperparameters:}
+the parameters of the learning algorithm (not the resultant model).\newline
+\textit{They must be set prior to training.}
+\item
+\textbf{Inference:}
+appyling a model to make predictions on new cases.
+\item
+\textbf{Feature engineering:}
+is the combination of...\newline
+- Feature selection: selecting the most useful features among existing features.\newline
+- Feature extraction: combining existing features to produce a more useful one.\newline
+- Creating new features by gathering new data.
+\end{itemize}
+
+\newpage
+The main challenges of ML:
+\begin{enumerate}
+\vspace{-4.0mm}
+\item
+\textbf{Bad data:}
+\begin{itemize}
+\vspace{-2.0mm}
+\item
+Insufficient quantity of data.
+\item
+Non-representative training data (sampling bias and/or sampling noise).
+\item
+Poor quality data (errors, outliers, and noise).
+\item
+Irrelevant features (garbage in = garbage out).
+\end{itemize}
+\item
+\textbf{Bad algorithm:}
+\begin{itemize}
+\vspace{-2.0mm}
+\item
+\underline{Overfitting} the training data.\newline
+\textit{The model performs well on training data, but it does not generalise well.}\newline
+This happens when the model is too complex relative to the amount and the noisiness of the training data.
+Solutions:\newline
+- Select a simpler model or constrain your current model through regularization.\newline
+- Obtain more training data and/or reduce the noise in the training data.
+\item
+\underline{Underfitting} the training data.\newline
+\textit{The model is too simple to learn the underlying structure of the data.}
+Solutions:\newline
+- Reduce constraints on your model or select a more powerful model.\newline
+- Feed better features to the learning algorithm (feature engineering).
+\end{itemize}
+\end{enumerate}
+
+\underline{Testing and validating a ML model}
+\begin{itemize}
+\vspace{-3.0mm}
+\item
+The only way to know how well a model generalizes, is to actually try it out on new cases.
+\item
+Split the data into two sets: a training set and a test set (typically with a 80:20 split).\newline
+\textit{The error on test set is called the generalization error.
+If the training error is low, but the generalization error is high, it means you are overfitting the training data.}
+\end{itemize}
+
+\underline{Hyperparameter tuning and model selection}
+\begin{itemize}
+\vspace{-3.0mm}
+\item
+You cannot use the test set to tune hyperparameters or select a model.\newline
+\textit{In doing so, your model would just adapt to that particular set,
+and your generalization error will no longer be a valid estimate.}
+\item
+Instead, use a validation (development) set from part of the training set.
+\item
+\textbf{Cross validation} uses many small validation sets.
+Each model is evaluated once per validation set after it is trained on the rest of the data.
+By averaging out all the evaluations of a model,
+you get a much more accurate measure of its performance.
+\end{itemize}
+
+
+
+
+Chapter 2: end-to-end
+
+To avoid a data snooping bias, immediately create a randomized test set.\newline
+\texttt{from sklearn.model\char`_selection import train\char`_test\char`_split}\newline
+\texttt{train, test = train\char`_test\char`_split(data, test\char`_size=0.2, random\char`_state=42)}\newline
+
+Exploratory analysis to gain insights
+\begin{itemize}
+\vspace{-3.0mm}
+\item
+Plot distributions:\newline
+\texttt{train.hist(bins=50, figsize=(20,15))} 
+\item
+Plot correlations:\newline
+\texttt{from pandas.plotting import scatter\char`_matrix}\newline
+\texttt{scatter\char`_matrix(train, figsize=(12,8))}
+\item
+Study correlation coefficients:\newline
+\texttt{corr\char`_matrix = train.corr()}\newline
+\texttt{corr\char`_matrix[\textquotesingle median\char`_house\char`_value\textquotesingle].sort\char`_values(ascending=False)}
+\item
+Transform attributes and/or try out various combinations of attributes:\newline
+\texttt{train[\textquotesingle rooms\char`_per\char`_house\textquotesingle] = train[\textquotesingle total\char`_rooms\textquotesingle]/train[\textquotesingle houses\textquotesingle]}\newline
+\end{itemize}
+
+Prepare the data for ML algorithms (wrap up as a function you can apply to the test set)
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Data cleaning (address any NULL values):\newline
+\texttt{train.dropna(subset=[\textquotesingle total\char`_rooms\textquotesingle])}~~~~get rid of the corresponding rows.\newline
+\texttt{train.drop(\textquotesingle total\char`_rooms\textquotesingle, axis=1)}~~~~~~~~~~get rid of the entire attribute.\newline
+\texttt{median = housing[\textquotesingle total\char`_rooms\textquotesingle].median()}~~~~~set to some value.\newline
+\texttt{housing[\textquotesingle total\char`_rooms\textquotesingle].fillna(median, inplace=True)}
+\item
+Separate the features and the labels:\newline
+\texttt{train\char`_features = train.drop(\textquotesingle median\char`_house\char`_value\textquotesingle, axis=1)}\newline
+\texttt{train\char`_labels = train[\textquotesingle median\char`_house\char`_value\textquotesingle].copy()}
+\item
+Handle text/categorical attributes:\newline
+You can sometimes map categories onto numbers (e.g. bad, average, good, excellent)
+but often you cannot.
+SEE BELOW
+\item
+Feature Scaling:\newline
+SEE BELOW
+\end{itemize}
+
+
+bad, average, good, excellent, could be mapped onto some numbers...
+But in general categories a=have no relationship
+
+What about one binary attribute per category. One hot encoding!
+Because only one attribute will be equal to 1 (hot), while the others will be 0 (cold).
+housing_cat = housing[['ocean_proximity']]
+
+from sklearn.preprocessing import OneHotEncoder
+cat_encoder = OneHotEncoder()
+housing_cat_1hot = cat_encoder.fit_transform(housing_cat)
+
+housing_cat_1hot.toarray()
+cat_encoder.categories_
+
+AM I SURE HOW TO RECONNECT THIS TO THE ORIGINAL DATA?
+I think it may stay separate!
+
+
+If a categorical attribute has a large number of possible categories
+then one-hot encoding results in loads of input features.
+Slows down model and degrades performance.
+>>> COULD TRY EMBEDDINGS...
+
+Feature Scaling!
+ML algorithms don't perform well when the input numerical attributes have very different scales.
+Note that scaling the targets is generally not required. It would actually make RMSE less intuitive.
+
+Two common scaling methods:
+min-max scaling (normalisation) --> rescaled between 0 and 1. MinMaxScaler.
+standardization --> subtracts mean, and divides by standard deviation.
+Gives a distribution with mean=0 and unit variance.
+It does not bound values to a specific range (a problem with neural networks)
+But it is much less affected by outliers. StandardScaler.
+(btw you might have wanted to take the log of attributes before this however!)
+
+
+TRANSFORMATION PIPELINES
+
+\texttt{from sklearn.preprocessing import StandardScaler}\newline
+\texttt{from sklearn.preprocessing import OneHotEncoder}\newline
+\texttt{from skelarn.compose import ColumnTransformer}\newline
+\newline
+\texttt{num\char`_attribs = list(train\char`_features.drop(\textquotesingle ocean\char`_proximity\textquotesingle, axis=1))}\newline
+\texttt{cat\char`_attribs = [\textquotesingle ocean\char`_proximity\textquotesingle]}\newline
+\newline
+\texttt{full\char`_pipeline = ColumnTransformer([}\newline
+\texttt{(\textquotesingle num\textquotesingle, StandardScaler(), num\char`_attribs),}\newline
+\texttt{(\textquotesingle cat\textquotesingle, OneHotEncoder(), cat\char`_attribs),}\newline
+\texttt{])}\newline
+\newline
+\texttt{train\char`_prepared = full\char`_pipeline.fit\char`_transform(train\char`_features)}
+
+
+UPTO: sSELECT AND TRAIN A MODEL p72
+
+Linear regression model:
+from sklearn.linear_model import LinearRegression
+lin_reg = LinearRegression()
+lin_reg.fit(housing_prepared, lousing_labels)
+
+RMSE
+from sklearn.metrics import mean_squared_error
+housing_predictions = lin_reg.predict(housing_prepared)
+lin_mse = mean_square_error(housing_labels, housing_predictions)
+lin_rmse = np.sqrt(lin_mse)
+
+Underfitting:
+Not providing enough information (need better features)
+OR
+the model is not powerful enough (or reduce constraints)
+
+DecisionTree:
+from sklearn.tree import DecisionTreeRegressor
+tree_reg = DecisionTreeRegressor()
+tree_reg.fit(housing_prepared, housing_labels)
+
+*You don't want to touch the test set until you are ready to launch a model you are confident about*
+So you need to use part of the training set for training, and part of it for model validation.
+introducing...
+SCIKIT-LEARNS K-fold cross-validation feature.
+- Splits the training set into N distinct subsets called folds.
+- Trains and evaluates the Decision Tree model N times, picking a different fold for evaluation every time and training on the other N-1 folds.
+- Results in N evaluation scores
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(tree_reg, housing_prepared, housing_labels, scoring='neg_mean_squared_error', cv=10)
+tree_rmse_scroes = np.sqrt(-scores)
+CAN GET AN ESTIMATE AND A STD DEVIATION - to work out the accuracy of the estimate.
+^^^
+NOTE: do this training distinct to the initial training.
+
+
+RandomForestRegressor:
+from sklearn.ensemble import RandomForestRegressor
+forest_reg = RandomForestRegressor()
+forest_reg.fit(housing_prepared, housing_labels)
+
+If the score on the training set is still much lower than on the validation sets,
+the model is overfitting the training set.
+
+Solutions for overfitting:
+-A lot more data
+-Simplify the model
+-Constrain the model (regularize it)
+
+TRY LOTS OF MODELS BEFORE ATTEMPTING TO TUNE HYPERPARAMETERS,
+AND DRAW UP A SHORTLIST
+
+Saving models
+import joblib
+joblib.dump(my_model, 'my_model.pkl')
+my_model_loaded = joblib.load('my_model.pkl')
+
+FINE TUNE MODEL:
+
+Grid search different hyperparameters. p76.
+
+from sklearn.model_selection import GridSearchCV
+param_grid = [{DISTINCT DIC 1},{DISTINCT DIC 2}]
+DISTINCT DIC 1 = {'n_estimators':[3,10,30], 'max_features':[2,4,6,8]}
+forest_reg = RandomForestRegressor()
+grid_search = GridSearchCV(forest_reg, param_grid, cv=5, scoring='neg_mean_squared_error', return_training_score=True)
+grid_search.fit(housing_prepared, housing_labels)
+
+^CV = N cross validations...
+
+grid_search.best_params_
+grid_search.best_estimator_
+grid_search.cv_results_['mean_test_score']
+grid_search.cv_results_['params']
+
+There is also a RandomizedSearchCV class out there...
+
+ANALYZE BEST MODELS. p78
+MODEL.feature_importances_
+
+cat_encoder = full_pipeline.named_transformers_['cat']
+cat_one_hot_attribs_0 = list(cat_encoder.categories_[0])
+cat_one_hot_attribs_1 = list(cat_encoder.categories_[1])
+cat_one_hot_attribs_2 = list(cat_encoder.categories_[2])
+cat_one_hot_attribs_3 = list(cat_encoder.categories_[3])
+cat_one_hot_attribs_4 = list(cat_encoder.categories_[4])
+
+attributes = num_attribs + cat_one_hot_attribs_0 + cat_one_hot_attribs_1 + cat_one_hot_attribs_2 + cat_one_hot_attribs_3 + cat_one_hot_attribs_4
+sorted(zip(forest_reg.feature_importances_, attributes), reverse=True)
+
+^^^REALLY F'ing USEFUL!!!
+
+THEN EVALUATE ON THE TEST SET ::: you need to process in exactly the same way!
+
+
+
+
+
+
+
+
+
+
+
+***UPTO classification on page 85***
+
+Stochastic Gradient Descent (SGD):
+from sklearn.linear_model import SGDClassifier
+sgd_clf = SGDClassifier(random_state=42) # set random_state for reproducible results.
+sgd_clf.fit(X_train, y_train_5)
+
+Performance Measures:
+
+from sklearn.model_selection import cross_val_score # used this in the previous chapter remember
+cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring='accuracy')
+
+Accuracy = percentage of correct predictions
+Not good for skewed datasets (when some classes are much more frequent than others).
+
+Confusion Matrix.
+                    Predicted Class
+                    ____________________________
+             non-5 | true neg     false positive
+Actual Class       |
+             is-5  | false neg    true positive
+
+from sklearn.model_selection import cross_val_predict             
+y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)
+^ like cross_val_score, perform K-fold cross-validation,
+but instead of returning the evaluation, it returns the PREDICTIONS
+^ this is 'clean' in that it never saw the model during training!
+
+from sklearn.metrics import confusion_matrix
+confusion_matrix(y_train_5, y_train_pred)
+
+NICE IMAGE YOU CAN NICK ON PAGE 92
+
+precision = TP / (TP + FP)
+recall = TP / (TP + FN)
+
+from sklearn.metrics import precision_score, recall_score
+precision_score(y_train_5, y_train_pred)
+recall_score(y_train_5, y_train_pred)
+
+When it claims an image represents a 5,
+it is correct only PRECISION amount of the time.
+Moreover, it only detects RECALL of the 5s.
+
+F1 is the harmonic mean of precision and recall
+F1 = 2 / (1/precision + 1/recall)
+Harmonic means give more weight to low values,
+can only get a high F1 score if both recall and precision are high.
+(perhaps not what you want BTW, depends on what you're doing...)
+from sklearn.metrics import f1_score
+f1_score(y_train_5, y_train_pred)
+
+increasing precision reduces recall, and vice versa.
+This is the precision/recall trade off:
+>>> you can change the decision threshold, if you want... p94
+
+from sklearn.metrics import precision_recall_curve
+instead of predict() use the decision_function() method
+y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3, method='decision_function') < THAT METHOD THE KEY BIT
+precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+
+The ROC Curve:
+receiever operating characterisitcs:
+true positive rate (recall) ::: want this to be big
+against false positive rate:
+FPR = FP / (FP + TN) ::: want this to be small!
+^ AGAIN THERE IS A TRADE-OFF
+
+from sklearn.metrics import roc_curve
+fpr, tpr, thresholds = roc_curve(y_train_5, y_scores)
+
+One way to compare classifiers is to measure the area under curve (AUC)
+perfect would = 1
+random would = 0.5
+
+from sklearn.metrics import roc_auc_score
+roc_auc_score(y_train_5, y_scores)
+
+The ROC curve is very similar to the precision/recall curve.
+Which one to use?
+PR better when positive class is rare,
+or when you care more about false positives than false negatives.
+
+NOW DO A RANDOM FOREST.
+It does not have a decision_function() method.
+Instead, it has a predict_proba() method.
+^Scikit-Learn classifiers generally have one or the other...
+
+from sklearn.ensemble import RandomForestClassifier
+forest_clf = RandomForestClassifier(random_state=42)
+y_probas_forest = cross_val_predict(forest_clf, X_train, y_train, cv=3, method='predict_proba')
+y_scores_forest = y_probas_forest[:,1] # use the prob of positive class...
+fpr_forst, tpr_forest, thresholds_forest = roc_curve(y_train_5, y_scores_forest)
+
+
+***MULTICLASS CLASSIFICATION***
+>>> more than two classes
+
+SGD, random forest, naive Bayes: can handle multiple classes natively.
+Logistic regression, support vector machine: strictly binary.
+^ but you can then train N 'one versus the rest' classifiers ::: typically preferred.
+^^ or N(N-1)/2 one-versus-one classifiers. 
+
+Scikit-learn detects when you try to use a binary classification algorithm for multi-class classification
+and automatically runs OvR or OvO
+
+from sklearn.svm import SVC
+svm_clf = SVC()
+svm_clf.fit(X_train, y_train)
+
+svm_clf.predict([some_digit])
+some_digit_scores = svm_clf.decision_function([some_digit])
+svm_clf.classes_
+svm_clf.classes_[6] ::: label for this class
+
+***Error Analysis
+- confusion matrix (can even plot it with Z=value)
+
+plt.matshow(conf_mx, cmap=plt.cm.gray)
+plt.show()
+
+- then need to normalise it abit
+row_sums = conf_mx.sum(axis=1, keepdims=True)
+norm_conf_mx = conf_mx / row_sums
+np.fill_diagnol(norm_conf_mx, 0)
+plt.matshow(norm_conf_mx, cmap=plt.cm.gray)
+plt.show()
+
+^^^
+NOTE THAT ALL WE HAVE DONE IS USE ACCURACY, and MAKE THOSE MATRIX PLOTS!
+
+Binary classifier
+Multiclass classifier
+
+...also got multioutput-binary classifier
+...also got multioutput-multiclass classification (kind of blurs into multioutput regression)
+^Not going to worry about these
+
+
+Chapter 4::: training models
+Useful for training NEURAL NETWORKS...
+
+Linear Regression:
+- 'closed form'
+-
+Using an iterative optimization approach called Gradient Descent (GD)
+that gradually tweaks the model parameters to minimize the cost function over the training set.
+(Batch GD, Mini-batch GD, and Stochastic GD)
+
+Linear Regression.
+predicted value: y_hat = theta_0 + theta_1.x_1 + ... theta_n.x_n
+
+p113 for equations and stuff
+
+from sklearn.linear_model import LinearRegression
+lin_reg = LinearRegression()
+lin_reg.fit(X, y)
+lin_reg.intercept_
+lin_reg.coef_
+
+What if there are a large number of features
+or too many training instances to fit in memory?
+
+Gradient Descent:
+Gradient descent is a generic optimization algorithm capable of finding the optimal solution to a wide range of problems. 
+The general idea is to tweak parameters iteratively in order to minimize a cost function.
+Gradient descent measures the local gradient of the error function with regard to the parameter vector THETA,
+and it goes in the direction of the descending gradient.
+
+Randomly initialized... wait until it converges!
+
+There is a learning rate hyper parameter, which controls the size of the steps
+
+We want global minimum, not local minimum.
+
+you should feature scale, so the hyperparams are not operating at totaly different scales...
+
+Batch Gradient Descent. p121.
+It uses the whole batch of training data at every step.
+page 122 has the main equation...I reckon
+theta(next step) = theta - eta GRAD MSE(theta)
+
+Stochastic Gradient Descent:
+picks a random instance in the training set at every step,
+and computes the gradients based only on that single instance.
+little data to manipulate = faster (good for huge data sets)
+but on the other hand,
+due to it's stochastic (ie random) nature,
+the algorithm is much less regular.
+It will also never truly settle down (can help jump out of local minima)
+>>> gradually reduce the learning rate p125 = learning schedule
+
+the concept of an epoch...
+
+Mini-batch Gradient descent:
+instead of computing gradients based on the full training set (batch)
+or just one random instance (stocahstic)
+mini-batch GD computes the gradients on small random sets of instances called mini-batches.
+^ less eratic than stochastic GD
+
+A model generalization (total) error has three components:
+1. Bias: wrong assumptions lead to underfitting
+2. Variance: model's excessive sensitivity to small variations in training data. likely due to overfitting.
+3. Irreducible error: nosiness of the data itself
+
+
+A good way to reduce overfitting is to regularize the model (ie constrain it somehow)
+^reducing the degrees of freedom
+
+For a linear model, regularization is typically achived by constraining the weights of the model.
+Ridge Regression
+Lasso Regression
+Elastic Net
+
+Can also do early stopping!
+^ Stop training as soon as the validation error reaches the minimum
+
+LOGISTIC REGRESSION p142
+Some regression algorithms can be used for classification.
+Logisitic regression is commonly used to estimate the probability that
+an instance belongs to a particular class.
+E.g. if the estimated probability is greater than 50%,
+then the model predicts that the instance belongs to that class
+^Binary classifier.
+
+p = sigma(x.theta)
+
+sigmoid function:
+sigma(t) = 1 / (1 + exp(-t))
+Worth noting the shape of this function
+t is called the LOGIT
+
+Training and cost function.
+p144: cost function & log loss logisitc regression cost function.
+
+Decision boundaries...
+Point where classification will change
+
+from sklearn.linear_model import LogisticRegression
+log_reg = LogisticRegression()
+log_reg.fit(X, y)
+log_reg.predict(X_new) # classification
+log_reg.predict_proba(X_new) # 
+
+Logisitc regression models can be regularised using l1 or l2 penalities...
+scikit learn actually adds an l2 penalty by default.
+
+SOFTMAX REGRESSION
+The logistic regression model can be generalized to support multiple classes directly
+without having to train and combine multiple binary classifiers (as discussed previous).
+This is called softmax regression OR multinomial logistic regression.
+p148-p151 very useful...
+
+softmax_reg = LogisticRegression(multi_class="multinomial", solver="lbfgs", C=10)
+
+*** Missing out Support Vector Machines ***
+
+KERNELS:::
+p170
+The function K(a,b) = (a.b)^2
+is a second degree polynomial kernel...
+or...
+In Machine Learning,
+a kernel is a function, phi,
+capable of computing phi(a).phi(b)
+based only on vectors a and b,
+without ...
+WILL NEED TO EXPAND THIS BIT
+
+Decision Trees::: p175
+Decision trees are versatile Machine Learning algorithms
+that can perform both classification and regression tasks.
+They are powerful algorithms, capable of fitting complex datasets.
+
+from sklearn.tree import DecisionTreeClassifier
+tree_clf = DecisionTreeClassifier(max_depth=2)
+tree_clf.fit(X, y)
+
+visualize it by...
+from sklearn.tree import export_graphviz
+export_graphviz(
+    tree_clf,
+    out_file=image_path("iris_tree.dot"),
+    feature_names=iris.feature_names[2:],
+    class_names=iris.target_names,
+    rounded=True,
+    filled=True
+)
+
+Root node = depth 0
+Leaf node (does not have any child nodes)
+
+NOTE:
+decision trees don't require feature scaling or centering at all.
+
+GINI IMPURITY
+p177
+Gi = 1 - sum pik^2
+A node is 'pure' gini=0
+if all training instances it applies to belong to the same class.
+
+Note:
+Scikit-learn uses the CART algorithm,
+which produces only binary trees (nodes can only have two children)
+
+Decision trees are intuitve,
+and their decisions are easy to interpret
+... so they are often called white box models...
+
+A decision tree can also estimate the porbability
+that an instance belongs to a particular class k.
+> It finds the leaf node for a given instance
+> and then returns the ratio of training instances of class k.
+
+tree_clf.predict([5, 1.5]) 
+tree_clf.predict_proba([5, 1.5])
+
+The CART Training Algo:
+the Classification and Regression Tree algo is used to train Decision Trees.
+1. split training set into two subsets using a single feature k, and threshold tk.
+2. How to choose k and tk?
+It searches for the pair that produce the purest subsets (weighted by size)
+p179
+3. recursviely applies the same logic
+4. Hyperparams::: used for stopping
+max_depth
+min_samples_split (min number of samples a node must have for it to be split)
+min_samples_leaf (min number of samples a leaf must have)
+min_weight_fraction_leaf (like above, expressed as a fraction of the total number)
+max_leaf_nodes (maximum number of leaf nodes)
+Also stops if it can't find a split that reduces impurity
+
+^the CART algorithm is a GREEDY algo.
+It searches for an optimum split at the top level, then repeats.
+But this is necessary due to the exponential increase in nodes
+
+Note can also use entropy p181
+interesting statement on which one to use...
+
+Regression
+Decision trees are also capable of performing regression tasks.
+
+from sklearn.tree import DecisionTreeRegressor
+tree_reg = DecisionTreeRegressor(max_depth=2)
+tree_reg.fit(X, y)
+
+The prediction is the average target value of the
+110 training instances associated with this leaf node
+
+CART algoithm is similar as to classification: p184
+
+Instability:
+Limitation 1: decision trees love orthogonal decision boundaries
+^ consequently they are sensitive to training set rotation!
+^^ PCA analysis often results in a better orientation of the training data.
+
+Limitation 2: they are very sensitive to small variations in the training data
+Random Forests can limit this instability by averaging predictions over many trees...
+
+****************************************
+Ensemble Learning and Random Forests...
+If you aggregate the predictions of a group of predictors,
+you will often get better predicitions than with the best individual predicitor
+
+A group of predictors is called an ensemble.
+
+E.g. random forests.
+You can train a group of decision tree classifiers,
+each on a different random subset of the training set.
+To make predictions, you can obtain the predictions of all the individual trees,
+and then use the class that get the most votes.
+^ despite it's simplicity, very simple!
+
+You will often use Ensemble methods near the end of a project,
+once you have already built a few good predictors.
+
+BAGGING
+BOOSTING
+STACKING
+
+Voting Classifiers:
+Majority voting = hard voting
+Voting classfiier often achieves a higher accuracy than the best classifier in the ensemble
+Even if each classifier is a weak learner,
+the ensemble can be a strong learner
+
+Ensemble methods work best when the predictors are
+as independent from one another as possible (i.e. very different algorithms).
+
+Can also do soft-voting! Where you use the probability...
+
+
+Use the same training algorithm for every predictor,
+and train them on different random subsets of the training set.
+BAGGING: when the sampling is performed with replacement.
+PASTING: when the sampling is performed without replacement.
+for classification: use statistical mode
+for regression: take the average.
+
+Bootstrapping introduces a bit more diversity in the subsets that each predictor is trained on...
+
+Random Forests:
+Is an ensemble of decision trees, generally trained via the bagging method.
+
+from sklearn.ensemble import RandomForestClassifier
+rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=16, n_jobs=-1)
+rnd_clf.fit(X_train, y_train)
+
+Has all the decision tree, and all the bagging hyperparameters.
+
+Extra-Trees ::: ANOTHER THING YOU CAN USE IN SCIKIT LEARN
+More bias, for lower variance.
+
+NEED TO UNDERSTAND BIAS AND VARIANCE
+
+Feature Importance...p198
+
+ADA BOOST
+GRADIENT BOOST
+
+STACKING!
+
+***************************
+The Bias/Variance trade-off
+p134.
+***************************
+---
+p213 dimensionality reduction
+---
+
+Many ML problems involve thousands or even millions of features for each training instance.
+Not only do all these features make training extremely slow,
+but they make it much marder to find a good solution.
+THIS IS THE CURSE OF DIMENSIONALITY.
+
+e.g. merging pixels, ignoring outer pixels...
+
+Reducing dimensionality does cause some information loss...
+It will speed up training, but probably make your system perform slightly worse.
+
+Dimensionality reduction is also extremely useful for data visulization (DataViz)
+^ can only really interpret plots in 2D ::: can visually detect patterns, such as clusters.
+
+
+The curse of dimensionality:
+High-dimensional datasets are at risk of being very sparse:
+most training instances are likely to be far away from each other.
+This also means that a new instance will likely be far away from any training instance,
+mkaing predictions much less reliable than in lower dimensions,
+since they will be based on much larger extrapolations.
+In short, the more dimensions a training set has,
+the greater the risk of overfitting it.
+
+In theory,
+one solution would be to increase the size of the training set to reach sufficient density of training instances.
+Unfortunately,
+the number of training instances required to reach a given density grows exponentially with the number of dimensions.
+
+Main approaches for dimensionality reduction:
+Projection AND Manifold Learning
+
+Projection:
+In most real-world problems,
+training instances are NOT spread out uniformly across all dimensions.
+Many features are almost constant,
+while others are highly correlated.
+As a result, all training instances lie within (or close to)
+a much lower-dimensional SUBSPACE of the high-dimensional space.
+
+e.g. 3d but on a 2d plane
+But this wouldn't work for 2d data 'rolled up' in 3d
+
+MANIFOLD LEARNING
+A d-dimensional manifold is part of an n-dimensional space (where d < n)
+that LOCALLY resembles a d-dimensional hyperplane
+(but on a larger scale it can bend and twist in the n-dimensional space.)
+Manifold hypothesis:
+Most real-world hign-dimensionnal datasets lie close to a much lower-dimesnional manifold.
+
+PCA: p219.
+Principal Component Analysis is by far the most popular dimensionality reduction algorithm.
+It identifies the hyperplane that lies closest to the data,
+and then projects the data onto it.
+
+PCA identifies the axis that accounts for the largest amount of variance in the training set.
+It then finds a second axis, orthogonal to the first one,
+that accounts for the largest amout of remaining variance. ETC.
+
+The i^th axis is called the i^th principal component of the data.
+
+Once you have identified all n principal components,
+you can reduce the dimensionality of the dataset down to d dimensions,
+by projecting it onto the hyperplane defined by the first d principal components. (d < n)
+
+from sklearn.decomposition import PCA
+pca = PCA(n_components = 2)
+X2D = pca.fit_transform(X)
+pca.explained_variance_ratio_ (the proportion of the dataset's variance that lies along each principle component)
+
+CHOOSING THE RIGHT NUMBER OF DIMENSIONS
+for example, try and capture 95% of the variance
+pca = PCA(n_components=0.95)
+X_reduced = pca.fit_transform(X_train)
+OBV for dataVis it's gotta be 2 or 3
+
+could also plot explained variance VS number of dimensions,
+there will usually be an elbow in the curve.
+
+PCA for compression (and decompression):
+pca = PCA(n_components = 154)
+X_reduced = pca.fit_transform(X_train)
+X_recovered = pca.inverse_transform(X_reduced)
+
+Can make it non-linear using kernel techniques:
+from sklearn.decomposition import KernelPCA
+rbf_pca = KernelPCA(n_components=2, kernel='rbf', gamma=0.04)
+X_reduced = rbf_pca.fit_transform(X)
+
+LLE: Locally Linear Embedding
+is another powerful nonlinear dimensionality reduction technique.
+It is a manifold technique that does not rely on projections.
+Particularly good at unrolling twisted manifolds, especially when there is not too much noise.
+
+from sklearn.manifold import LocallyLinearEmbedding
+lle = LocallyLinearEmbedding(n_components=2, n_neighbors=10)
+X_reduced = lle.fit_transform(X)
+
+ALSO t-Distirbuted Stochastic Neighbor Embedding
+*** I HAVE USED THIS DURING CLUSTERING WORK!
+
+Unsupervised Learning Techniques: Chapter9
+Clustering: the goal is to group similar instances together into clusters.
+Anomaly Detection: The objective is to learn what 'normal' data looks like,
+then use that to detect abnormal instances look like
+Density estimation: this is the task of estimating the probability density function of the random process generating the dataset..
+
+CLUSTERING
+
+Applications:
+Customer segmentation
+Dimensionality reduction (soft clustering)
+Outlier detection (low affinity instances)
+Semi supervised: if you only have a few labels, perform clustering and then propagate the labels to all the instances in the same cluster
+Search engines...
+
+There is no universal definition of what a cluster is...
+
+*** ALSO LOOK AT YOUR CLUSTERING WORK HERE ***
+KMEANS:
+from sklearn.cluster import KMeans
+k = 5
+kmeans = KMeans(n_clusters=k)
+y_pred = kmeans.fit_predict(X)
+
+kmeans.cluster_centres_
+
+Note that you must specifiy the number of clusters, k, that the algorithm must find
+
+K-Means algorithm does not behave very well when the blobs have very different diameters because all it cares about
+when assigning an instance to a cluster is the distance to the centroid.
+Instead of assigning each instance to a single cluster, which is called hard-clustering,
+it can be useful to give each instance a score per cluster, which is called soft-clustering.
+^Can be a distance or an affinity. NB: this can be a dimensionality reduction technique.
+kmeans.transform(X)
+
+Kmeans is guarenteed to converge, but it might find a local optimum.
+Dependent on the random initialization step
+^^^ Run the algorithm multiple times with different random initializations and keep the best solution
+n_init hyperparameter (which is ten by default)
+
+performance measure = INERTIA
+^the mean squared distance between each instance and its closest centroid
+Keep model with the lowest inertia
+kmeans.inertia_
+NB kmeans.score(X) = NEGATIVE INERTIA
+
+there is actually an initilization algo under the bonnet
+to ensure much less likely to converge on a suboptimal solution...
+AND an accelerated distance calculation going on!
+
+FINDING THE OPTIMAL NUMBER OF CLUSYERS.
+Can't just pick k which with lowest inertia
+(It keeps getting lower as you increase k)
+^ could look at the 'elbow', but this is rather coarse
+
+A more precise approach is to use the silhouette coefficient
+and silhouette score (mean silhouette coefficient over all instances)
+
+A silhouette coefficient can vary between -1 and +1.
+A coefficient of +1 means that the instances is well inside its own cluster, and far from others.
+A coefficient of ~0 means that it is close to a cluster boundary
+A coefficient of -1 means that the instance may have been assigned to the wrong cluster!
+
+from sklearn.metrics import silhouette_score
+silhouette_score(X, kmeans.labels_)
+plot silhouette score as a function of k...
+
+Silhouette diagram:
+the shape's height indicates the number of instances
+the cluster contains, and its width presents the sorted silhouette coefficients o fht einstances in the cluster.
+The vertical dashed lines represent the silhouette score for each number of clusters.
+When most of the instances in a cluster have a lower coefficient than this score,
+then the cluster is bad.
+Also, consider the size of the clusters...
+
+Kmeans not great when clusters have varying sizes,
+different densities,
+or nonspherical shapes...
+* IT IS IMPORTANT TO SCALE INPUT FEATURES BEFORE YOU RUN KMEANS
+
+:::semi-supervised learning:::
+use to create labels for all data, when you only have a few!
+
+DBSCAN: defines clusters as continuous regions of high density, which is good for clusters of arbitary shapes.
+AGGLOMERATIVE: hierachy of clusters is built from the bottom up
+^ HARDER TO OPTIMISE
+&& can't get soft-clustering results!
+
+Instead of distance based clustering
+there are hierachical clustering methods
+
+
+Gaussian Mixtures:
+GMM is a probabilistic model that assumes that the instances were generated from a mixture of several gaussian distributions
+whose parameters are unknown.
+You must know in advance the number k of Gaussian distributions
+
+p268
+Given a statistical model with some parameters, theta, the word probabiltiy is used to describe low plausible a future outcome, x, is.
+The word likelihood is used to describe how plausible a particular set of paramter values, theta, are after the outcome x is known.
+a PDF is a function of x, with theta fixed
+a likelihood function is a functions of theta, with x fixed.
+
+
+
+
+
+
+
+SHOULD BE PUT ABOVE Regularization:
+Decision trees make very few assumptions about the training data.
+If left unconstrained,
+the tree structure will adapt itself to the training data,
+fitting it very closely - indeed, most likely overfitting it.
+^Non parametric model
+(not because it does not have nay params,
+but because the number of params is not determined prior to training)
+
+To avoid overfitting the training data,
+you need to restrict the decision trees freedom during training
+^regularization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -133,8 +133,8 @@ you get a much more accurate measure of its performance.
 
 
 
-
-Chapter 2: end-to-end
+\newpage
+\textbf{End-to-end ML}
 
 To avoid a data snooping bias, immediately create a randomized test set.\newline
 \texttt{from sklearn.model\char`_selection import train\char`_test\char`_split}\newline
@@ -157,83 +157,61 @@ Study correlation coefficients:\newline
 \item
 Transform attributes and/or try out various combinations of attributes:\newline
 \texttt{train[\textquotesingle rooms\char`_per\char`_house\textquotesingle] = train[\textquotesingle total\char`_rooms\textquotesingle]/train[\textquotesingle houses\textquotesingle]}\newline
+\texttt{train[\textquotesingle mean\char`_salary\char`_log\textquotesingle] = np.log(train[\textquotesingle mean\char`_salary\textquotesingle]+1.0)}
 \end{itemize}
 
-Prepare the data for ML algorithms (wrap up as a function you can apply to the test set)
+Prepare the data for ML algorithms (wrap up as a function you can also apply to the test set)
 \vspace{-3.0mm}
 \begin{itemize}
 \item
 Data cleaning (address any NULL values):\newline
 \texttt{train.dropna(subset=[\textquotesingle total\char`_rooms\textquotesingle])}~~~~get rid of the corresponding rows.\newline
 \texttt{train.drop(\textquotesingle total\char`_rooms\textquotesingle, axis=1)}~~~~~~~~~~get rid of the entire attribute.\newline
-\texttt{median = housing[\textquotesingle total\char`_rooms\textquotesingle].median()}~~~~~set to some value.\newline
-\texttt{housing[\textquotesingle total\char`_rooms\textquotesingle].fillna(median, inplace=True)}
+\texttt{median = train[\textquotesingle total\char`_rooms\textquotesingle].median()}~~~~~~~set to some value.\newline
+\texttt{train[\textquotesingle total\char`_rooms\textquotesingle].fillna(median, inplace=True)}
 \item
 Separate the features and the labels:\newline
-\texttt{train\char`_features = train.drop(\textquotesingle median\char`_house\char`_value\textquotesingle, axis=1)}\newline
-\texttt{train\char`_labels = train[\textquotesingle median\char`_house\char`_value\textquotesingle].copy()}
+\texttt{train\char`_X = train.drop(\textquotesingle median\char`_house\char`_value\textquotesingle, axis=1)}\newline
+\texttt{train\char`_y = train[\textquotesingle median\char`_house\char`_value\textquotesingle].copy()}
 \item
 Handle text/categorical attributes:\newline
-You can sometimes map categories onto numbers (e.g. bad, average, good, excellent)
-but often you cannot.
-SEE BELOW
+Sometimes you can map categories onto numbers (e.g. bad, average, good, excellent).\newline
+But you might have to One Hot Encode;
+where you have one binary attribute per category.\newline
+\textit{Note: one-hot-encoding can result in lots of input features
+which slows down the model and degrades performance.}
 \item
 Feature Scaling:\newline
-SEE BELOW
+ML algos don't perform well when the input numerical features have very different scales.
+\textbf{Min-max scaling (normalization)} $\rightarrow$ rescales between 0 and 1.\newline
+\textit{This can be affected by outliers (consequently, you might want to take a features log first).}\newline
+\textbf{Standardization} $\rightarrow$ subtracts the mean, and divides by the standard deviation.\newline
+\textit{This gives a distribution with mean=0 and unit variance.
+It does not bound values to a specific range (a problem with neural networks)
+but is much less affected by outliers.}\newline
 \end{itemize}
 
-
-bad, average, good, excellent, could be mapped onto some numbers...
-But in general categories a=have no relationship
-
-What about one binary attribute per category. One hot encoding!
-Because only one attribute will be equal to 1 (hot), while the others will be 0 (cold).
-housing_cat = housing[['ocean_proximity']]
-
-from sklearn.preprocessing import OneHotEncoder
-cat_encoder = OneHotEncoder()
-housing_cat_1hot = cat_encoder.fit_transform(housing_cat)
-
-housing_cat_1hot.toarray()
-cat_encoder.categories_
-
-AM I SURE HOW TO RECONNECT THIS TO THE ORIGINAL DATA?
-I think it may stay separate!
-
-
-If a categorical attribute has a large number of possible categories
-then one-hot encoding results in loads of input features.
-Slows down model and degrades performance.
->>> COULD TRY EMBEDDINGS...
-
-Feature Scaling!
-ML algorithms don't perform well when the input numerical attributes have very different scales.
-Note that scaling the targets is generally not required. It would actually make RMSE less intuitive.
-
-Two common scaling methods:
-min-max scaling (normalisation) --> rescaled between 0 and 1. MinMaxScaler.
-standardization --> subtracts mean, and divides by standard deviation.
-Gives a distribution with mean=0 and unit variance.
-It does not bound values to a specific range (a problem with neural networks)
-But it is much less affected by outliers. StandardScaler.
-(btw you might have wanted to take the log of attributes before this however!)
-
-
-TRANSFORMATION PIPELINES
-
+\texttt{from sklearn.preprocessing import MinMaxScaler \# not used here}\newline
 \texttt{from sklearn.preprocessing import StandardScaler}\newline
 \texttt{from sklearn.preprocessing import OneHotEncoder}\newline
 \texttt{from skelarn.compose import ColumnTransformer}\newline
 \newline
-\texttt{num\char`_attribs = list(train\char`_features.drop(\textquotesingle ocean\char`_proximity\textquotesingle, axis=1))}\newline
 \texttt{cat\char`_attribs = [\textquotesingle ocean\char`_proximity\textquotesingle]}\newline
+\texttt{num\char`_attribs = list(train\char`_X.drop(cat\char`_attribs, axis=1))}\newline
 \newline
 \texttt{full\char`_pipeline = ColumnTransformer([}\newline
 \texttt{(\textquotesingle num\textquotesingle, StandardScaler(), num\char`_attribs),}\newline
 \texttt{(\textquotesingle cat\textquotesingle, OneHotEncoder(), cat\char`_attribs),}\newline
 \texttt{])}\newline
 \newline
-\texttt{train\char`_prepared = full\char`_pipeline.fit\char`_transform(train\char`_features)}
+\texttt{train\char`_X\char`_prepared = full\char`_pipeline.fit\char`_transform(train\char`_X)}\newline
+\newline
+To determine the order of the one-hot-encoded attributes, do the following...\newline
+\texttt{cat\char`_encoder = full\char`_pipeline.named\char`_transformers\char`_[\textquotesingle cat\textquotesingle]}\newline
+\texttt{cat\char`_encoder.categories\char`_[0]}
+
+
+
 
 
 UPTO: sSELECT AND TRAIN A MODEL p72
@@ -248,11 +226,6 @@ from sklearn.metrics import mean_squared_error
 housing_predictions = lin_reg.predict(housing_prepared)
 lin_mse = mean_square_error(housing_labels, housing_predictions)
 lin_rmse = np.sqrt(lin_mse)
-
-Underfitting:
-Not providing enough information (need better features)
-OR
-the model is not powerful enough (or reduce constraints)
 
 DecisionTree:
 from sklearn.tree import DecisionTreeRegressor
@@ -331,6 +304,8 @@ sorted(zip(forest_reg.feature_importances_, attributes), reverse=True)
 ^^^REALLY F'ing USEFUL!!!
 
 THEN EVALUATE ON THE TEST SET ::: you need to process in exactly the same way!
+
+
 
 
 

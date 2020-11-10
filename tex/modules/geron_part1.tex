@@ -167,7 +167,7 @@ Prepare the data for ML algorithms (wrap up as a function you can also apply to 
 Data cleaning (address any NULL values):\newline
 \texttt{train.dropna(subset=[\textquotesingle total\char`_rooms\textquotesingle])}~~~~get rid of the corresponding rows.\newline
 \texttt{train.drop(\textquotesingle total\char`_rooms\textquotesingle, axis=1)}~~~~~~~~~~get rid of the entire attribute.\newline
-\texttt{median = train[\textquotesingle total\char`_rooms\textquotesingle].median()}~~~~~~~set to some value.\newline
+\texttt{median = train[\textquotesingle total\char`_rooms\textquotesingle].median()}~~~~~~~~set to some value.\newline
 \texttt{train[\textquotesingle total\char`_rooms\textquotesingle].fillna(median, inplace=True)}
 \item
 Separate the features and the labels:\newline
@@ -189,7 +189,6 @@ ML algos don't perform well when the input numerical features have very differen
 \textit{This gives a distribution with mean=0 and unit variance.
 It does not bound values to a specific range (a problem with neural networks)
 but is much less affected by outliers.}\newline
-\end{itemize}
 
 \texttt{from sklearn.preprocessing import MinMaxScaler \# not used here}\newline
 \texttt{from sklearn.preprocessing import StandardScaler}\newline
@@ -205,60 +204,55 @@ but is much less affected by outliers.}\newline
 \texttt{])}\newline
 \newline
 \texttt{train\char`_X\char`_prepared = full\char`_pipeline.fit\char`_transform(train\char`_X)}\newline
-\newline
+\item
 To determine the order of the one-hot-encoded attributes, do the following...\newline
 \texttt{cat\char`_encoder = full\char`_pipeline.named\char`_transformers\char`_[\textquotesingle cat\textquotesingle]}\newline
 \texttt{cat\char`_encoder.categories\char`_[0]}
+\end{itemize}
+
+Training a model
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Linear regression model:\newline
+\texttt{from sklearn.linear\char`_model import LinearRegression}\newline
+\texttt{lin\char`_reg = LinearRegression()}\newline
+\texttt{lin\char`_reg.fit(train\char`_X\char`_prepared, train\char`_y)}
+\item
+Decision tree model:\newline
+\texttt{from sklearn.tree import DecisionTreeRegressor}\newline
+\texttt{tree\char`_reg = DecisionTreeRegressor()}\newline
+\texttt{tree\char`_reg.fit(train\char`_X\char`_prepared, train\char`_y)}
+\item
+Random forest model:\newline
+\texttt{from sklearn.ensemble import RandomForestRegressor}\newline
+\texttt{forest\char`_reg = RandomForestRegressor()}\newline
+\texttt{forest\char`_reg.fit(train\char`_X\char`_prepared, train\char`_y)}
+\end{itemize}
+
+Selecting a model
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Evaluate a model using the Root Mean Square Error (RMSE):\newline
+\texttt{from sklearn.metrics import mean\char`_squared\char`_error}\newline
+\texttt{train\char`_predictions = lin\char`_reg.predict(train\char`_X\char`_prepared)}\newline
+\texttt{lin\char`_mse = mean\char`_square\char`_error(train\char`_y, train\char`_predictions)}\newline
+\texttt{lin\char`_rmse = np.sqrt(lin\char`_mse)}
+\item
+K-fold cross-validation (do this in addition to the initial training):\newline
+- Splits the training set into $N$ distinct subsets called folds.\newline
+- Trains and evaluates the model $N$ times, resulting in $N$ evaluation scores.\newline
+- It selects a different fold for evaluation every time and trains on the other $N-1$ folds.\newline
+\texttt{from sklearn.model\char`_selection import cross\char`_val\char`_score}\newline
+\texttt{scores = cross\char`_val\char`_score(lin\char`_reg, train\char`_X\char`_prepared, train\char`_y,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~scoring=\textquotesingle neg\char`_mean\char`_squared\char`_error\textquotesingle, cv=10)}\newline
+\texttt{lin\char`_rmse\char`_scores = np.sqrt(-scores)}\newline
+\end{itemize}
 
 
 
 
-
-UPTO: sSELECT AND TRAIN A MODEL p72
-
-Linear regression model:
-from sklearn.linear_model import LinearRegression
-lin_reg = LinearRegression()
-lin_reg.fit(housing_prepared, lousing_labels)
-
-RMSE
-from sklearn.metrics import mean_squared_error
-housing_predictions = lin_reg.predict(housing_prepared)
-lin_mse = mean_square_error(housing_labels, housing_predictions)
-lin_rmse = np.sqrt(lin_mse)
-
-DecisionTree:
-from sklearn.tree import DecisionTreeRegressor
-tree_reg = DecisionTreeRegressor()
-tree_reg.fit(housing_prepared, housing_labels)
-
-*You don't want to touch the test set until you are ready to launch a model you are confident about*
-So you need to use part of the training set for training, and part of it for model validation.
-introducing...
-SCIKIT-LEARNS K-fold cross-validation feature.
-- Splits the training set into N distinct subsets called folds.
-- Trains and evaluates the Decision Tree model N times, picking a different fold for evaluation every time and training on the other N-1 folds.
-- Results in N evaluation scores
-from sklearn.model_selection import cross_val_score
-scores = cross_val_score(tree_reg, housing_prepared, housing_labels, scoring='neg_mean_squared_error', cv=10)
-tree_rmse_scroes = np.sqrt(-scores)
-CAN GET AN ESTIMATE AND A STD DEVIATION - to work out the accuracy of the estimate.
-^^^
-NOTE: do this training distinct to the initial training.
-
-
-RandomForestRegressor:
-from sklearn.ensemble import RandomForestRegressor
-forest_reg = RandomForestRegressor()
-forest_reg.fit(housing_prepared, housing_labels)
-
-If the score on the training set is still much lower than on the validation sets,
-the model is overfitting the training set.
-
-Solutions for overfitting:
--A lot more data
--Simplify the model
--Constrain the model (regularize it)
 
 TRY LOTS OF MODELS BEFORE ATTEMPTING TO TUNE HYPERPARAMETERS,
 AND DRAW UP A SHORTLIST
@@ -454,6 +448,12 @@ Multiclass classifier
 ...also got multioutput-binary classifier
 ...also got multioutput-multiclass classification (kind of blurs into multioutput regression)
 ^Not going to worry about these
+
+
+
+
+
+
 
 
 Chapter 4::: training models

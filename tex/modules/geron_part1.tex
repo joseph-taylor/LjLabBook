@@ -250,28 +250,31 @@ K-fold cross-validation (do this in addition to the initial training):\newline
 \texttt{lin\char`_rmse\char`_scores = np.sqrt(-scores)}\newline
 \end{itemize}
 
+Fine tune model hyperparameters
+\begin{itemize}
+\item
+Use grid search:\newline
+\texttt{from sklearn.model\char`_selection import GridSearchCV}\newline
+\texttt{dictionary\char`_1 = \{\textquotesingle n\char`_estimators\textquotesingle:[3,10,30], \textquotesingle max\char`_features\textquotesingle:[2,4,6,8]\}}\newline
+\texttt{dictionary\char`_2 = \{\textquotesingle bootstrap\textquotesingle:[False], \textquotesingle n\char`_estimators\textquotesingle:[3,10,30]\}}\newline
+\texttt{param\char`_grid = [dictionary\char`_1, dictionary\char`_2]}\newline
+\texttt{forest\char`_reg = RandomForestRegressor()}\newline
+\texttt{grid\char`_search = GridSearchCV(forest\char`_reg, param\char`_grid, cv=5, scoring='neg\char`_mean\char`_squared\char`_error', return\char`_training\char`_score=True)}\newline
+\texttt{grid\char`_search.fit(train\char`_X\char`_prepared, train\char`_y)}
+
+\end{itemize}
 
 
 
 
-TRY LOTS OF MODELS BEFORE ATTEMPTING TO TUNE HYPERPARAMETERS,
-AND DRAW UP A SHORTLIST
-
-Saving models
-import joblib
-joblib.dump(my_model, 'my_model.pkl')
-my_model_loaded = joblib.load('my_model.pkl')
 
 FINE TUNE MODEL:
 
 Grid search different hyperparameters. p76.
 
-from sklearn.model_selection import GridSearchCV
-param_grid = [{DISTINCT DIC 1},{DISTINCT DIC 2}]
-DISTINCT DIC 1 = {'n_estimators':[3,10,30], 'max_features':[2,4,6,8]}
-forest_reg = RandomForestRegressor()
-grid_search = GridSearchCV(forest_reg, param_grid, cv=5, scoring='neg_mean_squared_error', return_training_score=True)
-grid_search.fit(housing_prepared, housing_labels)
+
+
+
 
 ^CV = N cross validations...
 
@@ -299,6 +302,10 @@ sorted(zip(forest_reg.feature_importances_, attributes), reverse=True)
 
 THEN EVALUATE ON THE TEST SET ::: you need to process in exactly the same way!
 
+Saving models
+import joblib
+joblib.dump(my_model, 'my_model.pkl')
+my_model_loaded = joblib.load('my_model.pkl')
 
 
 

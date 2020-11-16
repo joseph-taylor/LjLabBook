@@ -136,7 +136,7 @@ you get a much more accurate measure of its performance.
 \newpage
 \textbf{End-to-end ML}
 
-To avoid a data snooping bias, immediately create a randomized test set.\newline
+To avoid a data snooping bias, immediately create a randomized test set\newline
 \texttt{from sklearn.model\char`_selection import train\char`_test\char`_split}\newline
 \texttt{train, test = train\char`_test\char`_split(data, test\char`_size=0.2, random\char`_state=42)}\newline
 
@@ -207,7 +207,7 @@ but is much less affected by outliers.}\newline
 \item
 To determine the order of the one-hot-encoded attributes, do the following...\newline
 \texttt{cat\char`_encoder = full\char`_pipeline.named\char`_transformers\char`_[\textquotesingle cat\textquotesingle]}\newline
-\texttt{cat\char`_encoder.categories\char`_[0]}
+\texttt{cat\char`_encoder.categories\char`_[i]}
 \end{itemize}
 
 Training a model
@@ -241,71 +241,49 @@ Evaluate a model using the Root Mean Square Error (RMSE):\newline
 \texttt{lin\char`_rmse = np.sqrt(lin\char`_mse)}
 \item
 K-fold cross-validation (do this in addition to the initial training):\newline
-- Splits the training set into $N$ distinct subsets called folds.\newline
+- Splits the training set into $N$ distinct subsets called folds (represented by \texttt{cv} below).\newline
 - Trains and evaluates the model $N$ times, resulting in $N$ evaluation scores.\newline
 - It selects a different fold for evaluation every time and trains on the other $N-1$ folds.\newline
 \texttt{from sklearn.model\char`_selection import cross\char`_val\char`_score}\newline
 \texttt{scores = cross\char`_val\char`_score(lin\char`_reg, train\char`_X\char`_prepared, train\char`_y,}\newline
 \texttt{.~~~~~~~~~~~~~~~~~~~~~~~~scoring=\textquotesingle neg\char`_mean\char`_squared\char`_error\textquotesingle, cv=10)}\newline
-\texttt{lin\char`_rmse\char`_scores = np.sqrt(-scores)}\newline
-\end{itemize}
-
-Fine tune model hyperparameters
-\begin{itemize}
+\texttt{lin\char`_rmse\char`_scores = np.sqrt(-scores)}
 \item
-Use grid search:\newline
+Fine tune model hyperparameters using grid search:\newline
 \texttt{from sklearn.model\char`_selection import GridSearchCV}\newline
 \texttt{dictionary\char`_1 = \{\textquotesingle n\char`_estimators\textquotesingle:[3,10,30], \textquotesingle max\char`_features\textquotesingle:[2,4,6,8]\}}\newline
 \texttt{dictionary\char`_2 = \{\textquotesingle bootstrap\textquotesingle:[False], \textquotesingle n\char`_estimators\textquotesingle:[3,10,30]\}}\newline
 \texttt{param\char`_grid = [dictionary\char`_1, dictionary\char`_2]}\newline
 \texttt{forest\char`_reg = RandomForestRegressor()}\newline
-\texttt{grid\char`_search = GridSearchCV(forest\char`_reg, param\char`_grid, cv=5, scoring='neg\char`_mean\char`_squared\char`_error', return\char`_training\char`_score=True)}\newline
-\texttt{grid\char`_search.fit(train\char`_X\char`_prepared, train\char`_y)}
-
+\texttt{grid\char`_search = GridSearchCV(forest\char`_reg, param\char`_grid, cv=5,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~scoring=\textquotesingle neg\char`_mean\char`_squared\char`_error\textquotesingle,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~return\char`_training\char`_score=True)}\newline
+\texttt{grid\char`_search.fit(train\char`_X\char`_prepared, train\char`_y)}\newline
+\newline
+\texttt{grid\char`_search.best\char`_params\char`_}\newline
+\texttt{grid\char`_search.best\char`_estimator\char`_}\newline
+\texttt{grid\char`_search.cv\char`_results\char`_[\textquotesingle mean\char`_test\char`_score\textquotesingle]}\newline
+\texttt{grid\char`_search.cv\char`_results\char`_[\textquotesingle params\textquotesingle]}
+\item
+Study the relative importance of each attribute:\newline
+\texttt{feat\char`_importances = grid\char`_search.best\char`_estimator\char`_.feature\char`_importances}\newline
+\texttt{feats = num\char`_attributes + list(cat\char`_encoder.categories\char`_[0]) + ...}\newline
+\texttt{sorted(zip(feat\char`_importances, feats), reverse=True)}
 \end{itemize}
 
+Evaluate model on the test set\newline
+\texttt{final\char`_model = grid\char`_search.best\char`_estimator\char`_ ~\# as an example}\newline
+\texttt{test\char`_y = test[\textquotesingle median\char`_house\char`_value\textquotesingle].copy()}\newline
+\texttt{test\char`_X = test.drop(\textquotesingle median\char`_house\char`_value\textquotesingle, axis=1)}\newline
+\texttt{test\char`_X\char`_prepared = full\char`_pipeline.\textbf{transform}(test\char`_X)}\newline
+\texttt{test\char`_predictions = final\char`_model.predict(test\char`_X\char`_prepared)}\newline
+\texttt{final\char`_mse = mean\char`_square\char`_error(test\char`_y, test\char`_predictions)}\newline
+\texttt{final\char`_rmse = np.sqrt(final\char`_mse)}\newline
 
-
-
-
-FINE TUNE MODEL:
-
-Grid search different hyperparameters. p76.
-
-
-
-
-
-^CV = N cross validations...
-
-grid_search.best_params_
-grid_search.best_estimator_
-grid_search.cv_results_['mean_test_score']
-grid_search.cv_results_['params']
-
-There is also a RandomizedSearchCV class out there...
-
-ANALYZE BEST MODELS. p78
-MODEL.feature_importances_
-
-cat_encoder = full_pipeline.named_transformers_['cat']
-cat_one_hot_attribs_0 = list(cat_encoder.categories_[0])
-cat_one_hot_attribs_1 = list(cat_encoder.categories_[1])
-cat_one_hot_attribs_2 = list(cat_encoder.categories_[2])
-cat_one_hot_attribs_3 = list(cat_encoder.categories_[3])
-cat_one_hot_attribs_4 = list(cat_encoder.categories_[4])
-
-attributes = num_attribs + cat_one_hot_attribs_0 + cat_one_hot_attribs_1 + cat_one_hot_attribs_2 + cat_one_hot_attribs_3 + cat_one_hot_attribs_4
-sorted(zip(forest_reg.feature_importances_, attributes), reverse=True)
-
-^^^REALLY F'ing USEFUL!!!
-
-THEN EVALUATE ON THE TEST SET ::: you need to process in exactly the same way!
-
-Saving models
-import joblib
-joblib.dump(my_model, 'my_model.pkl')
-my_model_loaded = joblib.load('my_model.pkl')
+Saving models\newline
+\texttt{import joblib}\newline
+\texttt{joblib.dump(my\char`_model, \textquotesingle my\char`_model.pkl\textquotesingle)}\newline
+\texttt{my\char`_model\char`_loaded = joblib.load(\textquotesingle my\char`_model.pkl\textquotesingle)}
 
 
 

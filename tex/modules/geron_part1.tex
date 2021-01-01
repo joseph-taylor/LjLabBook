@@ -2,9 +2,14 @@
 
 Jupyter notebook examples can be found here: \textit{https://github.com/ageron/handson-ml2}\newline
 
-\textbf{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Introduction}
 
-What is Machine Learning?
+\underline{What is Machine Learning?}
 \begin{itemize}
 \vspace{-4.0mm}
 \item
@@ -16,7 +21,7 @@ if its performance on T, as measured by P, improves with experience E.
 \end{itemize}
 
 \vspace{-4.0mm}
-Jargon:
+\underline{Jargon:}
 \begin{itemize}
 \vspace{-4.0mm}
 \item
@@ -68,7 +73,7 @@ is the combination of...\newline
 \end{itemize}
 
 \newpage
-The main challenges of ML:
+\underline{The main challenges of ML:}
 \begin{enumerate}
 \vspace{-4.0mm}
 \item
@@ -104,6 +109,7 @@ Solutions:\newline
 \end{itemize}
 \end{enumerate}
 
+\vspace{+3.0mm}
 \underline{Testing and validating a ML model}
 \begin{itemize}
 \vspace{-3.0mm}
@@ -115,6 +121,7 @@ Split the data into two sets: a training set and a test set (typically with a 80
 If the training error is low, but the generalization error is high, it means you are overfitting the training data.}
 \end{itemize}
 
+\vspace{+3.0mm}
 \underline{Hyperparameter tuning and model selection}
 \begin{itemize}
 \vspace{-3.0mm}
@@ -131,16 +138,19 @@ By averaging out all the evaluations of a model,
 you get a much more accurate measure of its performance.
 \end{itemize}
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\textbf{End-to-end ML}
+\subsection{End-to-end ML (Regression)}
 
-To avoid a data snooping bias, immediately create a randomized test set\newline
+To avoid a data snooping bias, immediately create a randomized test set.\newline
 \texttt{from sklearn.model\char`_selection import train\char`_test\char`_split}\newline
 \texttt{train, test = train\char`_test\char`_split(data, test\char`_size=0.2, random\char`_state=42)}\newline
 
-Exploratory analysis to gain insights
+Exploratory analysis to gain insights.
 \begin{itemize}
 \vspace{-3.0mm}
 \item
@@ -157,10 +167,10 @@ Study correlation coefficients:\newline
 \item
 Transform attributes and/or try out various combinations of attributes:\newline
 \texttt{train[\textquotesingle rooms\char`_per\char`_house\textquotesingle] = train[\textquotesingle total\char`_rooms\textquotesingle]/train[\textquotesingle houses\textquotesingle]}\newline
-\texttt{train[\textquotesingle mean\char`_salary\char`_log\textquotesingle] = np.log(train[\textquotesingle mean\char`_salary\textquotesingle]+1.0)}
+\texttt{train[\textquotesingle mean\char`_salary\char`_log\textquotesingle] = np.log(train[\textquotesingle mean\char`_salary\textquotesingle]+1.0)}\newline
 \end{itemize}
 
-Prepare the data for ML algorithms (wrap up as a function you can also apply to the test set)
+Prepare the data for ML algorithms (wrap up as a function you can also apply to the test set).
 \vspace{-3.0mm}
 \begin{itemize}
 \item
@@ -193,7 +203,7 @@ but is much less affected by outliers.}\newline
 \texttt{from sklearn.preprocessing import MinMaxScaler \# not used here}\newline
 \texttt{from sklearn.preprocessing import StandardScaler}\newline
 \texttt{from sklearn.preprocessing import OneHotEncoder}\newline
-\texttt{from skelarn.compose import ColumnTransformer}\newline
+\texttt{from sklearn.compose import ColumnTransformer}\newline
 \newline
 \texttt{cat\char`_attribs = [\textquotesingle ocean\char`_proximity\textquotesingle]}\newline
 \texttt{num\char`_attribs = list(train\char`_X.drop(cat\char`_attribs, axis=1))}\newline
@@ -210,229 +220,204 @@ To determine the order of the one-hot-encoded attributes, do the following...\ne
 \texttt{cat\char`_encoder.categories\char`_[i]}
 \end{itemize}
 
-Training a model
+Training a model.
 \vspace{-3.0mm}
 \begin{itemize}
 \item
 Linear regression model:\newline
 \texttt{from sklearn.linear\char`_model import LinearRegression}\newline
-\texttt{lin\char`_reg = LinearRegression()}\newline
-\texttt{lin\char`_reg.fit(train\char`_X\char`_prepared, train\char`_y)}
+\texttt{model = LinearRegression()}\newline
+\texttt{model.fit(train\char`_X\char`_prepared, train\char`_y)}
 \item
 Decision tree model:\newline
 \texttt{from sklearn.tree import DecisionTreeRegressor}\newline
-\texttt{tree\char`_reg = DecisionTreeRegressor()}\newline
-\texttt{tree\char`_reg.fit(train\char`_X\char`_prepared, train\char`_y)}
-\item
-Random forest model:\newline
-\texttt{from sklearn.ensemble import RandomForestRegressor}\newline
-\texttt{forest\char`_reg = RandomForestRegressor()}\newline
-\texttt{forest\char`_reg.fit(train\char`_X\char`_prepared, train\char`_y)}
+\texttt{model = DecisionTreeRegressor()}\newline
+\texttt{model.fit(train\char`_X\char`_prepared, train\char`_y)}
+% \item
+% Random forest model:\newline
+% \texttt{from sklearn.ensemble import RandomForestRegressor}\newline
+% \texttt{model = RandomForestRegressor()}\newline
+% \texttt{model.fit(train\char`_X\char`_prepared, train\char`_y)}
 \end{itemize}
 
-Selecting a model
+Selecting a model.
 \vspace{-3.0mm}
 \begin{itemize}
 \item
 Evaluate a model using the Root Mean Square Error (RMSE):\newline
 \texttt{from sklearn.metrics import mean\char`_squared\char`_error}\newline
-\texttt{train\char`_predictions = lin\char`_reg.predict(train\char`_X\char`_prepared)}\newline
-\texttt{lin\char`_mse = mean\char`_square\char`_error(train\char`_y, train\char`_predictions)}\newline
-\texttt{lin\char`_rmse = np.sqrt(lin\char`_mse)}
+\texttt{train\char`_pred\char`_y = model.predict(train\char`_X\char`_prepared)}\newline
+\texttt{mse = mean\char`_square\char`_error(train\char`_y, train\char`_pred\char`_y)}\newline
+\texttt{rmse = np.sqrt(mse)}
 \item
-K-fold cross-validation (do this in addition to the initial training):\newline
+K-fold cross-validation (note that this doesn't result in the model being trained):\newline
 - Splits the training set into $N$ distinct subsets called folds (represented by \texttt{cv} below).\newline
 - Trains and evaluates the model $N$ times, resulting in $N$ evaluation scores.\newline
 - It selects a different fold for evaluation every time and trains on the other $N-1$ folds.\newline
 \texttt{from sklearn.model\char`_selection import cross\char`_val\char`_score}\newline
-\texttt{scores = cross\char`_val\char`_score(lin\char`_reg, train\char`_X\char`_prepared, train\char`_y,}\newline
+\texttt{scores = cross\char`_val\char`_score(model, train\char`_X\char`_prepared, train\char`_y,}\newline
 \texttt{.~~~~~~~~~~~~~~~~~~~~~~~~scoring=\textquotesingle neg\char`_mean\char`_squared\char`_error\textquotesingle, cv=10)}\newline
-\texttt{lin\char`_rmse\char`_scores = np.sqrt(-scores)}
-\item
-Fine tune model hyperparameters using grid search:\newline
-\texttt{from sklearn.model\char`_selection import GridSearchCV}\newline
-\texttt{dictionary\char`_1 = \{\textquotesingle n\char`_estimators\textquotesingle:[3,10,30], \textquotesingle max\char`_features\textquotesingle:[2,4,6,8]\}}\newline
-\texttt{dictionary\char`_2 = \{\textquotesingle bootstrap\textquotesingle:[False], \textquotesingle n\char`_estimators\textquotesingle:[3,10,30]\}}\newline
-\texttt{param\char`_grid = [dictionary\char`_1, dictionary\char`_2]}\newline
-\texttt{forest\char`_reg = RandomForestRegressor()}\newline
-\texttt{grid\char`_search = GridSearchCV(forest\char`_reg, param\char`_grid, cv=5,}\newline
-\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~scoring=\textquotesingle neg\char`_mean\char`_squared\char`_error\textquotesingle,}\newline
-\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~return\char`_training\char`_score=True)}\newline
-\texttt{grid\char`_search.fit(train\char`_X\char`_prepared, train\char`_y)}\newline
-\newline
-\texttt{grid\char`_search.best\char`_params\char`_}\newline
-\texttt{grid\char`_search.best\char`_estimator\char`_}\newline
-\texttt{grid\char`_search.cv\char`_results\char`_[\textquotesingle mean\char`_test\char`_score\textquotesingle]}\newline
-\texttt{grid\char`_search.cv\char`_results\char`_[\textquotesingle params\textquotesingle]}
+\texttt{rmse\char`_scores = np.sqrt(-scores)}
+% \item
+% Fine tune model hyperparameters using grid search:\newline
+% \texttt{from sklearn.model\char`_selection import GridSearchCV}\newline
+% \texttt{dictionary\char`_1 = \{\textquotesingle n\char`_estimators\textquotesingle:[3,10,30], \textquotesingle max\char`_features\textquotesingle:[2,4,6,8]\}}\newline
+% \texttt{dictionary\char`_2 = \{\textquotesingle bootstrap\textquotesingle:[False], \textquotesingle n\char`_estimators\textquotesingle:[3,10,30]\}}\newline
+% \texttt{param\char`_grid = [dictionary\char`_1, dictionary\char`_2]}\newline
+% \texttt{forest\char`_reg = RandomForestRegressor()}\newline
+% \texttt{grid\char`_search = GridSearchCV(forest\char`_reg, param\char`_grid, cv=5,}\newline
+% \texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~scoring=\textquotesingle neg\char`_mean\char`_squared\char`_error\textquotesingle,}\newline
+% \texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~return\char`_training\char`_score=True)}\newline
+% \texttt{grid\char`_search.fit(train\char`_X\char`_prepared, train\char`_y)}\newline
+% \newline
+% \texttt{grid\char`_search.best\char`_params\char`_}\newline
+% \texttt{grid\char`_search.best\char`_estimator\char`_}\newline
+% \texttt{grid\char`_search.cv\char`_results\char`_[\textquotesingle mean\char`_test\char`_score\textquotesingle]}\newline
+% \texttt{grid\char`_search.cv\char`_results\char`_[\textquotesingle params\textquotesingle]}
 \item
 Study the relative importance of each attribute:\newline
-\texttt{feat\char`_importances = grid\char`_search.best\char`_estimator\char`_.feature\char`_importances}\newline
+\texttt{feat\char`_importances = model.feature\char`_importances}\newline
 \texttt{feats = num\char`_attributes + list(cat\char`_encoder.categories\char`_[0]) + ...}\newline
 \texttt{sorted(zip(feat\char`_importances, feats), reverse=True)}
 \end{itemize}
 
-Evaluate model on the test set\newline
-\texttt{final\char`_model = grid\char`_search.best\char`_estimator\char`_ ~\# as an example}\newline
+Evaluate model on the test set.\newline
 \texttt{test\char`_y = test[\textquotesingle median\char`_house\char`_value\textquotesingle].copy()}\newline
 \texttt{test\char`_X = test.drop(\textquotesingle median\char`_house\char`_value\textquotesingle, axis=1)}\newline
 \texttt{test\char`_X\char`_prepared = full\char`_pipeline.\textbf{transform}(test\char`_X)}\newline
-\texttt{test\char`_predictions = final\char`_model.predict(test\char`_X\char`_prepared)}\newline
-\texttt{final\char`_mse = mean\char`_square\char`_error(test\char`_y, test\char`_predictions)}\newline
-\texttt{final\char`_rmse = np.sqrt(final\char`_mse)}\newline
+\texttt{test\char`_pred\char`_y = final\char`_model.predict(test\char`_X\char`_prepared)}\newline
+\texttt{test\char`_mse = mean\char`_square\char`_error(test\char`_y, test\char`_pred\char`_y)}\newline
+\texttt{test\char`_rmse = np.sqrt(test\char`_mse)}\newline
 
-Saving models\newline
+Saving models.\newline
 \texttt{import joblib}\newline
 \texttt{joblib.dump(my\char`_model, \textquotesingle my\char`_model.pkl\textquotesingle)}\newline
 \texttt{my\char`_model\char`_loaded = joblib.load(\textquotesingle my\char`_model.pkl\textquotesingle)}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Classification}
 
+Training a binary classification model.
+Note that \texttt{train\char`_y} should be \texttt{True} or \texttt{False}.\newline
+\texttt{model.fit(train\char`_X, train\char`_y)}\newline
+\texttt{train\char`_pred\char`_y = model.predict(train\char`_X)}\newline
+\texttt{train\char`_prob\char`_y = model.predict\char`_proba(train\char`_X)[:,1]}\newline
 
+Perform K-fold cross-validation:
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Ensure the K-fold cross-validation contains the same percentage of positive classes.\newline
+\texttt{from sklearn.model\char`_selection import StratifiedKFold}\newline
+\texttt{CV = StratifiedKFold(n\char`_splits=5)}\newline
 
+\item
+The following returns the class prediction rather than an evaluation score...\newline
+\texttt{from sklearn.model\char`_selection import cross\char`_val\char`_predict}\newline
+\texttt{cv\char`_pred\char`_y = cross\char`_val\char`_predict(model, train\char`_X, train\char`_y, cv=CV)}\newline
 
+\item
+Or you could get the predicted probability of a positive class...\newline
+\texttt{cv\char`_prob\char`_y = cross\char`_val\char`_predict(model, train\char`_X, train\char`_y, cv=CV,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~method=\textquotesingle predict\char`_proba\textquotesingle)[:,1]}\newline
+\texttt{cv\char`_pred\char`_y = (cv\char`_prob\char`_y > 0.5) \# you could alter this threshold}\newline
 
+\item
+Note that some models have a decision function score rather than a probability.\newline
+\texttt{cv\char`_score\char`_y = cross\char`_val\char`_predict(model, train\char`_X, train\char`_y, cv=CV,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~method=\textquotesingle decision\char`_function\textquotesingle)}\newline
+\texttt{cv\char`_pred\char`_y = (cv\char`_score\char`_y > 0.0) \# you could alter this threshold}
 
-
-
-
-
-
-***UPTO classification on page 85***
-
-Stochastic Gradient Descent (SGD):
-from sklearn.linear_model import SGDClassifier
-sgd_clf = SGDClassifier(random_state=42) # set random_state for reproducible results.
-sgd_clf.fit(X_train, y_train_5)
+\end{itemize}
 
 Performance Measures:
+\vspace{-3.0mm}
+\begin{itemize}
 
-from sklearn.model_selection import cross_val_score # used this in the previous chapter remember
-cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring='accuracy')
+\item
+Confusion Matrix.\newline
+\texttt{from sklearn.metrics import confusion\char`_matrix}\newline
+\texttt{confusion\char`_matrix(train\char`_y, cv\char`_pred\char`_y)}
 
-Accuracy = percentage of correct predictions
+\texttt{~~~~~~~~~~~~~~~~~Predicted \textbf{N}egative~~Predicted \textbf{P}ositive}\newline
+\texttt{Actual Negative~|~TN~~~~~~~~~~~~~~~~~FP~~~~~~~~~~~~~~~~}\newline
+\texttt{Actual Positive~|~FN~~~~~~~~~~~~~~~~~TP~~~~~~~~~~~~~~~~}\newline
+
+\item
+$\textrm{Accuracy} = (\textrm{TP}+\textrm{TN}) / (\textrm{TP}+\textrm{TN}+\textrm{FP}+\textrm{FN})$\newline
 Not good for skewed datasets (when some classes are much more frequent than others).
 
-Confusion Matrix.
-                    Predicted Class
-                    ____________________________
-             non-5 | true neg     false positive
-Actual Class       |
-             is-5  | false neg    true positive
+\texttt{from sklearn.metrics import accuracy\char`_score}\newline
+\texttt{accuracy\char`_score(train\char`_y, cv\char`_pred\char`_y)}\newline
 
-from sklearn.model_selection import cross_val_predict             
-y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)
-^ like cross_val_score, perform K-fold cross-validation,
-but instead of returning the evaluation, it returns the PREDICTIONS
-^ this is 'clean' in that it never saw the model during training!
+\item
+$\textrm{Precision} = \textrm{TP} / (\textrm{TP}+\textrm{FP})$\newline
+The fraction of positive class predictions that are indeed positive in actuality.
 
-from sklearn.metrics import confusion_matrix
-confusion_matrix(y_train_5, y_train_pred)
+\texttt{from sklearn.metrics import precision\char`_score}\newline
+\texttt{precision\char`_score(train\char`_y, cv\char`_pred\char`_y)}\newline
 
-NICE IMAGE YOU CAN NICK ON PAGE 92
+\item
+$\textrm{Recall} = \textrm{TP} / (\textrm{TP}+\textrm{FN})$. (Also called sensitivity)\newline
+The fraction of actual positive classes that are detected.
 
-precision = TP / (TP + FP)
-recall = TP / (TP + FN)
+\texttt{from sklearn.metrics import recall\char`_score}\newline
+\texttt{recall\char`_score(train\char`_y, cv\char`_pred\char`_y)}\newline
 
-from sklearn.metrics import precision_score, recall_score
-precision_score(y_train_5, y_train_pred)
-recall_score(y_train_5, y_train_pred)
+\item
+There is a trade off between precision and recall.
+Depending on what you are doing, you might favour one over the other.
+E.g. you'd prioritise a high recall when detecting cancer.\newline
 
-When it claims an image represents a 5,
-it is correct only PRECISION amount of the time.
-Moreover, it only detects RECALL of the 5s.
+\item
+F1 is the harmonic mean of precision and recall.
+$\textrm{F1} = \frac{2}{\frac{1}{\textrm{precision}} + \frac{1}{\textrm{recall}}}$\newline
+You can only get a high F1 score if both precision and recall are high.\newline
+\texttt{from sklearn.metrics import f1\char`_score}\newline
+\texttt{f1\char`_score(train\char`_y, cv\char`_pred\char`_y)}\newline
 
-F1 is the harmonic mean of precision and recall
-F1 = 2 / (1/precision + 1/recall)
-Harmonic means give more weight to low values,
-can only get a high F1 score if both recall and precision are high.
-(perhaps not what you want BTW, depends on what you're doing...)
-from sklearn.metrics import f1_score
-f1_score(y_train_5, y_train_pred)
+\item
+Plot precision against recall, or both as a function of the threshold.\newline
+\texttt{from sklearn.metrics import precision\char`_recall\char`_curve}\newline
+\texttt{precs, recalls, thresh = precision\char`_recall\char`_curve(train\char`_y, cv\char`_prob\char`_y)}\newline
+\texttt{ax1.plot(recalls, precs)}\newline
+\texttt{...}\newline
+\texttt{ax2.plot(thresh, precs[:-1], \textquotesingle b--\textquotesingle, label=\textquotesingle precision\textquotesingle)}\newline
+\texttt{ax2.plot(thresh, recalls[:-1], \textquotesingle g--\textquotesingle, label=\textquotesingle recall\textquotesingle)}\newline
 
-increasing precision reduces recall, and vice versa.
-This is the precision/recall trade off:
->>> you can change the decision threshold, if you want... p94
+\item
+Plot a ROC (Receiver Operating Characteristics) curve.\newline
+This is the true-positive-rate (recall)
+vs the false-positive-rate (fall-out)
+$= \textrm{FP} / (\textrm{FP}+\textrm{TN})$.\newline
+Fall-out is the probability of a false alarm (not a great measure for skewed datasets).\newline
+\texttt{from sklearn.metrics import roc\char`_curve}\newline
+\texttt{fpr, tpr, thresh = roc\char`_curve(train\char`_y, cv\char`_prob\char`_y)}\newline
+\texttt{ax.plot(fpr, tpr)}\newline
+\texttt{ax.set\char`_xlabel(\textquotesingle False Positive Rate (Fall-out)\textquotesingle)}\newline
+\texttt{ax.set\char`_ylabel(\textquotesingle True Positive Rate (Recall)\textquotesingle)}\newline
+\texttt{...}\newline
+The area under this curve can be used as a performance measure.\newline
+A perfect classifier would have AUC=1 and a random classifier would have AUC=0.5.
+\texttt{from sklearn.metrics import roc\char`_auc\char`_score}\newline
+\texttt{roc\char`_auc\char`_score(train\char`_y, cv\char`_prob\char`_y)}
 
-from sklearn.metrics import precision_recall_curve
-instead of predict() use the decision_function() method
-y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3, method='decision_function') < THAT METHOD THE KEY BIT
-precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+\item
+It might be appropiate to consider
+the actual number of positives,
+the predicted number of positives,
+and the predicted total probability.\newline
+\texttt{train\char`_y.sum()}\newline
+\texttt{cv\char`_pred\char`_y.sum()}\newline
+\texttt{cv\char`_prob\char`_y.sum()}\newline
 
-The ROC Curve:
-receiever operating characterisitcs:
-true positive rate (recall) ::: want this to be big
-against false positive rate:
-FPR = FP / (FP + TN) ::: want this to be small!
-^ AGAIN THERE IS A TRADE-OFF
-
-from sklearn.metrics import roc_curve
-fpr, tpr, thresholds = roc_curve(y_train_5, y_scores)
-
-One way to compare classifiers is to measure the area under curve (AUC)
-perfect would = 1
-random would = 0.5
-
-from sklearn.metrics import roc_auc_score
-roc_auc_score(y_train_5, y_scores)
-
-The ROC curve is very similar to the precision/recall curve.
-Which one to use?
-PR better when positive class is rare,
-or when you care more about false positives than false negatives.
-
-NOW DO A RANDOM FOREST.
-It does not have a decision_function() method.
-Instead, it has a predict_proba() method.
-^Scikit-Learn classifiers generally have one or the other...
-
-from sklearn.ensemble import RandomForestClassifier
-forest_clf = RandomForestClassifier(random_state=42)
-y_probas_forest = cross_val_predict(forest_clf, X_train, y_train, cv=3, method='predict_proba')
-y_scores_forest = y_probas_forest[:,1] # use the prob of positive class...
-fpr_forst, tpr_forest, thresholds_forest = roc_curve(y_train_5, y_scores_forest)
+\end{itemize}
 
 
-***MULTICLASS CLASSIFICATION***
->>> more than two classes
-
-SGD, random forest, naive Bayes: can handle multiple classes natively.
-Logistic regression, support vector machine: strictly binary.
-^ but you can then train N 'one versus the rest' classifiers ::: typically preferred.
-^^ or N(N-1)/2 one-versus-one classifiers. 
-
-Scikit-learn detects when you try to use a binary classification algorithm for multi-class classification
-and automatically runs OvR or OvO
-
-from sklearn.svm import SVC
-svm_clf = SVC()
-svm_clf.fit(X_train, y_train)
-
-svm_clf.predict([some_digit])
-some_digit_scores = svm_clf.decision_function([some_digit])
-svm_clf.classes_
-svm_clf.classes_[6] ::: label for this class
-
-***Error Analysis
-- confusion matrix (can even plot it with Z=value)
-
-plt.matshow(conf_mx, cmap=plt.cm.gray)
-plt.show()
-
-- then need to normalise it abit
-row_sums = conf_mx.sum(axis=1, keepdims=True)
-norm_conf_mx = conf_mx / row_sums
-np.fill_diagnol(norm_conf_mx, 0)
-plt.matshow(norm_conf_mx, cmap=plt.cm.gray)
-plt.show()
-
-^^^
-NOTE THAT ALL WE HAVE DONE IS USE ACCURACY, and MAKE THOSE MATRIX PLOTS!
-
-Binary classifier
-Multiclass classifier
-
-...also got multioutput-binary classifier
-...also got multioutput-multiclass classification (kind of blurs into multioutput regression)
-^Not going to worry about these
 
 
 
@@ -571,6 +556,10 @@ based only on vectors a and b,
 without ...
 WILL NEED TO EXPAND THIS BIT
 
+
+
+
+
 Decision Trees::: p175
 Decision trees are versatile Machine Learning algorithms
 that can perform both classification and regression tasks.
@@ -661,6 +650,10 @@ Limitation 1: decision trees love orthogonal decision boundaries
 Limitation 2: they are very sensitive to small variations in the training data
 Random Forests can limit this instability by averaging predictions over many trees...
 
+
+
+
+
 ****************************************
 Ensemble Learning and Random Forests...
 If you aggregate the predictions of a group of predictors,
@@ -723,6 +716,10 @@ ADA BOOST
 GRADIENT BOOST
 
 STACKING!
+
+
+
+
 
 ***************************
 The Bias/Variance trade-off
@@ -831,6 +828,10 @@ X_reduced = lle.fit_transform(X)
 
 ALSO t-Distirbuted Stochastic Neighbor Embedding
 *** I HAVE USED THIS DURING CLUSTERING WORK!
+
+
+
+
 
 Unsupervised Learning Techniques: Chapter9
 Clustering: the goal is to group similar instances together into clusters.

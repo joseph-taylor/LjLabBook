@@ -417,8 +417,159 @@ and the predicted total probability.\newline
 
 \end{itemize}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{SHAP Plots}
+
+Create SHAP plots to explain the output of ML models.
+
+\texttt{import shap}\newline
+\newline
+\texttt{feats = num\char`_attribs}\newline
+\texttt{for i in range (0, len(cat\char`_attribs)):}\newline
+\texttt{.~~~feats = feats + list(cat\char`_encoder.categories\char`_[i])}\newline
+\newline
+\texttt{explainer = shap.TreeExplainer(model)}\newline
+\texttt{shap\char`_values = explainer.shap\char`_values(train\char`_X\char`_prepared)}\newline
+\newline
+\texttt{shap.summary\char`_plot(shap\char`_values,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~train\char`_X\char`_prepared,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~feature\char`_names=feats,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~plot\char`_type=\textquotesingle dot\textquotesingle,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~show=False,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~max\char`_display=len(feats))}\newline
+\texttt{fig = plt.gcf()}\newline
+\texttt{fig.tight\char`_layout()}\newline
+\texttt{plt.savefig(output\char`_path)}\newline
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Repository Structure}
+
+The following demos a typical ML repo structure
+(only use notebooks for exploratory work):
+
+\texttt{datasets/2020\char`_10\char`_14/COPY\char`_create\char`_dataset.py}\newline
+\texttt{datasets/2020\char`_10\char`_14/data\char`_raw.csv}\newline
+\texttt{datasets/2020\char`_10\char`_14/data\char`_clean.csv}\newline
+\texttt{datasets/2020\char`_10\char`_14/models/}\newline
+\texttt{datasets/2020\char`_10\char`_14/models/XGBoost\char`_nEst100/COPY\char`_model\char`_training\char`_and\char`_evaluation.py}\newline
+\texttt{datasets/2020\char`_10\char`_14/models/XGBoost\char`_nEst100/model.pkl}\newline
+\texttt{datasets/2020\char`_10\char`_14/models/XGBoost\char`_nEst100/model\char`_evalulation.pdf}\newline
+\texttt{datasets/2020\char`_10\char`_14/models/XGBoost\char`_nEst100/model\char`_evalulation.txt}\newline
+\texttt{sql/redshift\char`_query.sql}\newline
+\texttt{create\char`_dataset.py}\newline
+\texttt{model\char`_training\char`_and\char`_evaluation.py}\newline
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Decision Trees}
+
+Decision trees are versatile ML algos that can perform both classification and regression tasks.
+They are powerful algorithms, capable of fitting complex datasets.
+
+Decision trees are intuitive,
+and their decisions are easy to interpret.\newline
+They are often called \textit{white box models}.
+
+Root node = depth 0
+Leaf node (does not have any child nodes)
+
+GINI IMPURITY
+p177
+Gi = 1 - sum pik^2
+A node is 'pure' gini=0
+if all training instances it applies to belong to the same class.
+
+Note:
+Scikit-learn uses the CART algorithm,
+which produces only binary trees (nodes can only have two children)
 
 
+
+The CART Training Algo:
+the Classification and Regression Tree algo is used to train Decision Trees.
+1. split training set into two subsets using a single feature k, and threshold tk.
+2. How to choose k and tk?
+It searches for the pair that produce the purest subsets (weighted by size)
+p179
+3. recursviely applies the same logic
+4. Hyperparams::: used for stopping
+max_depth
+min_samples_split (min number of samples a node must have for it to be split)
+min_samples_leaf (min number of samples a leaf must have)
+min_weight_fraction_leaf (like above, expressed as a fraction of the total number)
+max_leaf_nodes (maximum number of leaf nodes)
+Also stops if it can't find a split that reduces impurity
+
+^the CART algorithm is a GREEDY algo.
+It searches for an optimum split at the top level, then repeats.
+But this is necessary due to the exponential increase in nodes
+
+Note can also use entropy p181
+interesting statement on which one to use...
+
+Classification:\newline
+\texttt{from sklearn.tree import DecisionTreeClassifier}\newline
+\texttt{tree\char`_clf = DecisionTreeClassifier(max\char`_depth=2)}\newline
+\texttt{tree\char`_clf.fit(X, y)}\newline
+\texttt{tree\char`_clf.predict(X)}\newline
+
+A decision tree can also estimate the probability
+that an instance belongs to a particular class $k$.\newline
+% 
+First it traverses the tree to find the leaf node for this instance,
+and then returns the ratio of training instances of class $k$ in this node.\newline
+\texttt{tree\char`_clf.predict\char`_proba(X)}
+
+Regression:\newline
+Decision trees are also capable of performing regression tasks.
+
+from sklearn.tree import DecisionTreeRegressor
+tree_reg = DecisionTreeRegressor(max_depth=2)
+tree_reg.fit(X, y)
+
+The prediction is the average target value of the
+110 training instances associated with this leaf node
+
+
+
+
+CART algoithm is similar as to classification: p184
+
+NOTE:
+decision trees don't require feature scaling or centering at all.
+
+Instability:
+Limitation 1: decision trees love orthogonal decision boundaries
+^ consequently they are sensitive to training set rotation!
+^^ PCA analysis often results in a better orientation of the training data.
+
+Limitation 2: they are very sensitive to small variations in the training data
+Random Forests can limit this instability by averaging predictions over many trees...
+
+
+SHOULD BE PUT ABOVE Regularization:
+Decision trees make very few assumptions about the training data.
+If left unconstrained,
+the tree structure will adapt itself to the training data,
+fitting it very closely - indeed, most likely overfitting it.
+^Non parametric model
+(not because it does not have nay params,
+but because the number of params is not determined prior to training)
+
+To avoid overfitting the training data,
+you need to restrict the decision trees freedom during training
+^regularization.
 
 
 
@@ -542,113 +693,12 @@ p148-p151 very useful...
 
 softmax_reg = LogisticRegression(multi_class="multinomial", solver="lbfgs", C=10)
 
-*** Missing out Support Vector Machines ***
-
-KERNELS:::
-p170
-The function K(a,b) = (a.b)^2
-is a second degree polynomial kernel...
-or...
-In Machine Learning,
-a kernel is a function, phi,
-capable of computing phi(a).phi(b)
-based only on vectors a and b,
-without ...
-WILL NEED TO EXPAND THIS BIT
 
 
 
 
 
-Decision Trees::: p175
-Decision trees are versatile Machine Learning algorithms
-that can perform both classification and regression tasks.
-They are powerful algorithms, capable of fitting complex datasets.
 
-from sklearn.tree import DecisionTreeClassifier
-tree_clf = DecisionTreeClassifier(max_depth=2)
-tree_clf.fit(X, y)
-
-visualize it by...
-from sklearn.tree import export_graphviz
-export_graphviz(
-    tree_clf,
-    out_file=image_path("iris_tree.dot"),
-    feature_names=iris.feature_names[2:],
-    class_names=iris.target_names,
-    rounded=True,
-    filled=True
-)
-
-Root node = depth 0
-Leaf node (does not have any child nodes)
-
-NOTE:
-decision trees don't require feature scaling or centering at all.
-
-GINI IMPURITY
-p177
-Gi = 1 - sum pik^2
-A node is 'pure' gini=0
-if all training instances it applies to belong to the same class.
-
-Note:
-Scikit-learn uses the CART algorithm,
-which produces only binary trees (nodes can only have two children)
-
-Decision trees are intuitve,
-and their decisions are easy to interpret
-... so they are often called white box models...
-
-A decision tree can also estimate the porbability
-that an instance belongs to a particular class k.
-> It finds the leaf node for a given instance
-> and then returns the ratio of training instances of class k.
-
-tree_clf.predict([5, 1.5]) 
-tree_clf.predict_proba([5, 1.5])
-
-The CART Training Algo:
-the Classification and Regression Tree algo is used to train Decision Trees.
-1. split training set into two subsets using a single feature k, and threshold tk.
-2. How to choose k and tk?
-It searches for the pair that produce the purest subsets (weighted by size)
-p179
-3. recursviely applies the same logic
-4. Hyperparams::: used for stopping
-max_depth
-min_samples_split (min number of samples a node must have for it to be split)
-min_samples_leaf (min number of samples a leaf must have)
-min_weight_fraction_leaf (like above, expressed as a fraction of the total number)
-max_leaf_nodes (maximum number of leaf nodes)
-Also stops if it can't find a split that reduces impurity
-
-^the CART algorithm is a GREEDY algo.
-It searches for an optimum split at the top level, then repeats.
-But this is necessary due to the exponential increase in nodes
-
-Note can also use entropy p181
-interesting statement on which one to use...
-
-Regression
-Decision trees are also capable of performing regression tasks.
-
-from sklearn.tree import DecisionTreeRegressor
-tree_reg = DecisionTreeRegressor(max_depth=2)
-tree_reg.fit(X, y)
-
-The prediction is the average target value of the
-110 training instances associated with this leaf node
-
-CART algoithm is similar as to classification: p184
-
-Instability:
-Limitation 1: decision trees love orthogonal decision boundaries
-^ consequently they are sensitive to training set rotation!
-^^ PCA analysis often results in a better orientation of the training data.
-
-Limitation 2: they are very sensitive to small variations in the training data
-Random Forests can limit this instability by averaging predictions over many trees...
 
 
 
@@ -725,6 +775,10 @@ STACKING!
 The Bias/Variance trade-off
 p134.
 ***************************
+
+
+
+
 ---
 p213 dimensionality reduction
 ---
@@ -942,18 +996,6 @@ a likelihood function is a functions of theta, with x fixed.
 
 
 
-SHOULD BE PUT ABOVE Regularization:
-Decision trees make very few assumptions about the training data.
-If left unconstrained,
-the tree structure will adapt itself to the training data,
-fitting it very closely - indeed, most likely overfitting it.
-^Non parametric model
-(not because it does not have nay params,
-but because the number of params is not determined prior to training)
-
-To avoid overfitting the training data,
-you need to restrict the decision trees freedom during training
-^regularization.
 
 
 

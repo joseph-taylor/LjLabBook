@@ -407,7 +407,7 @@ A perfect classifier would have AUC=1 and a random classifier would have AUC=0.5
 \texttt{roc\char`_auc\char`_score(train\char`_y, cv\char`_prob\char`_y)}
 
 \item
-It might be appropiate to consider
+It might be appropriate to consider
 the actual number of positives,
 the predicted number of positives,
 and the predicted total probability.\newline
@@ -475,104 +475,90 @@ The following demos a typical ML repo structure
 \subsection{Decision Trees}
 
 Decision trees are versatile ML algos that can perform both classification and regression tasks.
-They are powerful algorithms, capable of fitting complex datasets.
+They are capable of fitting complex datasets,
+but they're also intuitive, with decisions that are easy to interpret
+(due to this, they are often called \textit{white box models}).
 
-Decision trees are intuitive,
-and their decisions are easy to interpret.\newline
-They are often called \textit{white box models}.
+You can picture a decision tree as a set of nodes
+that branch off due to conditions on the feature space.
+Root node = depth 0.
+Leaf node = does not have any child nodes.\newline
 
-Root node = depth 0
-Leaf node (does not have any child nodes)
+\underline{The Classification And Regression Tree (CART) algorithm:}
+\vspace{-3.0mm}
+\begin{enumerate}
+\item
+Split the training set into two subsets using a single feature $k$ and a threshold $t_k$.\newline
+Note that this produces binary trees (all nodes can only have two children).
+\item
+Search for the pair $(k, t_k)$ that produces the purest subsets (weighted by size)\newline
+by minimizing:
+\begin{equation}
+J(k, t_k) = \frac{m_{\textrm{left}}}{m}G_{\textrm{left}} + \frac{m_{\textrm{right}}}{m}G_{\textrm{right}}
+\end{equation}
+where $m$ is the number of instances
+and $G = 1 - \sum p_j^2$ (the Gini impurity)\newline
+where $p_j$ is the ratio of class $j$ instances.
+NB: a node is pure if $G=0$.
+\item
+Recursively apply the same logic.
+\item
+Stop if there isn't a split that reduces impurity
+or when hyperparameter contraints are met.
+E.g. \texttt{max\char`_depth}, \texttt{max\char`_leaf\char`_nodes}, \texttt{min\char`_samples\char`_leaf}.
+\end{enumerate}
 
-GINI IMPURITY
-p177
-Gi = 1 - sum pik^2
-A node is 'pure' gini=0
-if all training instances it applies to belong to the same class.
+The CART algorithm is a greedy algorithm;
+it searches for an optimum split at the top level, then repeats.
+This is necessary, however, due to the exponential increase in nodes.
 
-Note:
-Scikit-learn uses the CART algorithm,
-which produces only binary trees (nodes can only have two children)
+Note 1: you can also use entropy to measure the impurity of a node:
+$H = - \sum p_j \, \textrm{log}_2 \, p_j$
 
+Note 2: for regression tasks, the CART algorithm tries to minimize MSE rather than impurity.
 
-
-The CART Training Algo:
-the Classification and Regression Tree algo is used to train Decision Trees.
-1. split training set into two subsets using a single feature k, and threshold tk.
-2. How to choose k and tk?
-It searches for the pair that produce the purest subsets (weighted by size)
-p179
-3. recursviely applies the same logic
-4. Hyperparams::: used for stopping
-max_depth
-min_samples_split (min number of samples a node must have for it to be split)
-min_samples_leaf (min number of samples a leaf must have)
-min_weight_fraction_leaf (like above, expressed as a fraction of the total number)
-max_leaf_nodes (maximum number of leaf nodes)
-Also stops if it can't find a split that reduces impurity
-
-^the CART algorithm is a GREEDY algo.
-It searches for an optimum split at the top level, then repeats.
-But this is necessary due to the exponential increase in nodes
-
-Note can also use entropy p181
-interesting statement on which one to use...
-
-Classification:\newline
+\newpage
+\underline{Classification:}\newline
 \texttt{from sklearn.tree import DecisionTreeClassifier}\newline
 \texttt{tree\char`_clf = DecisionTreeClassifier(max\char`_depth=2)}\newline
-\texttt{tree\char`_clf.fit(X, y)}\newline
-\texttt{tree\char`_clf.predict(X)}\newline
+\texttt{tree\char`_clf.fit(X, y)}
+
+The predicted class is that which is most common
+in the training instances associated with the corresponding leaf node.\newline
+\texttt{tree\char`_clf.predict(X)}
 
 A decision tree can also estimate the probability
 that an instance belongs to a particular class $k$.\newline
 % 
-First it traverses the tree to find the leaf node for this instance,
-and then returns the ratio of training instances of class $k$ in this node.\newline
-\texttt{tree\char`_clf.predict\char`_proba(X)}
+It finds the leaf node for the instance,
+and returns the ratio of class $k$ (training set) instances.\newline
+\texttt{tree\char`_clf.predict\char`_proba(X)}\newline
 
-Regression:\newline
-Decision trees are also capable of performing regression tasks.
-
-from sklearn.tree import DecisionTreeRegressor
-tree_reg = DecisionTreeRegressor(max_depth=2)
-tree_reg.fit(X, y)
+\underline{Regression:}\newline
+\texttt{from sklearn.tree import DecisionTreeRegressor}\newline
+\texttt{tree\char`_reg = DecisionTreeRegressor(max\char`_depth=2)}\newline
+\texttt{tree\char`_reg.fit(X, y)}
 
 The prediction is the average target value of the
-110 training instances associated with this leaf node
+training instances associated with the corresponding leaf node.\newline
+\texttt{tree\char`_reg.predict(X)}\newline
 
-
-
-
-CART algoithm is similar as to classification: p184
-
-NOTE:
-decision trees don't require feature scaling or centering at all.
-
-Instability:
-Limitation 1: decision trees love orthogonal decision boundaries
-^ consequently they are sensitive to training set rotation!
-^^ PCA analysis often results in a better orientation of the training data.
-
-Limitation 2: they are very sensitive to small variations in the training data
-Random Forests can limit this instability by averaging predictions over many trees...
-
-
-SHOULD BE PUT ABOVE Regularization:
+\underline{Limitations:}
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Decision trees love orthogonal decision boundaries.
+Consequently, they are sensitive to training set rotation!
+\textit{NB: PCA often results in a better orientation of the training data.}
+\item
+Decision trees are very sensitive to small variations in the training data.\newline
+\textit{NB: Random Forests can limit this instability by averaging predictions over many trees.}
+\item
 Decision trees make very few assumptions about the training data.
-If left unconstrained,
-the tree structure will adapt itself to the training data,
-fitting it very closely - indeed, most likely overfitting it.
-^Non parametric model
-(not because it does not have nay params,
-but because the number of params is not determined prior to training)
-
-To avoid overfitting the training data,
-you need to restrict the decision trees freedom during training
-^regularization.
-
-
-
+If left unconstrained, the tree structure will adapt itself to the training data,
+fitting it very closely - most likely overfitting it.
+\textit{Regularization techniques will restrict the algos freedom during training.}
+\end{itemize}
 
 
 

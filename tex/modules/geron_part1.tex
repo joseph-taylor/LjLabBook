@@ -548,7 +548,7 @@ training instances associated with the corresponding leaf node.\newline
 \begin{itemize}
 \item
 Decision trees love orthogonal decision boundaries.
-Consequently, they are sensitive to training set rotation!
+Consequently, they are sensitive to training set rotation.
 \textit{NB: PCA often results in a better orientation of the training data.}
 \item
 Decision trees are very sensitive to small variations in the training data.\newline
@@ -559,6 +559,90 @@ If left unconstrained, the tree structure will adapt itself to the training data
 fitting it very closely - most likely overfitting it.
 \textit{Regularization techniques will restrict the algos freedom during training.}
 \end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Bias/Variance Trade-off}
+
+A model's generalization error can be expressed as the sum of three very different errors:
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+\textbf{Bias:}
+this is due to wrong modeling assumptions, such as assuming that the data is linear when it is actually quadratic.
+A high-bias model is likely to underfit the training data.
+\item
+\textbf{Variance:}
+this is due to the model's excessive sensitivity to small variations in the training data.
+A model with many degrees of freedom is likely to have a high-variance and thus overfit the training data.
+\item
+\textbf{Irreducible error:}
+this is due to the noisiness of the data itself.
+\end{itemize}
+
+Increasing a model's complexity will typically increase its variance and reduce its bias.\newline
+Conversely, reducing a model's complexity will increase its bias and reduces its variance.\newline
+It's a trade-off.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Ensemble Learning}
+
+If you aggregate the predictions of a group of predictors (such as classifiers or regressors),
+you will often get better predictions than with the best individual predictor.
+% 
+A group of predictors is called an ensemble.
+Common ensemble methods are bagging and boosting.\newline
+
+\underline{Bagging/Pasting}\newline
+Use the same training algorithm for every predictor,
+and train them on different random subsets of the training set.
+For classification, use the statistical mode.
+For regression, take the average.
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+\textbf{Bagging:} when the sampling is performed with replacement (generally preferred).
+% The name is short for bootstrap aggregating.
+\item
+\textbf{Pasting:} when the sampling is performed without replacement.
+\end{itemize}
+%
+\vspace{-3.0mm}
+Generally, the net result is that the ensemble has a similar bias but a lower variance
+than a single predictor trained on the original training set.
+
+A \textbf{Random Forest} is an ensemble of decision trees,
+generally trained via the bagging method.
+For greater tree diversity,
+extra randomness is introduced when growing the trees
+(this increases the bias, but reduces the variance).
+\textit{Extremely Randomized Trees} have an even lower variance.
+
+\texttt{from sklearn.ensemble import RandomForestClassifier}\newline
+\texttt{model = RandomForestClassifier(n\char`_estimators=500)}
+
+\texttt{from sklearn.ensemble import RandomForestRegressor}\newline
+\texttt{model = RandomForestRegressor(n\char`_estimators=500)}
+
+\underline{Boosting}\newline
+
+
+
+
+ADA BOOST
+GRADIENT BOOST
+
+
+
+
 
 
 
@@ -690,77 +774,10 @@ softmax_reg = LogisticRegression(multi_class="multinomial", solver="lbfgs", C=10
 
 
 
-****************************************
-Ensemble Learning and Random Forests...
-If you aggregate the predictions of a group of predictors,
-you will often get better predicitions than with the best individual predicitor
-
-A group of predictors is called an ensemble.
-
-E.g. random forests.
-You can train a group of decision tree classifiers,
-each on a different random subset of the training set.
-To make predictions, you can obtain the predictions of all the individual trees,
-and then use the class that get the most votes.
-^ despite it's simplicity, very simple!
-
-You will often use Ensemble methods near the end of a project,
-once you have already built a few good predictors.
-
-BAGGING
-BOOSTING
-STACKING
-
-Voting Classifiers:
-Majority voting = hard voting
-Voting classfiier often achieves a higher accuracy than the best classifier in the ensemble
-Even if each classifier is a weak learner,
-the ensemble can be a strong learner
-
-Ensemble methods work best when the predictors are
-as independent from one another as possible (i.e. very different algorithms).
-
-Can also do soft-voting! Where you use the probability...
-
-
-Use the same training algorithm for every predictor,
-and train them on different random subsets of the training set.
-BAGGING: when the sampling is performed with replacement.
-PASTING: when the sampling is performed without replacement.
-for classification: use statistical mode
-for regression: take the average.
-
-Bootstrapping introduces a bit more diversity in the subsets that each predictor is trained on...
-
-Random Forests:
-Is an ensemble of decision trees, generally trained via the bagging method.
-
-from sklearn.ensemble import RandomForestClassifier
-rnd_clf = RandomForestClassifier(n_estimators=500, max_leaf_nodes=16, n_jobs=-1)
-rnd_clf.fit(X_train, y_train)
-
-Has all the decision tree, and all the bagging hyperparameters.
-
-Extra-Trees ::: ANOTHER THING YOU CAN USE IN SCIKIT LEARN
-More bias, for lower variance.
-
-NEED TO UNDERSTAND BIAS AND VARIANCE
-
-Feature Importance...p198
-
-ADA BOOST
-GRADIENT BOOST
-
-STACKING!
 
 
 
 
-
-***************************
-The Bias/Variance trade-off
-p134.
-***************************
 
 
 

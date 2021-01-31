@@ -630,20 +630,44 @@ extra randomness is introduced when growing the trees
 \texttt{model = RandomForestClassifier(n\char`_estimators=500)}
 
 \texttt{from sklearn.ensemble import RandomForestRegressor}\newline
-\texttt{model = RandomForestRegressor(n\char`_estimators=500)}
+\texttt{model = RandomForestRegressor(n\char`_estimators=500)}\newline
 
 \underline{Boosting}\newline
+The general idea of boosting methods is to train predictors sequentially,
+each trying to correct its predecessor.
+Popular methods include \textit{AdaBoost} and \textit{Gradient Boosting}.
 
+Gradient Boosting works by fitting a new predictor
+to the residual errors made by the previous predictor.
+% 
+It has a regularization technique called \textit{shrinkage},
+where a \texttt{learning\char`_rate} hyperparameter scales the contribution of each predictor.
+When set to a low value,
+more predictors are required in the ensemble to fit the training set,
+but the predictions will usually generalize better.
+% 
+Note that to trade a higher bias for a lower variance,
+one can train each predictor on a random subset of the training instances.
 
+XGBoost (which stands for extreme gradient boosting)
+is a python library which has an optimized implementation of Gradient Boosting.
+Its default is to use tree based models.
+Check it out, it has a very similar API to Scikit-Learn.
 
+\texttt{import xgboost}\newline
+\newline
+\texttt{model = xgboost.XGBRegressor(n\char`_estimators=500)}\newline
+\texttt{\# model = xgboost.XGBClassifier(n\char`_estimators=500)}\newline
+\newline
+\texttt{model.fit(X, y)}\newline
+\texttt{y\char`_pred = model.predict(X)}
 
-ADA BOOST
-GRADIENT BOOST
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{TODO}
 
 
 

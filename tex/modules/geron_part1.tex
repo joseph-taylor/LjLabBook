@@ -649,7 +649,7 @@ but the predictions will usually generalize better.
 Note that to trade a higher bias for a lower variance,
 one can train each predictor on a random subset of the training instances.
 
-XGBoost (which stands for extreme gradient boosting)
+\textbf{XGBoost} (which stands for extreme gradient boosting)
 is a python library which has an optimized implementation of Gradient Boosting.
 Its default is to use tree based models.
 Check it out, it has a very similar API to Scikit-Learn.
@@ -667,7 +667,139 @@ Check it out, it has a very similar API to Scikit-Learn.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{TODO}
+\newpage
+\subsection{Dimensionality Reduction}
+
+\underline{The curse of dimensionality}\newline
+Many ML problems involve thousands or even millions of features for each training instance.
+All these features make both training extremely slow
+and it much harder to find a good solution:
+
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+High-dimensional datasets are at risk of being very sparse,
+with most training instances far away from each other.
+New instances will likely be far away from a training instance,
+thus making predictions unreliable as they will be based on large extrapolations.
+\item
+In short, the more dimensions a training set has,
+the greater the risk of overfitting it.
+\end{itemize}
+
+\vspace{-3.0mm}
+One solution, in theory,
+would be to increase the size of the training set to reach a sufficient density of training instances.
+This is unfeasible, however,
+as the number of training instances required to reach a given density grows exponentially with the number of dimensions.
+
+Fortunately,
+it is often possible to considerably reduce the number of features,
+turning an intractable problem into a tractable one.
+This technique is called \textit{Dimensionality Reduction}.\newline
+These techniques are also extremely useful for data visualization (can plot N-d in 2-d).
+
+In most real-world problems,
+training instances are not spread out uniformly across all dimensions.
+Many features are almost constant, while others are highly correlated.
+As a result,
+all training instances lie within, or close to,
+a much lower-dimension subspace (a manifold).
+
+\underline{Principal Component Analysis}\newline
+PCA identifies the hyperplane that lies closest to the data,
+and then projects the data onto it.
+
+Principal Components:
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Identify the axis that accounts for the largest amount of variance in the training set.
+This is the first principal component.
+\item
+Find a second axis, orthogonal to the first one,
+that accounts for the largest amount of remaining variance.
+This is the second principal component.
+\item
+Continue until there are as many axes as the number of dimensions of the dataset.
+\item
+NB: PCA assumes the data is centered around the origin (Scikit-Learn does this for you).
+\end{itemize}
+
+\vspace{-3.0mm}
+Once all $n$ principal components have been identified,
+reduce the dataset down to $d$ dimensions
+by projecting it onto the hyperplane defined by the first $d$ principal components $(d < n)$.
+
+\texttt{from sklearn.decomposition import PCA}\newline
+\texttt{pca = PCA(n\char`_components = 2)}\newline
+\texttt{X2D = pca.fit\char`_transform(X)}\newline
+The proportion of the dataset's variance that lies along each principle component is given by:\newline
+\texttt{pca.explained\char`_variance\char`_ratio\char`_}
+
+The greater the total explained variance,
+the smaller the information loss.
+Instead of arbitrarily deciding $d$,
+you can choose a value that contains a sufficiently large proportion of the variance:\newline
+\texttt{pca = PCA(n\char`_components = 0.95)}
+
+
+
+
+PCA for compression (and decompression):
+pca = PCA(n_components = 154)
+X_reduced = pca.fit_transform(X_train)
+X_recovered = pca.inverse_transform(X_reduced)
+
+Can make it non-linear using kernel techniques:
+from sklearn.decomposition import KernelPCA
+rbf_pca = KernelPCA(n_components=2, kernel='rbf', gamma=0.04)
+X_reduced = rbf_pca.fit_transform(X)
+
+
+
+LLE: Locally Linear Embedding MANIFOLD
+is another powerful nonlinear dimensionality reduction technique.
+It is a manifold technique that does not rely on projections.
+Particularly good at unrolling twisted manifolds, especially when there is not too much noise.
+
+from sklearn.manifold import LocallyLinearEmbedding
+lle = LocallyLinearEmbedding(n_components=2, n_neighbors=10)
+X_reduced = lle.fit_transform(X)
+
+ALSO t-Distirbuted Stochastic Neighbor Embedding
+*** I HAVE USED THIS DURING CLUSTERING WORK!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -806,109 +938,6 @@ softmax_reg = LogisticRegression(multi_class="multinomial", solver="lbfgs", C=10
 
 
 
----
-p213 dimensionality reduction
----
-
-Many ML problems involve thousands or even millions of features for each training instance.
-Not only do all these features make training extremely slow,
-but they make it much marder to find a good solution.
-THIS IS THE CURSE OF DIMENSIONALITY.
-
-e.g. merging pixels, ignoring outer pixels...
-
-Reducing dimensionality does cause some information loss...
-It will speed up training, but probably make your system perform slightly worse.
-
-Dimensionality reduction is also extremely useful for data visulization (DataViz)
-^ can only really interpret plots in 2D ::: can visually detect patterns, such as clusters.
-
-
-The curse of dimensionality:
-High-dimensional datasets are at risk of being very sparse:
-most training instances are likely to be far away from each other.
-This also means that a new instance will likely be far away from any training instance,
-mkaing predictions much less reliable than in lower dimensions,
-since they will be based on much larger extrapolations.
-In short, the more dimensions a training set has,
-the greater the risk of overfitting it.
-
-In theory,
-one solution would be to increase the size of the training set to reach sufficient density of training instances.
-Unfortunately,
-the number of training instances required to reach a given density grows exponentially with the number of dimensions.
-
-Main approaches for dimensionality reduction:
-Projection AND Manifold Learning
-
-Projection:
-In most real-world problems,
-training instances are NOT spread out uniformly across all dimensions.
-Many features are almost constant,
-while others are highly correlated.
-As a result, all training instances lie within (or close to)
-a much lower-dimensional SUBSPACE of the high-dimensional space.
-
-e.g. 3d but on a 2d plane
-But this wouldn't work for 2d data 'rolled up' in 3d
-
-MANIFOLD LEARNING
-A d-dimensional manifold is part of an n-dimensional space (where d < n)
-that LOCALLY resembles a d-dimensional hyperplane
-(but on a larger scale it can bend and twist in the n-dimensional space.)
-Manifold hypothesis:
-Most real-world hign-dimensionnal datasets lie close to a much lower-dimesnional manifold.
-
-PCA: p219.
-Principal Component Analysis is by far the most popular dimensionality reduction algorithm.
-It identifies the hyperplane that lies closest to the data,
-and then projects the data onto it.
-
-PCA identifies the axis that accounts for the largest amount of variance in the training set.
-It then finds a second axis, orthogonal to the first one,
-that accounts for the largest amout of remaining variance. ETC.
-
-The i^th axis is called the i^th principal component of the data.
-
-Once you have identified all n principal components,
-you can reduce the dimensionality of the dataset down to d dimensions,
-by projecting it onto the hyperplane defined by the first d principal components. (d < n)
-
-from sklearn.decomposition import PCA
-pca = PCA(n_components = 2)
-X2D = pca.fit_transform(X)
-pca.explained_variance_ratio_ (the proportion of the dataset's variance that lies along each principle component)
-
-CHOOSING THE RIGHT NUMBER OF DIMENSIONS
-for example, try and capture 95% of the variance
-pca = PCA(n_components=0.95)
-X_reduced = pca.fit_transform(X_train)
-OBV for dataVis it's gotta be 2 or 3
-
-could also plot explained variance VS number of dimensions,
-there will usually be an elbow in the curve.
-
-PCA for compression (and decompression):
-pca = PCA(n_components = 154)
-X_reduced = pca.fit_transform(X_train)
-X_recovered = pca.inverse_transform(X_reduced)
-
-Can make it non-linear using kernel techniques:
-from sklearn.decomposition import KernelPCA
-rbf_pca = KernelPCA(n_components=2, kernel='rbf', gamma=0.04)
-X_reduced = rbf_pca.fit_transform(X)
-
-LLE: Locally Linear Embedding
-is another powerful nonlinear dimensionality reduction technique.
-It is a manifold technique that does not rely on projections.
-Particularly good at unrolling twisted manifolds, especially when there is not too much noise.
-
-from sklearn.manifold import LocallyLinearEmbedding
-lle = LocallyLinearEmbedding(n_components=2, n_neighbors=10)
-X_reduced = lle.fit_transform(X)
-
-ALSO t-Distirbuted Stochastic Neighbor Embedding
-*** I HAVE USED THIS DURING CLUSTERING WORK!
 
 
 

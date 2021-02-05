@@ -733,7 +733,7 @@ by projecting it onto the hyperplane defined by the first $d$ principal componen
 
 \texttt{from sklearn.decomposition import PCA}\newline
 \texttt{pca = PCA(n\char`_components = 2)}\newline
-\texttt{X2D = pca.fit\char`_transform(X)}\newline
+\texttt{X\char`_2d = pca.fit\char`_transform(X)}\newline
 The proportion of the dataset's variance that lies along each principle component is given by:\newline
 \texttt{pca.explained\char`_variance\char`_ratio\char`_}
 
@@ -743,60 +743,95 @@ Instead of arbitrarily deciding $d$,
 you can choose a value that contains a sufficiently large proportion of the variance:\newline
 \texttt{pca = PCA(n\char`_components = 0.95)}
 
+Compression: \texttt{X\char`_reduced = pca.fit\char`_transform(X)}\newline
+Decompression: \texttt{X\char`_recovered = pca.inverse\char`_transform(X\char`_reduced)}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\subsection{Clustering}
+The goal is to identify similar instances and group them into clusters.\newline
+Note, however, that there is no universal definition of what a cluster is.\newline
+This is an unsupervised learning task, as the data is not labeled.\newline
 
-PCA for compression (and decompression):
-pca = PCA(n_components = 154)
-X_reduced = pca.fit_transform(X_train)
-X_recovered = pca.inverse_transform(X_reduced)
+\underline{\textbf{KMeans}}\newline
+\texttt{from sklearn.cluster import KMeans}\newline
+\texttt{kmeans = KMeans(n\char`_clusters=5, n\char`_init=300)}\newline
+\texttt{y\char`_category  = kmeans.fit\char`_predict(X) \# hard clustering}\newline
+\texttt{y\char`_distances = kmeans.transform(X) ~\# soft clustering}\newline
+\texttt{kmeans.cluster\char`_centres\char`_ ~~~~~~~~~~~~\# centroid coordinates}
 
-Can make it non-linear using kernel techniques:
-from sklearn.decomposition import KernelPCA
-rbf_pca = KernelPCA(n_components=2, kernel='rbf', gamma=0.04)
-X_reduced = rbf_pca.fit_transform(X)
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+You must specify the number of clusters that the algorithm will find.
+\item
+KMeans does not behave very well when the groups have very different diameters because all it cares about
+when assigning an instance to a cluster is the distance to the centroid.
+\item
+It is important to scale features before running the algorithm.
+\item
+The algorithm is guaranteed to converge, but it might find a local optimum\newline
+(hence \texttt{n\char`_init} which runs the algo multiple times with different random initializations).
+\end{itemize}
 
+\vspace{-3.0mm}
+Performance measure = Inertia (mean distance$^2$ between each instance and its closest centroid).\newline
+\texttt{kmeans.inertia\char`_}\newline
 
+\underline{Finding the optimal number of clusters:}
 
-LLE: Locally Linear Embedding MANIFOLD
-is another powerful nonlinear dimensionality reduction technique.
-It is a manifold technique that does not rely on projections.
-Particularly good at unrolling twisted manifolds, especially when there is not too much noise.
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Cannot just pick $k$ which gives the lowest inertia (it always gets lower as you increase $k$).
+You could look for the `elbow' in inertia vs $k$, but this is coarse.
+\item
+A more precise approach is to use silhouette coefficients and the silhouette score (mean silhouette coefficient over all instances).
+Silhouette coefficients vary between -1 and +1.\newline
+- Coefficient of $+1$: the instance is well inside its own cluster, and far from others.\newline
+- Coefficient of $\,\,\,\,0$: the instance is close to a cluster boundary.\newline
+- Coefficient of $-1$: the instance may have been assigned to the wrong cluster!\newline
+\texttt{from sklearn.metrics import silhouette\char`_score}\newline
+\texttt{silhouette\char`_score = silhouette\char`_score(X, y\char`_category)}
+\item
+You want to maximize silhouette score as a function of $k$.
+\item
+You should also check the corresponding silhouette diagram.\newline
+The shape's height indicates the number of instances the cluster contains,
+and its width represents the sorted silhouette coefficients of the instances in the cluster.
+The vertical dashed line indicates the silhouette score.
+When most of the instances in a cluster have a lower coefficient than this score,
+then the cluster is rather bad since this means its instances are much too close to other clusters.
+\end{itemize}
 
-from sklearn.manifold import LocallyLinearEmbedding
-lle = LocallyLinearEmbedding(n_components=2, n_neighbors=10)
-X_reduced = lle.fit_transform(X)
+\newpage
+Silhouette diagram example:\newline
+\texttt{from sklearn.metrics import silhouette\char`_samples}
 
-ALSO t-Distirbuted Stochastic Neighbor Embedding
-*** I HAVE USED THIS DURING CLUSTERING WORK!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\texttt{fig = plt.figure(figsize=(11, 9))}\newline
+\texttt{silhouette\char`_coefficients = silhouette\char`_samples(X, y\char`_category)}\newline
+\texttt{padding = len(X) // 30}\newline
+\texttt{pos = padding}\newline
+\texttt{ticks = []}\newline
+\texttt{for i in range(k):}\newline
+\texttt{.~~~coeffs = silhouette\char`_coefficients[y\char`_category == i]}\newline
+\texttt{.~~~coeffs.sort()}\newline
+\texttt{.~~~color = mpl.cm.Spectral(i / k)}\newline
+\texttt{.~~~plt.fill\char`_betweenx(np.arange(pos, pos + len(coeffs)), 0, coeffs,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~facecolor=color, edgecolor=color, alpha=0.7)}\newline
+\texttt{.~~~ticks.append(pos + len(coeffs) // 2)}\newline
+\texttt{.~~~pos += len(coeffs) + padding}\newline
+\texttt{plt.gca().yaxis.set\char`_major\char`_locator(FixedLocator(ticks))}\newline
+\texttt{plt.gca().yaxis.set\char`_major\char`_formatter(FixedFormatter(range(k)))}\newline
+\texttt{plt.ylabel(\textquotesingle Cluster\textquotesingle , fontsize=14)}\newline
+\texttt{plt.gca().set\char`_xticks([-0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1])}\newline
+\texttt{plt.xlabel(\textquotesingle Silhouette Coefficient\textquotesingle , fontsize=14)}\newline
+\texttt{plt.axvline(x=silhouette\char`_score, color=\textquotesingle red\textquotesingle , linestyle=\textquotesingle --\textquotesingle )}\newline
 
 
 
@@ -921,207 +956,4 @@ softmax_reg = LogisticRegression(multi_class="multinomial", solver="lbfgs", C=10
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Unsupervised Learning Techniques: Chapter9
-Clustering: the goal is to group similar instances together into clusters.
-Anomaly Detection: The objective is to learn what 'normal' data looks like,
-then use that to detect abnormal instances look like
-Density estimation: this is the task of estimating the probability density function of the random process generating the dataset..
-
-CLUSTERING
-
-Applications:
-Customer segmentation
-Dimensionality reduction (soft clustering)
-Outlier detection (low affinity instances)
-Semi supervised: if you only have a few labels, perform clustering and then propagate the labels to all the instances in the same cluster
-Search engines...
-
-There is no universal definition of what a cluster is...
-
-*** ALSO LOOK AT YOUR CLUSTERING WORK HERE ***
-KMEANS:
-from sklearn.cluster import KMeans
-k = 5
-kmeans = KMeans(n_clusters=k)
-y_pred = kmeans.fit_predict(X)
-
-kmeans.cluster_centres_
-
-Note that you must specifiy the number of clusters, k, that the algorithm must find
-
-K-Means algorithm does not behave very well when the blobs have very different diameters because all it cares about
-when assigning an instance to a cluster is the distance to the centroid.
-Instead of assigning each instance to a single cluster, which is called hard-clustering,
-it can be useful to give each instance a score per cluster, which is called soft-clustering.
-^Can be a distance or an affinity. NB: this can be a dimensionality reduction technique.
-kmeans.transform(X)
-
-Kmeans is guarenteed to converge, but it might find a local optimum.
-Dependent on the random initialization step
-^^^ Run the algorithm multiple times with different random initializations and keep the best solution
-n_init hyperparameter (which is ten by default)
-
-performance measure = INERTIA
-^the mean squared distance between each instance and its closest centroid
-Keep model with the lowest inertia
-kmeans.inertia_
-NB kmeans.score(X) = NEGATIVE INERTIA
-
-there is actually an initilization algo under the bonnet
-to ensure much less likely to converge on a suboptimal solution...
-AND an accelerated distance calculation going on!
-
-FINDING THE OPTIMAL NUMBER OF CLUSYERS.
-Can't just pick k which with lowest inertia
-(It keeps getting lower as you increase k)
-^ could look at the 'elbow', but this is rather coarse
-
-A more precise approach is to use the silhouette coefficient
-and silhouette score (mean silhouette coefficient over all instances)
-
-A silhouette coefficient can vary between -1 and +1.
-A coefficient of +1 means that the instances is well inside its own cluster, and far from others.
-A coefficient of ~0 means that it is close to a cluster boundary
-A coefficient of -1 means that the instance may have been assigned to the wrong cluster!
-
-from sklearn.metrics import silhouette_score
-silhouette_score(X, kmeans.labels_)
-plot silhouette score as a function of k...
-
-Silhouette diagram:
-the shape's height indicates the number of instances
-the cluster contains, and its width presents the sorted silhouette coefficients o fht einstances in the cluster.
-The vertical dashed lines represent the silhouette score for each number of clusters.
-When most of the instances in a cluster have a lower coefficient than this score,
-then the cluster is bad.
-Also, consider the size of the clusters...
-
-Kmeans not great when clusters have varying sizes,
-different densities,
-or nonspherical shapes...
-* IT IS IMPORTANT TO SCALE INPUT FEATURES BEFORE YOU RUN KMEANS
-
-:::semi-supervised learning:::
-use to create labels for all data, when you only have a few!
-
-DBSCAN: defines clusters as continuous regions of high density, which is good for clusters of arbitary shapes.
-AGGLOMERATIVE: hierachy of clusters is built from the bottom up
-^ HARDER TO OPTIMISE
-&& can't get soft-clustering results!
-
-Instead of distance based clustering
-there are hierachical clustering methods
-
-
-Gaussian Mixtures:
-GMM is a probabilistic model that assumes that the instances were generated from a mixture of several gaussian distributions
-whose parameters are unknown.
-You must know in advance the number k of Gaussian distributions
-
-p268
-Given a statistical model with some parameters, theta, the word probabiltiy is used to describe low plausible a future outcome, x, is.
-The word likelihood is used to describe how plausible a particular set of paramter values, theta, are after the outcome x is known.
-a PDF is a function of x, with theta fixed
-a likelihood function is a functions of theta, with x fixed.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\newpage

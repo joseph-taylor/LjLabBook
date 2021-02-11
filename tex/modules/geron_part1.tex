@@ -833,127 +833,104 @@ Silhouette diagram example:\newline
 \texttt{plt.xlabel(\textquotesingle Silhouette Coefficient\textquotesingle , fontsize=14)}\newline
 \texttt{plt.axvline(x=silhouette\char`_score, color=\textquotesingle red\textquotesingle , linestyle=\textquotesingle --\textquotesingle )}\newline
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Gradient Descent}
 
+\underline{Introduction:}\newline
+Gradient Descent is a generic optimization algorithm capable of finding optimal solutions to a wide range of problems. 
+The general idea of Gradient Descent is to tweak model parameters iteratively in order to minimize a cost function.
 
+\underline{Method:}
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Gradient Descent starts by filling the model parameter vector, $\boldsymbol{\theta}$, with random values.
+\item
+It then measures the local gradient of the cost function with regard to $\boldsymbol{\theta}$.
+\item
+It then updates $\boldsymbol{\theta}$ in the direction of descending gradient:
+$\boldsymbol{\theta}^{\textrm{next step}} = \boldsymbol{\theta} - \eta \nabla_{\boldsymbol{\theta}} \textrm{MSE} (\boldsymbol{\theta})$
+\newline
+where $\eta$ is the learning rate hyperparameter ().
+\item
+This continues until the cost function converges to a minimum.
+\end{itemize}
 
+\underline{Notes:}
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+Gradient Descent works best when all features have a similar scale.
+\item
+You want to find the global minimum, rather than a local minimum, of the cost function
+\item
+If $\eta$ is too small, then the algorithm will have to go through many iterations to converge.\newline
+On the other hand, if $\eta$ is too high, the algorithm might diverge.
+\item
+\textbf{Batch Gradient Descent:}\newline
+Uses all the training data (for the gradient calculation) at every step.
+\item
+\textbf{Stochastic Gradient Descent:}\newline
+Picks a random instance in the training set (for the gradient calculation) at every step.
 
+\textit{Pros:} the algorithm is quicker, can be used on huge training sets (only one instance needs to be in memory at each iteration),
+and can escape local minima.
 
-Chapter 4::: training models
-Useful for training NEURAL NETWORKS...
+\textit{Cons:} the algorithm is less regular and can never perfectly converge.
+A learning schedule,
+which reduces $\eta$ every iteration,
+can allow the algo to settle at the global minimum.
 
-Linear Regression:
-- 'closed form'
--
-Using an iterative optimization approach called Gradient Descent (GD)
-that gradually tweaks the model parameters to minimize the cost function over the training set.
-(Batch GD, Mini-batch GD, and Stochastic GD)
+\item
+\textbf{Mini-batch Gradient Descent:}\newline
+Selects a small random set of instances (for the gradient calculation) at every step.
 
-Linear Regression.
-predicted value: y_hat = theta_0 + theta_1.x_1 + ... theta_n.x_n
+\textit{Pros:} the algorithm has a similar speed to stochastic gradient descent, but is less erratic.
+\end{itemize}
 
-p113 for equations and stuff
+\underline{Regularization:}
+\vspace{-3.0mm}
+\begin{itemize}
+\item
+You can add a regularization term to the cost function (during training only)
+which forces the algorithm to fit the data whilst keeping the model parameters as small as possible.\newline
+For example, Ridge Regression:
+$J(\boldsymbol{\theta}) = \textrm{MSE}(\boldsymbol{\theta}) + \frac{\alpha}{2}\sum \theta_i^2$
+\item
+Perform early stopping: stop training as soon as the validation error reaches a minimum.
+\end{itemize}
 
-from sklearn.linear_model import LinearRegression
-lin_reg = LinearRegression()
-lin_reg.fit(X, y)
-lin_reg.intercept_
-lin_reg.coef_
+\underline{Classification:}
 
-What if there are a large number of features
-or too many training instances to fit in memory?
+Linear regression:
+$\hat{y} = h_{\boldsymbol{\theta}}(\boldsymbol{x}) = \boldsymbol{x}^{T} \boldsymbol{\theta}$
 
-Gradient Descent:
-Gradient descent is a generic optimization algorithm capable of finding the optimal solution to a wide range of problems. 
-The general idea is to tweak parameters iteratively in order to minimize a cost function.
-Gradient descent measures the local gradient of the error function with regard to the parameter vector THETA,
-and it goes in the direction of the descending gradient.
+Logistic regression:
+$\hat{p} = h_{\boldsymbol{\theta}}(\boldsymbol{x}) = \sigma({\boldsymbol{x}^{T} \boldsymbol{\theta}})$
+~~~where $\sigma(t) = \frac{1}{1+\textrm{exp}(-t)}$~is the logistic function.
 
-Randomly initialized... wait until it converges!
+Log loss cost function:
+$J(\boldsymbol{\theta}) = - \frac{1}{m} \sum_{i=1}^{m} \big[ y^{(i)} \, \textrm{log}(\hat{p}^{(i)}) + (1 - y^{(i)}) \, \textrm{log}(1 - \hat{p}^{(i)}) \big]$\newline
+- $m$ is the number of instances being evaluated.\newline
+- $y^{(i)}$ is the class (0 or 1) of the $i^{\textrm{th}}$ instance.\newline
+- $\hat{p}^{(i)}$ is the modeled probability (of having class=1) for the $i^{\textrm{th}}$ instance.\newline
 
-There is a learning rate hyper parameter, which controls the size of the steps
+\underline{Softmax Regression (Multiclass Classification)}
 
-We want global minimum, not local minimum.
+For a given instance, $\boldsymbol{x}$, compute the \textit{softmax score} for each class:
+$s_k(\boldsymbol{x}) = \boldsymbol{x}^T \boldsymbol{\theta}^{(k)}$\newline
+Each class has its own parameter vector $\boldsymbol{\theta}^{(k)}$.
+These are combined to create a param matrix $\boldsymbol{\Theta}$.
 
-you should feature scale, so the hyperparams are not operating at totaly different scales...
+Softmax function:
+$\hat{p}_k = \frac{\textrm{exp}(s_k(\boldsymbol{x}))}{\sum_{j=1}^{K} \textrm{exp}(s_j(\boldsymbol{x}))}$
 
-Batch Gradient Descent. p121.
-It uses the whole batch of training data at every step.
-page 122 has the main equation...I reckon
-theta(next step) = theta - eta GRAD MSE(theta)
-
-Stochastic Gradient Descent:
-picks a random instance in the training set at every step,
-and computes the gradients based only on that single instance.
-little data to manipulate = faster (good for huge data sets)
-but on the other hand,
-due to it's stochastic (ie random) nature,
-the algorithm is much less regular.
-It will also never truly settle down (can help jump out of local minima)
->>> gradually reduce the learning rate p125 = learning schedule
-
-the concept of an epoch...
-
-Mini-batch Gradient descent:
-instead of computing gradients based on the full training set (batch)
-or just one random instance (stocahstic)
-mini-batch GD computes the gradients on small random sets of instances called mini-batches.
-^ less eratic than stochastic GD
-
-A model generalization (total) error has three components:
-1. Bias: wrong assumptions lead to underfitting
-2. Variance: model's excessive sensitivity to small variations in training data. likely due to overfitting.
-3. Irreducible error: nosiness of the data itself
-
-
-A good way to reduce overfitting is to regularize the model (ie constrain it somehow)
-^reducing the degrees of freedom
-
-For a linear model, regularization is typically achived by constraining the weights of the model.
-Ridge Regression
-Lasso Regression
-Elastic Net
-
-Can also do early stopping!
-^ Stop training as soon as the validation error reaches the minimum
-
-LOGISTIC REGRESSION p142
-Some regression algorithms can be used for classification.
-Logisitic regression is commonly used to estimate the probability that
-an instance belongs to a particular class.
-E.g. if the estimated probability is greater than 50%,
-then the model predicts that the instance belongs to that class
-^Binary classifier.
-
-p = sigma(x.theta)
-
-sigmoid function:
-sigma(t) = 1 / (1 + exp(-t))
-Worth noting the shape of this function
-t is called the LOGIT
-
-Training and cost function.
-p144: cost function & log loss logisitc regression cost function.
-
-Decision boundaries...
-Point where classification will change
-
-from sklearn.linear_model import LogisticRegression
-log_reg = LogisticRegression()
-log_reg.fit(X, y)
-log_reg.predict(X_new) # classification
-log_reg.predict_proba(X_new) # 
-
-Logisitc regression models can be regularised using l1 or l2 penalities...
-scikit learn actually adds an l2 penalty by default.
-
-SOFTMAX REGRESSION
-The logistic regression model can be generalized to support multiple classes directly
-without having to train and combine multiple binary classifiers (as discussed previous).
-This is called softmax regression OR multinomial logistic regression.
-p148-p151 very useful...
-
-softmax_reg = LogisticRegression(multi_class="multinomial", solver="lbfgs", C=10)
-
-
+Cross entropy cost function:
+$J(\boldsymbol{\Theta}) = - \frac{1}{m} \sum_{i=1}^{m} \sum_{k=1}^{K} y_k^{(i)}\, \textrm{log}(\hat{p}_k^{(i)})$\newline
+- Note that when there are just two classes $(K=2)$, the log loss cost function is recovered.
 
 \newpage

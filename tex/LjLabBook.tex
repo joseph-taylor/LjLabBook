@@ -27,10 +27,14 @@
   linkcolor=black,
   urlcolor=black
 }
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
 \tableofcontents % adds a contents page
 \newpage
 \pagenumbering{arabic} % change page numbering back to Arabic numbers
 
+\input{./modules/geron_part1.tex}
+% \input{./modules/geron_part2.tex}
 \input{./modules/navigation.tex}
 \input{./modules/bash.tex}
 \input{./modules/emacs.tex}
@@ -41,7 +45,6 @@
 \input{./modules/pandas.tex}
 \input{./modules/sql.tex}
 \input{./modules/stats.tex}
-\input{./modules/ml.tex}
 \input{./modules/resources.tex}
 
 \end{document}

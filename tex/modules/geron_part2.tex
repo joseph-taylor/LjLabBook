@@ -159,32 +159,92 @@ The architecture of an MLP for multiclass classification:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-up to page 295
+\subsection{Implementing MLPs with Keras}
 
-\subsection{Keras Intro}
+The following code creates a classification MLP with:
+\vspace{-5.0mm}
+\begin{itemize}
+\item
+An input layer with 784 neurons, where each instance is a $28*28$ array.
+\vspace{-3.0mm}
+\item
+Two hidden layers (with 300 and 100 neurons, respectively).\newline
+Both layers use the ReLU activation function.\newline
+All the layers are connected sequentially.
+\vspace{-3.0mm}
+\item
+10 exclusive classification outputs.
+\end{itemize}
 
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
+\vspace{-2.0mm}
+\texttt{from tensorflow import keras}\newline
+\texttt{model = keras.models.Sequential()}\newline
+\texttt{model.add(keras.layers.Flatten(input\char`_shape=[28,28]))}\newline
+\texttt{model.add(keras.layers.Dense(300, activation=\textquotesingle relu\textquotesingle))}\newline
+\texttt{model.add(keras.layers.Dense(100, activation=\textquotesingle relu\textquotesingle))}\newline
+\texttt{model.add(keras.layers.Dense(10, activation=\textquotesingle softmax\textquotesingle))}\newline
+\vspace{-2.0mm}
 
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
+For binary classification, use \texttt{activation=\textquotesingle sigmoid\textquotesingle} (i.e. the logistic function)\newline
+For regression, the output layer would be:~\texttt{model.add(keras.layers.Dense(1))}
 
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
-TODO
+The following will give a summary of your model:\newline
+\textit{Note that `None' in the Output Shape means that the batch size can be anything.}\newline
+\texttt{model.summary()}
+
+Each model layer is its own object:\newline
+\texttt{input = model.layers[0]}\newline
+\texttt{hidden\char`_1 = model.layers[1]}\newline
+\texttt{hidden\char`_2 = model.layers[2]}\newline
+\texttt{output = model.layers[3]}
+
+Each layer manages its own connection weights between the layers neurons and their inputs:\newline
+\texttt{weights, biases = hidden\char`_2.get\char`_weights()}
+
+Notice that the connection weights are randomly initialized (this is required to break symmetry)
+and the biases are initialized to zero.\newline
+\textit{Sometimes you may want to use a different initialization method (information provided later).}
+
+\newpage
+\textbf{Compilation}\newline
+After a model is created, you must specify the loss function and the optimizer to use:\newline
+\texttt{model.compile(loss=\textquotesingle sparse\char`_categorical\char`_crossentropy\textquotesingle,}\newline
+\texttt{.~~~~~~~~~~~~~optimizer=\textquotesingle sgd\textquotesingle,}\newline
+\texttt{.~~~~~~~~~~~~~metrics=[\textquotesingle accuracy\textquotesingle]) \# these are optional}
+
+For binary classification: \texttt{loss=\textquotesingle binary\char`_crossentropy\textquotesingle}\newline
+For regression: \texttt{loss=\textquotesingle mean\char`_squared\char`_error\textquotesingle}
+
+Note that the optimizer is equivalent to: \texttt{optimizer=keras.optimizers.SGD(lr=0.01)}\newline
+\textit{Sometimes you may want to use more efficient optimizers (information provided later).}\newline
+
+\textbf{Training}\newline
+\texttt{history = model.fit(X, y, epochs=30, validation\char`_split=0.1)}
+
+- The \texttt{fit()} method returns a History object containing meta-data about the training.\newline
+- If not stated, the \texttt{epochs} parameter will default to one (not enough for convergence).\newline
+- If not stated, the \texttt{validation\char`_split} parameter will be zero (i.e no cross validation).
+
+Use the History object to plot the learning curves:\newline
+\texttt{import pandas as pd}\newline
+\texttt{import matplotlib.pyplot as plt}\newline
+\texttt{pd.DataFrame(history.history).plot(figsize=(12,8))}\newline
+\texttt{plt.grid(True)}\newline
+\texttt{plt.gca().set\char`_ylim(0,1)}\newline
+\texttt{plt.show()}\newline
+\textit{Note that the validation error is computed at the \underline{end} of each epoch,
+whilst the training error is computed using a running mean \underline{during} each epoch.}
+
+To continue training, just call the \texttt{fit()} method again. Note the following:\newline
+- This will create a new History object (rather than appending).\newline
+- You can update the model compilation parameters before the additional training.\newline
+
+\textbf{Evaluation}\newline
+Estimate the generalization error using the test set:\newline
+\texttt{model.evaluate(X\char`_test, y\char`_test)}
+
+Make predictions as follows:\newline
+\texttt{y\char`_proba = model.predict(X\char`_new)}\newline
+\texttt{y\char`_pred ~= np.argmax(model.predict(X\char`_new), axis=-1)}
+
+TODO: hyperparameter tuning section on page 306.

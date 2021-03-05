@@ -245,6 +245,82 @@ Estimate the generalization error using the test set:\newline
 
 Make predictions as follows:\newline
 \texttt{y\char`_proba = model.predict(X\char`_new)}\newline
-\texttt{y\char`_pred ~= np.argmax(model.predict(X\char`_new), axis=-1)}
+\texttt{y\char`_pred ~= np.argmax(model.predict(X\char`_new), axis=-1)}\newline
 
-TODO: hyperparameter tuning section on page 306.
+\textbf{Saving and Loading}\newline
+The following saves a model's architecture, parameters, and optimizer:\newline
+\texttt{model.save(\textquotesingle my\char`_keras\char`_model.h5\textquotesingle)}
+
+The following loads a model:\newline
+\texttt{model = keras.models.load\char`_models(\textquotesingle model.h5\textquotesingle)}
+
+You can also save your model at regular checkpoints during training...
+
+\newpage
+\textbf{Callbacks}\newline
+The \texttt{fit()} method accepts a \textit{callbacks} argument
+(a list of objects called \underline{during} training).
+
+The following saves your model at regular intervals (default = end of each epoch):\newline
+\texttt{save\char`_cb = keras.callbacks.ModelCheckpoint(\textquotesingle my\char`_keras\char`_model.h5\textquotesingle)}\newline
+\texttt{history = model.fit(X, y, epochs=10, callbacks=[save\char`_cb])}
+
+Moreover, if you use a validation set during training,
+you can ensure your model only saves when the performance on the validation set is the best so far (i.e implicit early stopping):
+\texttt{save\char`_cb = keras.callbacks.ModelCheckpoint(\textquotesingle my\char`_keras\char`_model.h5\textquotesingle,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~save\char`_best\char`_only=True)}\newline
+\texttt{history = model.fit(X, y, epochs=100, validation\char`_split=0.1,\newline
+.~~~~~~~~~~~~~~~~~~~callbacks=[save\char`_cb])}
+
+Explicit early stopping can be implemented with the following callback:\newline
+\texttt{early\char`_stop\char`_cb = \newline keras.callbacks.EarlyStopping(patience=10, restore\char`_best\char`_weights=True)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fine-Tuning Neural Network Hyperparameters}
+
+The flexibility of NNs is also one of their drawbacks,
+there are many hyperparameters to tune:
+
+\vspace{-5.0mm}
+\begin{itemize}
+\item
+\textbf{Learning rate:} very low = $10^{-5}$, keras default = 0.01, very high = 10.\newline
+\textit{Always retune this after changing another hyperparameter.}
+\item
+\textbf{Optimizer:} there are better options out there than mini-batch gradient descent...
+\item
+\textbf{Batch size:} keras default = 32 (large batch sizes can lead to training instabilities).
+\item
+\textbf{Hidden layer activation function:} ReLU is a good default in general.
+\item
+\textbf{Number of hidden layers:} for most problems, you can start with just one or two.
+\item
+\textbf{Number of neurons:} in general, use the same number for all hidden layers.\newline
+\textit{It can sometimes help to make the first hidden layer bigger than the others.}
+\item
+\textbf{Keras Tuner:} use this library to tune hyperparameters \textit{(keras-team.github.io/keras-tuner/)}
+\item
+\textbf{Tip:} it's often simpler to pick a model with more layers and neurons than you actually need,
+then use early stopping \& other regularization techniques to prevent overfitting.
+\end{itemize}
+% 
+\textbf{Number of hidden layers}\newline
+If it has enough neurons, one hidden layer can theoretically model the most complex functions.
+% 
+However, for complex problems,
+deep networks have a much higher \textit{parameter efficiency} than shallow ones:
+they can model complex functions using exponentially fewer neurons,
+allowing them to reach much better performance with the same amount of training data.
+% 
+This is because real-world data is often structured in a hierarchial way,
+and deep neural networks take advantage of this:\newline
+- Lower hidden layers model low-level structures (e.g. line segments).\newline
+- Intermediate hidden layers combine these to model intermediate-level structures (e.g. shapes).\newline
+- The highest hidden layers combine these to model high-level structures (e.g. faces).\newline
+- \textit{Transfer learning} is where you `borrow' the lower layers from a previously trained model.
+
+\newpage

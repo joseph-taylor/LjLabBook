@@ -33,7 +33,7 @@ Then they apply an \textit{activation function} to that sum, $h_{\boldsymbol{w}}
 Traditionally, the activation function was a heavyside step function.
 However, in order to perform Gradient Descent on a NN,
 a differentiable function was needed instead.\newline
-- The default has become the Rectified Linear Unit functoin: ReLU(z) = max(0,z)\newline
+- The default has become the Rectified Linear Unit function: ReLU(z) = max(0,z)\newline
 - The logistic function and hyperbolic tangent function are also popular choices.
 \end{itemize}
 \vspace{-2.0mm}
@@ -96,9 +96,9 @@ by propagating the error gradient backward through the network.
 
 \item
 \vspace{-2.0mm}
-an \textbf{iteration} = one forward-backward pass using one mini-batch.\newline
-an \textbf{epoch} = one forward-backward pass of \textit{all} the training set examples.\newline
-If you have 2000 training examples, and your batch size is 500\newline
+An \textbf{iteration} = one forward-backward pass using one mini-batch.\newline
+An \textbf{epoch} = one forward-backward pass of \textit{all} the training set examples.\newline
+If you have 2000 training examples, and your batch size is 500...\newline
 $\rightarrow$ then it will take 4 iterations to complete 1 epoch.
 
 \item
@@ -252,7 +252,7 @@ The following saves a model's architecture, parameters, and optimizer:\newline
 \texttt{model.save(\textquotesingle my\char`_keras\char`_model.h5\textquotesingle)}
 
 The following loads a model:\newline
-\texttt{model = keras.models.load\char`_models(\textquotesingle model.h5\textquotesingle)}
+\texttt{model = keras.models.load\char`_models(\textquotesingle my\char`_keras\char`_model.h5\textquotesingle)}
 
 You can also save your model at regular checkpoints during training...
 
@@ -322,5 +322,98 @@ and deep neural networks take advantage of this:\newline
 - Intermediate hidden layers combine these to model intermediate-level structures (e.g. shapes).\newline
 - The highest hidden layers combine these to model high-level structures (e.g. faces).\newline
 - \textit{Transfer learning} is where you `borrow' the lower layers from a previously trained model.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Training Deep Neural Networks}
+
+What if you need to tackle a complex problem,
+such as detecting hundreds of types of objects in high-resolution images?
+% 
+You may need to train a much deeper DNN,
+perhaps with 10+ layers,
+each containing hundreds of neurons.
+% 
+You might then experience the following problems:
+
+\vspace{-5.0mm}
+\begin{itemize}
+\item
+The \textit{vanishing gradients} or \textit{exploding gradients} problem.
+This is when gradients grow ever smaller (or ever larger)
+when flowing backward through the DNN during training.
+This makes it very hard to train the lower layers.
+\vspace{-2.0mm}
+\item
+Training may be extremely slow.
+\vspace{-2.0mm}
+\item
+A model with millions of parameters risks severly overfitting the training set,
+especially if there are not enough training instances or if they are too noisy.
+\end{itemize}
+
+\textbf{\underline{The Vanishing Gradients Problem}}\newline
+% 
+Gradients often get ever smaller as the backpropagation progresses down to the lower layers.
+Consequently, the update leaves the lower layers' connection weights virtually unchanged.\newline
+This means the training never converges on a good solution.
+
+For the signal to flow properly,
+we need the outputs (forward pass) and the gradient (reverse pass) of all the layers to have equal variance.\newline
+
+\textbf{*** Weight Initialization ***}\newline
+$fan_{\textrm{in}}$ = the number of inputs into a layer.\newline
+$fan_{\textrm{out}}$ = the number of neurons in a layer.\newline
+$fan_{\textrm{avg}} = (fan_{\textrm{in}} + fan_{\textrm{out}})/2$.
+
+The connection weights of each layer must be initialized randomly by one of the following:\newline
+- Normal distribution with mean 0 and variance $\sigma^2$\newline
+- Uniform distribution between $-r$ and $+r$, where $r=\sqrt{3 \sigma^2}$ 
+
+\begin{tabular}{ l|l|l } 
+
+Initialization & Layer Activation function & $\sigma^2$ \\ 
+\hline
+Glorot & None, tanh, logistic, softmax & $1/fan_{\textrm{avg}}$\\
+He & ReLU and variants & $2/fan_{\textrm{in}}$\\
+LeCun & SELU & $1/fan_{\textrm{in}}$\\
+\end{tabular}
+
+By default, Keras uses Glorit initialization with a uniform distribution when you create a layer.\newline
+You can override this like so:\newline
+\texttt{keras.layers.Dense(10, activation=\textquotesingle relu\textquotesingle, kernel\char`_initializer=\textquotesingle he\char`_normal\textquotesingle)}
+\texttt{keras.layers.Dense(30, activation=\textquotesingle relu\textquotesingle, kernel\char`_initializer=\textquotesingle he\char`_uniform\textquotesingle)}\newline
+
+\textbf{*** Activation Functions ***} \textit{they get better as you go down...}
+
+\textbf{Logistic:} saturates at 0 or 1, with a derivative extremely close to 0. Function has a mean of 0.5.\newline
+\textbf{Tanh:} saturates at -1 or 1, with a derivative extremely close to 0. Function has a mean of 0.
+
+\textbf{ReLU:} does not saturate for positive values, and is fast to compute.\newline
+During training, some neurons can effectively die (they stop outputting anything other than 0).\newline
+This happens when the weighted sum of its inputs are negative for all instances in the training set.
+The weights are then no longer updated by Gradient Descent as the gradient is always zero.
+
+\textbf{LeakyReLU} = $\textrm{max}(\alpha z, z)$.
+The hyperparameter $\alpha$, typically set to 0.01, defines how much the function `leaks' for $z<0$.
+This small slope ensures that leaky ReLUs never die.
+
+\textbf{Exponential Linear Unit (ELU)} = $\alpha(e^z - 1)$ if $z < 0$.
+The hyperparameter $\alpha$, typically set to unity, defines the output as $z \rightarrow -\infty$.
+This function has a mean value closer to zero and is differentiable at $z=0$.
+The use of the exponential function makes it slower to compute.
+
+\textbf{Scaled ELU (SELU):} a scaled variant of ELU ($\alpha = 1.67$ and $scale = 1.05$).\newline
+If you build a DNN composed of a sequential stack of dense layers,
+and if all hidden layers use the SELU activation function,
+then the network will \textit{self-normalize}:
+the output of each layer will preserve a mean of 0 and a standard deviation of 1 during training. Conditions:\newline
+- The input features must be standardized.\newline
+- Every hidden layer's weights must be initialized with LeCun normal initialization. E.g.\newline
+\texttt{layers.Dense(10, activation=\textquotesingle selu\textquotesingle, kernel\char`_initializer=\textquotesingle lecun\char`_normal\textquotesingle)}
+
 
 \newpage

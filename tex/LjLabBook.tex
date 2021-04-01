@@ -10,14 +10,14 @@
 \usepackage{textcomp}
 
 \begin{document}
-\begin{titlepage}
-  \cmsnote{LjLabBook}
-  \date{\today}
-  \title{HOW TO 9+t $\Longrightarrow$ \bf{5+t}}
-  \begin{Authlist}
-    Joe Taylor
-  \end{Authlist}
-\end{titlepage}
+% \begin{titlepage}
+%   \cmsnote{LjLabBook}
+%   \date{\today}
+%   \title{HOW TO 9+t $\Longrightarrow$ \bf{5+t}}
+%   \begin{Authlist}
+%     Joe Taylor
+%   \end{Authlist}
+% \end{titlepage}
 
 \pagenumbering{roman} % use Roman numerals in contents pages
 \hypersetup{
@@ -34,7 +34,8 @@
 \pagenumbering{arabic} % change page numbering back to Arabic numbers
 
 \input{./modules/geron_part1.tex}
-% \input{./modules/geron_part2.tex}
+\input{./modules/geron_part2.tex}
+\input{./modules/stats.tex}
 \input{./modules/navigation.tex}
 \input{./modules/bash.tex}
 \input{./modules/emacs.tex}
@@ -44,7 +45,6 @@
 \input{./modules/numpy.tex}
 \input{./modules/pandas.tex}
 \input{./modules/sql.tex}
-\input{./modules/stats.tex}
 \input{./modules/resources.tex}
 
 \end{document}

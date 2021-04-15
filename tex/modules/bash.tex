@@ -1,7 +1,7 @@
 \section{BASH}
 
-Everything in UNIX is either a file or a process.
-Processes can take additional options.
+\textit{Everything in UNIX is either a file or a process.
+Processes can take additional options.}
 
 Basics:
 \begin{easylist}[itemize]
@@ -28,7 +28,7 @@ Other:
 & \texttt{ps [ux[ww]]} -- gives you info abouts your processes. 
 & \texttt{top} -- gives you info abouts the systems processes.
 & \texttt{who} -- see who is on the system with you.
-& \texttt{chmod X$\pm$Y} -- change permissions. \textbf{X} = \texttt{u}:user, \texttt{g}:group, \texttt{o}:other, \texttt{a}:all. \textbf{Y} = \texttt{r}:read, \texttt{w}:write, \texttt{x}:execute.
+& \texttt{chmod X$\pm$Y} -- change permissions.\newline\textbf{X} = \texttt{u}:user, \texttt{g}:group, \texttt{o}:other, \texttt{a}:all. \textbf{Y} = \texttt{r}:read, \texttt{w}:write, \texttt{x}:execute.
 & \texttt{<command> --help, man <command>} -- how to use a command.
 & \texttt{say <quote>} -- voice output from the terminal.
 & \texttt{open -a [application] filename} -- open a file.
@@ -61,7 +61,7 @@ Text:
 & \texttt{diff} -- differences between files.
 & \texttt{command > file} -- redirect standard output to a file (use \verb!>&! to include errors).
 & \texttt{command >> file} -- append standard output to a file.
-& \texttt{command1 | command2} -- pipe output of command\_1 to input of command\_2.
+& \texttt{command1 | command2} -- pipe output of command-1 to input of command-2.
 \end{easylist}
 
 History and Kill:
@@ -72,7 +72,8 @@ History and Kill:
 & \texttt{CNTRL R} -- navigate bash history (press repeatedly to search further back).
 & \texttt{clear} -- clears the screen.
 & \texttt{CNTRL C} -- kill a foreground process in the foreground.
-& \texttt{CNTRL Z} -- put a foreground process in the background. Use \texttt{\&} at end of command to do this automatically.
+\newpage
+& \texttt{CNTRL Z} -- put a foreground process in the background. Use \texttt{\&} at the end of a command to do this automatically.
 & \texttt{bg} -- look at background processes, provides a job number.
 & \texttt{fg \% <jobNumber>} -- put background process in foreground.
 & \texttt{kill \% <jobNumber>} -- kill background process.
@@ -82,9 +83,9 @@ Very Useful, Can Never Remember:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{sed} -- \textbf{s}tream \textbf{ed}itor. 
-& \texttt{sed 's/<old>/<new>/g' <stream/file>} -- sed for substitution.
-\newline Use \verb!-i'.original'! for in-file replacement. Note you can use different delimiters.
-& \texttt{find <directory> -name <file name>} -- find the path to a file. Searches recursively by default. Other options exist e.g. file size.
+& \texttt{sed \textquotesingle s/<old>/<new>/g\textquotesingle~<stream/file>} -- sed for substitution.
+\newline Use \verb!-i! for in-file replacement. Note you can use different delimiters.
+& \texttt{find <directory> -name <file name>} -- find the path to a file.\newline Searches recursively by default. Other options exist e.g. file size.
 & \texttt{grep <expression> <stream/file>} -- search text file for an expression.
 \newline Option \verb!-i! ignores case; \verb!-r! searches recursively.
 \end{easylist}
@@ -92,7 +93,7 @@ Very Useful, Can Never Remember:
 Secure Shell:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& \texttt{scp <local path> <user>@<hostname>:<destination path>} -- secure copy.
+& \texttt{scp <local path> <user>@<hostname>:<destination path>} \newline-- secure copy.
 & \texttt{ssh -XY <user>@<hostname>} -- secure shell, to log in to a remote server.
 & \texttt{sshfs <user>@<hostname>:/path/to/base/ <locMountDir> -o volname=NAME} -- secure shell file system.
 & \texttt{display <image file>} -- view things in ssh.
@@ -105,7 +106,7 @@ Screen:
 & \texttt{screen} -- start screen session (environments are not transferred over). 
 & \texttt{Ctrl A} then \texttt{D} -- detach screen session. 
 & \texttt{exit} -- kill screen session. 
-& \texttt{screen -r <sessionID>} -- reattach screen session. 
+& \texttt{screen -r <sessionID>} -- re-attach screen session. 
 & \texttt{screen -ls} -- list screen sessions. 
 & \texttt{screen -X -S <sessionID> kill} -- kill screen session without attaching it. 
 \end{easylist}
@@ -118,11 +119,11 @@ Environment Variables And Loops:
 & \texttt{export PATH="/path/to/bin:\$PATH"} -- example of setting an environmental variable.
 & \texttt{myvar=123abc} -- example of declaring a variable (string only).
 & \texttt{echo \$myvar} -- example of using variable.
-& \texttt{for myvar in *.pdf; do ls \$myvar; echo; done} -- specific example of for loop.
-& \texttt{while true; do <command1>; <command2>; etc; done} -- run a command periodically.
+& \texttt{for myvar in *.pdf; do ls \$myvar; echo; done} \newline-- specific example of for loop.
+& \texttt{while true; do <command1>; <command2>; etc; done} \newline-- run a command periodically.
 & \texttt{alias <shortcut>="<regularExpression>"} -- alias commands.
 & \texttt{source <shell file>} -- evaluates the file.
-& \texttt{.bashrc} OR \texttt{.bash\_profile} -- for permanent aliases and setting of variables.
+& \texttt{.bashrc} OR \texttt{.bash\char`_profile} -- for permanent aliases and setting of variables.
 \end{easylist}
 
 Useful Webpages:

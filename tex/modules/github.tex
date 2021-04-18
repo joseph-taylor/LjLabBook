@@ -1,21 +1,21 @@
 \section{GITHUB}
 
-Git is a version control system.
-GitHub is the online store.
+\textit{Git is a version control system.
+GitHub is the online store.}
 
 \vspace{\baselineskip}
 GitHub -- i.e. online:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 &
-To setup a new repository online you must first create an \textbf{empty} repo on GitHub.
+To setup a new repository online you must first create an \textbf{empty} repo on GitHub.\newline
 In your local repo, you can then set this new GitHub repo as the remote.
 % And then you're off.
 &
 If you want to collaborate on an existing repo, you should fork this repo to your account.
 To get it locally you should then clone the GitHub version of the repo.
 &
-If you want to merge your code with a collaborator on GitHub, use the `New Pull Request' button.
+If you want to merge your code with a collaborator on GitHub, create a `Pull Request'.
 \end{easylist}
 
 Git Setup:
@@ -25,7 +25,7 @@ Git Setup:
 & \texttt{git clone git@github.com:joseph-taylor/LjLabBook.git <localRepoName>} -- clone a repo to local from GitHub.
 This will automatically set a remote called `origin'.
 & \texttt{.gitignore} -- text file telling git what files to ignore.
-& \texttt{git config --global core.editor "emacs -nw"} -- set emacs as default git text editor.
+& \texttt{git config --global core.editor "emacs -nw"} -- set default text editor.
 \end{easylist}
 
 Git Basics:
@@ -54,21 +54,21 @@ Git Useful:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git diff <file>} -- diff between current file and version from last commit.
-& \texttt{git diff <commitLabel> <file>} -- diff between current file and version from the stated commit.
-& \texttt{git diff <commitLabelOne> <commitLabelTwo> <file>} -- diff between file for two different commits.
+& \texttt{git diff <commitLabel> <file>} \newline-- diff between current file and version from the stated commit.
+& \texttt{git diff <commitLabelOne> <commitLabelTwo> <file>} \newline-- diff between file for two different commits.
 & \texttt{git log} -- log of git commit messages and hashes.
 & \texttt{git help <command>} -- git help pages.
 \end{easylist}
 
 Git Branching
-(note that you get conflicts when changes are made to the same files):
+\textit{(note that you get conflicts when changes are made to the same files):}
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
 & \texttt{git checkout -b <newBranchName>} -- create new branch and change to it
 \newline (modifications in the repo \textbf{are} carried over).
 & \texttt{git checkout <oldBranchName>} -- change to an existing branch.
-& \texttt{git merge <branchNameToMerge> [-m "message"]} -- merge changes from stated branch into current branch.
-& \texttt{git branch -d <branchNameToDelete>} -- delete branch (can only do this if the changes are merged).
+& \texttt{git merge <branchNameToMerge> [-m "message"]} \newline -- merge changes from stated branch into current branch.
+& \texttt{git branch -d <branchNameToDelete>} -- delete branch. \newline \textit{Can only do this if the changes are merged.}
 \end{easylist}
 
 Git Stashing
@@ -77,7 +77,7 @@ Git Stashing
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
 & \texttt{git stash} -- saves your changes and goes back to the HEAD commit.
 & \texttt{git stash list} -- look at your stored stashes.
-& \texttt{git stash apply [stash@\{N\}]} -- apply a stash. If you have more than one stash you should name it.
+& \texttt{git stash apply [stash@\{N\}]} -- apply a stash.\newline \textit{If you have more than one stash you should name it.}
 & \texttt{git stash clear} -- remove all stashes.
 & \texttt{git stash drop <stash@\{N\}>} -- remove a specific stash.
 \end{easylist}
@@ -85,8 +85,8 @@ Git Stashing
 Reversing Changes in Git:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
-& \texttt{git checkout -- <file>} -- undo uncommited changes to a file (the \texttt{--} avoids conflict with branch names).
-& \texttt{git checkout <commitLabel>} --  detached HEAD state: can view state of old commit but you are not on a branch. Branch off if you want to work from here.
+& \texttt{git checkout -- <file>} -- undo uncommited changes to a file.\newline \textit{The} \texttt{--} \textit{avoids conflict with branch names.}
+& \texttt{git checkout <commitLabel>} --  detached HEAD state. Can view state of old commit but you are not on a branch. Branch off if you want to work from here.
 & \texttt{git revert <commitLabel>} -- reverses \textbf{the changes of} the stated commit. This change happens in the form of a new commit. Just exit the emacs situation.
 & \texttt{git reset <commitLabel>} -- moves a branch back in time to an older commit. The commits that were on top of it no longer exist. Not good when collaborating.
 \end{easylist}
@@ -98,7 +98,7 @@ Git to GitHub:
 & \texttt{git remote [-v]} -- print the GitHub remotes for the repo.
 & \texttt{git remote add <remoteName> git@github.com:joseph-taylor/LjLabBook.git} -- create a new remote.
 & \texttt{git push <remoteName> <branchName>} -- push commits on the local branch to the remote branch (you don't have to be on that branch).
-& \texttt{git pull <remoteName> <branchName>} -- pull commits on remote branch to the local branch (you don't have to be on that branch).
+& \texttt{git pull <remoteName> <branchName>} -- pull commits on remote branch to the current local branch.
 \end{easylist}
 
 \vspace{\baselineskip}

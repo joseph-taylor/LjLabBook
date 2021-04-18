@@ -197,7 +197,7 @@ ML algos don't perform well when the input numerical features have very differen
 \textit{This can be affected by outliers (consequently, you might want to take a features log first).}\newline
 \textbf{Standardization} $\rightarrow$ subtracts the mean, and divides by the standard deviation.\newline
 \textit{This gives a distribution with mean=0 and unit variance.
-It does not bound values to a specific range (a problem with neural networks)
+It does not bound values to a specific range,
 but is much less affected by outliers.}\newline
 
 \texttt{from sklearn.preprocessing import MinMaxScaler \# not used here}\newline
@@ -586,7 +586,7 @@ this is due to the noisiness of the data itself.
 
 Increasing a model's complexity will typically increase its variance and reduce its bias.\newline
 Conversely, reducing a model's complexity will increase its bias and reduces its variance.\newline
-It's a trade-off.
+It's a trade-off...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -650,8 +650,8 @@ Note that to trade a higher bias for a lower variance,
 one can train each predictor on a random subset of the training instances.
 
 \textbf{XGBoost} (which stands for extreme gradient boosting)
-is a python library which has an optimized implementation of Gradient Boosting.
-Its default is to use tree based models.
+is a python library which has an \newline optimized implementation of Gradient Boosting.
+Its default is to use tree based models.\newline
 Check it out, it has a very similar API to Scikit-Learn.
 
 \texttt{import xgboost}\newline
@@ -695,7 +695,7 @@ as the number of training instances required to reach a given density grows expo
 
 Fortunately,
 it is often possible to considerably reduce the number of features,
-turning an intractable problem into a tractable one.
+turning an \newline intractable problem into a tractable one.
 This technique is called \textit{Dimensionality Reduction}.\newline
 These techniques are also extremely useful for data visualization (can plot N-d in 2-d).
 
@@ -853,7 +853,7 @@ Gradient Descent starts by filling the model parameter vector, $\boldsymbol{\the
 It then measures the local gradient of the cost function with regard to $\boldsymbol{\theta}$.
 \item
 It then updates $\boldsymbol{\theta}$ in the direction of descending gradient:
-$\boldsymbol{\theta}^{\textrm{next step}} = \boldsymbol{\theta} - \eta \nabla_{\boldsymbol{\theta}} \textrm{MSE} (\boldsymbol{\theta})$
+$\boldsymbol{\theta}^{\textrm{next step}} = \boldsymbol{\theta} - \eta \nabla_{\boldsymbol{\theta}} J (\boldsymbol{\theta})$
 \newline
 where $\eta$ is the learning rate hyperparameter.
 \item
@@ -866,7 +866,7 @@ This continues until the cost function converges to a minimum.
 \item
 Gradient Descent works best when all features have a similar scale.
 \item
-You want to find the global minimum, rather than a local minimum, of the cost function
+You want to find the global minimum, rather than a local minimum, of the cost function.
 \item
 If $\eta$ is too small, then the algorithm will have to go through many iterations to converge.\newline
 On the other hand, if $\eta$ is too high, the algorithm might diverge.
@@ -899,7 +899,7 @@ Selects a small random set of instances (for the gradient calculation) at every 
 You can add a regularization term to the cost function (during training only)
 which forces the algorithm to fit the data whilst keeping the model parameters as small as possible.\newline
 For example, Ridge Regression:
-$J(\boldsymbol{\theta}) = \textrm{MSE}(\boldsymbol{\theta}) + \frac{\alpha}{2}\sum \theta_i^2$
+$J'(\boldsymbol{\theta}) = J (\boldsymbol{\theta}) + \frac{\alpha}{2}\sum \theta_i^2$
 (also called $l_2$ regularization).
 \item
 Perform early stopping: stop training as soon as the validation error reaches a minimum.

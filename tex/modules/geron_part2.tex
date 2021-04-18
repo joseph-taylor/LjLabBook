@@ -369,7 +369,7 @@ $fan_{\textrm{in}}$ = the number of inputs into a layer.\newline
 $fan_{\textrm{out}}$ = the number of neurons in a layer.\newline
 $fan_{\textrm{avg}} = (fan_{\textrm{in}} + fan_{\textrm{out}})/2$.
 
-The connection weights of each layer must be initialized randomly by one of the following:\newline
+The connection weights of each layer should be initialized randomly by one of the following:\newline
 - Normal distribution with mean 0 and variance $\sigma^2$\newline
 - Uniform distribution between $-r$ and $+r$, where $r=\sqrt{3 \sigma^2}$ 
 
@@ -535,5 +535,149 @@ Notes:\newline
 - In practice, you only need to apply dropout to the top 1-3 layers (excluding the output layer).\newline
 - Dropout means the loss evaluation during training can be misleading.\newline
 - You need to use \textit{alpha dropout} if you are using the SELU activation function.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{TensorFlow}
+
+Around 95\% of use cases do not require anything other than \texttt{tf.keras} and \texttt{tf.data}.\newline
+These are TensorFlow's high-level APIs.
+But you might need to use the low-level API...\newline
+
+\textbf{\underline{TensorFlow Objects and Operations}}
+
+TensorFlow revolves around \textit{tensors}, which \textit{flow} from operation to operation.\newline
+Creating tensors, and using them, is very similar to NumPy:
+
+\texttt{import tensorflow as tf}\newline
+\texttt{t = tf.constant([[1., 2., 3.], [4., 5., 6.]])} -- create a tensor.\newline
+\texttt{t = tf.constant(a, dtype=tf.float32)} -- create a tensor from a NumPy array.
+
+\texttt{t[:, 1:]} -- an example of indexing.
+
+\texttt{t + 10} -- all sorts of tensor operations are available...\newline
+\texttt{tf.square(t)}\newline
+\texttt{tf.reduce\char`_mean(t)}\newline
+\texttt{t @ tf.transpose(t)}
+
+\texttt{t.dtype} -- note that TensforFlow uses 32-bit floats by default (NumPy uses 64-bit precision).\newline
+Also note that TensorFlow does not perform any type conversions automatically.
+
+TensorFlow supports several other data structures:\newline
+Variables, sparse tensors, tensor arrays, ragged tensors, string tensors, sets, queues...\newline
+
+\textbf{\underline{Computing Gradients Using Autodiff}}
+
+Use autodiff to efficiently compute gradients. E.g this simple toy function at \texttt{(w1,w2)=(5,3)}.\newline
+\texttt{def f(w1, w2):}\newline
+\texttt{.~~~return 3*w1**2 + 2*w1*w2}\newline
+\texttt{}\newline
+\texttt{w1, w2 = tf.Variable(5.), tf.Variable(3.)}\newline
+\texttt{with tf.GradientTape() as tape:}\newline
+\texttt{.~~~z = f(w1, w2)}\newline
+\texttt{gradients = tape.gradient(z, [w1, w2])}
+
+The GradientTape records every operation that involves a Variable data structure.\newline
+To save memory, only put the strict minimum inside the tape block.\newline
+The tape is automatically erased immediately after you call its \texttt{gradient()} method.\newline
+
+\textbf{\underline{Customizing Keras Models}}
+
+Using TensorFlow's low-level API you can build custom:
+% 
+\vspace{-5.0mm}
+\begin{itemize}
+\item
+Loss functions.
+\vspace{-3.0mm}
+\item
+Activation functions.
+\vspace{-3.0mm}
+\item
+Initializers.
+\vspace{-3.0mm}
+\item
+Regularizers.
+\vspace{-3.0mm}
+\item
+Layers and Models.
+\end{itemize}
+
+\newpage
+For better performance,
+you should only use vectorized TensorFlow operations.\newline
+
+\textbf{\underline{Custom Loss Functions}}
+
+\texttt{def my\char`_huber(y\char`_true, y\char`_pred):\newline
+.~~~error = y\char`_true - y\char`_pred\newline
+.~~~is\char`_small\char`_error = tf.abs(error) < 1\newline
+.~~~squared\char`_loss = tf.square(error) / 2\newline
+.~~~linear\char`_loss = tf.abs(error) - 0.5\newline
+.~~~return tf.where(is\char`_small\char`_error, squared\char`_loss, linear\char`_loss)}
+
+def huber_fn(y_true, y_pred):
+    error = y_true - y_pred
+    is_small_error = tf.abs(error) < 1
+    squared_loss = tf.square(error) / 2
+    linear_loss  = tf.abs(error) - 0.5
+    return tf.where(is_small_error, squared_loss, linear_loss)
+
+\textbf{\underline{Custom Activation Functions, Initializers, and Regularizers}}
+
+def my_softplus(z):
+    return tf.math.log(tf.exp(z) + 1.0)
+
+def my_glorot_initializer(shape, dtype=tf.float32):
+    stddev = tf.sqrt(2. / (shape[0] + shape[1]))
+    return tf.random.normal(shape, stddev=stddev, dtype=dtype)
+
+def my_l1_regularizer(weights):
+    return tf.reduce_sum(tf.abs(0.01 * weights))
+
+layer = keras.layers.Dense(1, activation=my_softplus,
+                           kernel_initializer=my_glorot_initializer,
+                           kernel_regularizer=my_l1_regularizer)
+
+...
+model.save("my_model_with_many_custom_parts.h5")
+
+model = keras.models.load_model(
+    "my_model_with_many_custom_parts.h5",
+    custom_objects={
+       "my_l1_regularizer": my_l1_regularizer,
+       "my_positive_weights": my_positive_weights,
+       "my_glorot_initializer": my_glorot_initializer,
+       "my_softplus": my_softplus,
+    })
+...
+
+
+
+
+
+Loss functions,
+Activation functions,
+Regularizers
+
+Custom Loss Functions
+
+
+If a function has hyperparameters
+that need to be saved along with the model... bit more complicated
+
+Custom Layers
+
+1. No weights
+
+2. Create a subclass of the keras.layers.Layer class
+
+Custom Models
+
+
 
 \newpage

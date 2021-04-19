@@ -618,65 +618,92 @@ you should only use vectorized TensorFlow operations.\newline
 .~~~is\char`_small\char`_error = tf.abs(error) < 1\newline
 .~~~squared\char`_loss = tf.square(error) / 2\newline
 .~~~linear\char`_loss = tf.abs(error) - 0.5\newline
-.~~~return tf.where(is\char`_small\char`_error, squared\char`_loss, linear\char`_loss)}
+.~~~return tf.where(is\char`_small\char`_error, squared\char`_loss, linear\char`_loss)\newline
+...\newline
+model.compile(loss=my\char`_huber, optimizer=\textquotesingle adam\textquotesingle)\newline
+...\newline
+model.save(\textquotesingle my\char`_custom\char`_model.h5\textquotesingle)\newline
+model = keras.models.load\char`_model(\textquotesingle my\char`_custom\char`_model.h5\textquotesingle,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~custom\char`_objects=\{\textquotesingle my\char`_huber\textquotesingle:my\char`_huber\})}\newline
 
-def huber_fn(y_true, y_pred):
-    error = y_true - y_pred
-    is_small_error = tf.abs(error) < 1
-    squared_loss = tf.square(error) / 2
-    linear_loss  = tf.abs(error) - 0.5
-    return tf.where(is_small_error, squared_loss, linear_loss)
+If your custom loss function requires an argument,
+you need to create a subclass of \texttt{keras.losses.Loss}
+The \texttt{get\char`_config()} method allows the function argument value to be saved.
+
+
+\texttt{class MyHuberLoss(keras.losses.Loss):\newline
+.~~~def \char`_\char`_init\char`_\char`_(self, threshold=1.0, **kwargs):\newline
+.~~~~~~~self.threshold = threshold\newline
+.~~~~~~~super().\char`_\char`_init\char`_\char`_(**kwargs)\newline
+.~~~def call(self, y\char`_true, y\char`_pred):\newline
+.~~~~~~~error = y\char`_true - y\char`_pred\newline
+.~~~~~~~is\char`_small\char`_error = tf.abs(error) < self.threshold\newline
+.~~~~~~~squared\char`_loss = tf.square(error)/2\newline
+.~~~~~~~lin\char`_loss  = self.threshold*tf.abs(error) - self.threshold**2/2\newline
+.~~~~~~~return tf.where(is\char`_small\char`_error, squared\char`_loss, lin\char`_loss)\newline
+.~~~def get\char`_config(self):\newline
+.~~~~~~~base\char`_config = super().get\char`_config()\newline
+.~~~~~~~return \{**base\char`_config, \textquotesingle threshold\textquotesingle:self.threshold\}\newline
+...\newline
+model.compile(loss=MyHuberLoss(2.), optimizer=\textquotesingle adam\textquotesingle)\newline
+...\newline
+model.save(\textquotesingle my\char`_custom\char`_model.h5\textquotesingle)\newline
+model = keras.models.load\char`_model(\textquotesingle my\char`_custom\char`_model.h5\textquotesingle,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~custom\char`_objects=\{\textquotesingle MyHuberLoss\textquotesingle:MyHuberLoss\})}
+\newpage
 
 \textbf{\underline{Custom Activation Functions, Initializers, and Regularizers}}
 
-def my_softplus(z):
-    return tf.math.log(tf.exp(z) + 1.0)
+\texttt{def my\char`_softplus(z):\newline
+.~~~return tf.math.log(tf.exp(z) + 1.0)}
 
-def my_glorot_initializer(shape, dtype=tf.float32):
-    stddev = tf.sqrt(2. / (shape[0] + shape[1]))
-    return tf.random.normal(shape, stddev=stddev, dtype=dtype)
+\texttt{def my\char`_glorot\char`_initializer(shape, dtype=tf.float32):\newline
+.~~~stddev = tf.sqrt(2.~/ (shape[0] + shape[1]))\newline
+.~~~return tf.random.normal(shape, stddev=stddev, dtype=dtype)}
 
-def my_l1_regularizer(weights):
-    return tf.reduce_sum(tf.abs(0.01 * weights))
+\texttt{def my\char`_l1\char`_regularizer(weights):\newline
+.~~~return tf.reduce\char`_sum(tf.abs(0.01 * weights))}
 
-layer = keras.layers.Dense(1, activation=my_softplus,
-                           kernel_initializer=my_glorot_initializer,
-                           kernel_regularizer=my_l1_regularizer)
+\texttt{layer = keras.layers.Dense(100,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~activation=my\char`_softplus,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~kernel\char`_regularizer=my\char`_l1\char`_regularizer,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~kernel\char`_initializer=my\char`_glorot\char`_initializer)}
 
-...
-model.save("my_model_with_many_custom_parts.h5")
+\texttt{...\newline
+model.save(\textquotesingle my\char`_custom\char`_model.h5\textquotesingle)\newline
+model = keras.models.load\char`_model(\newline
+.~~~\textquotesingle my\char`_custom\char`_model.h5\textquotesingle,\newline
+.~~~custom\char`_objects=\{\newline
+.~~~~~~~\textquotesingle my\char`_softplus\textquotesingle:~my\char`_softplus,\newline
+.~~~~~~~\textquotesingle my\char`_l1\char`_regularizer\textquotesingle:~my\char`_l1\char`_regularizer,\newline
+.~~~~~~~\textquotesingle my\char`_glorot\char`_initializer\textquotesingle:~my\char`_glorot\char`_initializer\newline
+.~~~\})\newline
+}\newline
 
-model = keras.models.load_model(
-    "my_model_with_many_custom_parts.h5",
-    custom_objects={
-       "my_l1_regularizer": my_l1_regularizer,
-       "my_positive_weights": my_positive_weights,
-       "my_glorot_initializer": my_glorot_initializer,
-       "my_softplus": my_softplus,
-    })
-...
+\textbf{\underline{Custom Layers}}
+
+% If you want an exotic layer for which TensorFlow does not provide a default implementation...
+
+Custom layers without weights can be easily created.
+E.g. exp function applied to each input:\newline
+\texttt{exponential\char`_layer = keras.layers.Lambda(lambda x:~tf.exp(x))}\newline
+
+The following custom layer puts the input through a series of dense layers,
+and then adds this output to the original input (an example of a ResidualBlock layer):
+
+\texttt{class ResidualBlock(keras.layers.Layer):\newline
+.~~~def \char`_\char`_init\char`_\char`_(self, n\char`_layers, n\char`_neurons, **kwargs):\newline
+.~~~~~~~super().\char`_\char`_init\char`_\char`_(**kwargs)\newline
+.~~~~~~~self.hidden = [keras.layers.Dense(n\char`_neurons, activation=\textquotesingle elu\textquotesingle)\newline
+.~~~~~~~~~~~~~~~~~~~~~~for \char`_ in range(n\char`_layers)]}
+
+\texttt{.~~~def call(self, inputs):\newline
+.~~~~~~~Z = inputs\newline
+.~~~~~~~for layer in self.hidden:\newline
+.~~~~~~~~~~~Z = layer(Z)\newline
+.~~~~~~~return inputs + Z}
 
 
-
-
-
-Loss functions,
-Activation functions,
-Regularizers
-
-Custom Loss Functions
-
-
-If a function has hyperparameters
-that need to be saved along with the model... bit more complicated
-
-Custom Layers
-
-1. No weights
-
-2. Create a subclass of the keras.layers.Layer class
-
-Custom Models
 
 
 

@@ -703,8 +703,62 @@ and then adds this output to the original input (an example of a ResidualBlock l
 .~~~~~~~~~~~Z = layer(Z)\newline
 .~~~~~~~return inputs + Z}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{TensorFlow: Data API}
 
+Deep Learning systems are often trained on very large datasets that will not fit into RAM.\newline
+TensorFlow's Data API: can ingest large datasets and preprocess them efficiently.
 
+\textbf{\underline{Transformations \& Shuffling}}
 
+Create a dummy dataset (each entry/item is just a scalar tensor 0, 1, 2, ..., 199):\newline
+\texttt{dataset = tf.data.Dataset.range(200)}
+
+Transform the dataset items:\newline
+\texttt{dataset = dataset.map(lambda x:~x * 2)}
+
+Shuffle the dataset items:\newline
+\texttt{dataset = dataset.shuffle(buffer\char`_size=10, seed=42)}\newline
+- Loads the first $n$ items into memory.\newline
+- Randomly selects one item from the buffer.\newline
+- Replaces the selected item with a fresh one from the source dataset.\newline
+- Iterates through the entire source dataset.\newline
+- \textit{Ideally, the buffer-size would be equal to the dataset size, but you might be limited by RAM.}
+
+Group the dataset items into batches:\newline
+\texttt{dataset = dataset.batch(32, drop\char`_remainder=True)}
+
+Look at a few items in a dataset:\newline
+\texttt{for item in dataset.take(5):\newline.~~~print(item)}\newline
+
+\textbf{\underline{Reading from CSV}}
+
+This only points to the data, it does not load it (i.e.~if the path does not exist, it will not crash).\newline
+Each item will just be a string corresponding to a line of the CSV:\newline
+\texttt{dataset = tf.data.TextLineDataset(\textquotesingle path/to/data.csv\textquotesingle).skip(1)}
+
+Dummy CSV meta data:\newline
+\texttt{n\char`_inputs = 7}\newline
+\texttt{X\char`_mean = tf.constant(np.zeros(7), dtype=tf.float32)}\newline
+\texttt{X\char`_std = tf.constant(np.ones(7), dtype=tf.float32)}
+
+Parse and scale the CSV data:\newline
+\texttt{def preprocess(line):\newline
+.~~~defs = [0.]~* n\char`_inputs + [tf.constant([], dtype=tf.float32)]\newline
+.~~~fields = tf.io.decode\char`_csv(line, record\char`_defaults=defs)\newline
+.~~~x = tf.stack(fields[:-1])\newline
+.~~~y = tf.stack(fields[-1:])\newline
+.~~~return (x - X\char`_mean) / X\char`_std, y}
+
+\texttt{dataset = dataset.map(preprocess)}
+
+And then the rest...\newline
+\texttt{dataset = dataset.shuffle(10000).batch(32).prefetch(1)}\newline
+Prefetch: the dataset will work on preparing batch $n+1$ whilst training on batch $n$.
 
 \newpage

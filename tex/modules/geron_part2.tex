@@ -762,3 +762,62 @@ And then the rest...\newline
 Prefetch: the dataset will work on preparing batch $n+1$ whilst training on batch $n$.
 
 \newpage
+\textbf{\underline{Preprocessing Input Features}}
+
+Include a preprocessing layer directly in your model:\newline
+\texttt{class Standardization(keras.layers.Layer):\newline
+.~~~def adapt(self, data\char`_sample):\newline
+.~~~~~~~self.means = np.mean(data\char`_sample, axis=0, keepdims=True)\newline
+.~~~~~~~self.stds = np.std(data\char`_sample, axis=0, keepdims=True)\newline
+.~~~def call(self, inputs):\newline
+.~~~~~~~return (inputs-self.means)/(self.stds+keras.backend.epsilon())}
+
+\texttt{std\char`_layer = Standardization()\newline
+std\char`_layer.adapt(data\char`_sample)}
+
+\texttt{model = keras.Sequential()\newline
+model.add(std\char`_layer) \# and then continue as normal...}
+
+\textbf{\underline{Encode Categorical Features Using One-Hot Vectors}}
+
+First, define the \textit{vocabulary} (the list of all possible categories)\newline
+and create a tensor with the corresponding indices:\newline
+\texttt{vocab = [\textquotesingle <1H OCEAN\textquotesingle, \textquotesingle INLAND\textquotesingle, \textquotesingle NEAR OCEAN\textquotesingle, \textquotesingle ISLAND\textquotesingle]}\newline
+\texttt{indices = tf.range(len(vocab), dtype=tf.int64)}
+
+Next, create a lookup table.
+This includes \textit{out-of-vocabulary} (oov) buckets:\newline
+\texttt{table\char`_init = tf.lookup.KeyValueTensorInitializer(vocab, indices)\newline
+num\char`_oov\char`_buckets = 2\newline
+table = tf.lookup.StaticVocabularyTable(table\char`_init, num\char`_oov\char`_buckets)}
+
+Use the lookup table to encode a small batch of categorical features to one-hot vectors:\newline
+\texttt{categories = tf.constant([\textquotesingle NEAR OCEAN\textquotesingle, \textquotesingle DESERT\textquotesingle, \textquotesingle INLAND\textquotesingle, \textquotesingle NOMAD\textquotesingle])\newline
+cat\char`_indices = table.lookup(categories)\newline
+cat\char`_one\char`_hot = tf.one\char`_hot(cat\char`_indices, depth=len(vocab) + num\char`_oov\char`_buckets)}
+
+\textbf{\underline{Encode Categorical Features Using Embeddings}}
+
+An embedding is a trainable dense vector that represents a category.
+By default, embeddings are initialized randomly.
+As training progresses, the co-ordinates begin to \textit{represent} something.
+
+Create an \textit{embedding matrix} containing each category's embedding, initialized randomly:\newline
+\texttt{embedding\char`_dim = 2 \# hyperparameter needs to be tuned\newline
+embedding = keras.layers.Embedding(input\char`_dim=len(vocab)+num\char`_oov\char`_buckets\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~output\char`_dim=embedding\char`_dim)}
+
+Using the Functional API, create a Keras model that can process categorical features
+(along with regular numerical features)
+and learn an embedding for each category (and each oov bucket):\newline
+\texttt{regular\char`_inputs = keras.layers.Input(shape=[8])\newline
+cats = keras.layers.Input(shape=[], dtype=tf.string)\newline
+cat\char`_indices = keras.layers.Lambda(lambda x:~table.lookup(x))(cats)\newline
+cat\char`_embed = keras.layers.Embedding(input\char`_dim=6, output\char`_dim=2)(cat\char`_indices)\newline
+encoded\char`_inputs = keras.layers.concatenate([regular\char`_inputs, cat\char`_embed])\newline
+outputs = keras.layers.Dense(1)(encoded\char`_inputs) \# trivial model\newline
+model = keras.models.Model(inputs=[regular\char`_inputs,cats], outputs=[outputs])}
+
+
+
+\newpage

@@ -818,6 +818,91 @@ encoded\char`_inputs = keras.layers.concatenate([regular\char`_inputs, cat\char`
 outputs = keras.layers.Dense(1)(encoded\char`_inputs) \# trivial model\newline
 model = keras.models.Model(inputs=[regular\char`_inputs,cats], outputs=[outputs])}
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Deep Computer Vision: Convolutional Neural Networks}
+
+Convolutional neural networks (CNNs) emerged from the study of the brain's visual cortex.
+It was discovered that many neurons in the visual cortex have a small \textit{local receptive field},
+meaning they react only to visual stimuli located in a limited region of the visual field.
+The receptive fields of the different neurons can overlap.
+Together they tile the whole visual field.
+It was also observed that some neurons react only to images of horizontal lines,
+while others react to lines with different orientations.
+Moreover, some neurons have larger receptive fields,
+and react to more complex patterns that are combinations of the lower-level patterns...
+
+\textit{Why not simply use a DNN with fully connected layers for image recognition tasks?}\newline
+The large number of inputs (e.g.~100$\times$100 pixels) leads to a crazy number of model parameters.\newline
+
+\textbf{\underline{Convolutional Layers}}
+
+\textit{Convolutional layer:}~neurons are not connected to every single pixel in the input image,
+but only to pixels in their receptive fields. These layers are represented in 2D.
+
+An architecture of multiple convolutional layers allows the network to first concentrate on small low-level features,
+then assemble them into larger higher-level features.
+This works well as many real-world images are composed of a hierarchical structure.
+
+Mapping between layer $l$ and layer $l-1$:\newline
+$i^{l} ~\rightarrow (i^{l-1} \times s_h)~~\,\textrm{to}~~(i^{l-1} \times s_h + f_h -1)$\newline
+$j^{l} \rightarrow (j^{l-1} \times s_w)~~\textrm{to}~~(j^{l-1} \times s_w + f_w -1)$
+
+where:\newline
+$f_h$ and $f_w$ are the height and width of the receptive field.\newline
+$s_h$ and $s_w$ are the vertical and horizontal strides (the shift one from receptive field to the next).
+
+In order for a layer to have the same height and width as the previous layer,
+it is common to add zeros around the inputs. This is called \textit{zero padding}.
+
+The following diagram illustrates a convolutional layers (with zero padding and a stride of 1):
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.70\textwidth]{./images/conv_layer.jpg}
+\end{figure}
+
+\newpage
+
+\textbf{\underline{Filters and Feature Maps}}
+
+A neuron's weights can be represented as a small image the size of the receptive field.\newline
+These images are called \textit{filters} or \textit{convolutional kernels}.
+
+It is common to apply the same filter to all neurons in a convolutional layer.\newline
+The output is called a \textit{feature map}.\newline
+It will highlight the areas in an image that activate the filter the most (e.g.~vertical lines).
+
+In reality,
+unlike the 2D diagram above,
+a convolutional layer has multiple filters.\newline
+This means it is more like a 3D object,
+outputting one feature map per filter.
+
+$\rightarrow$~A convolutional layer is capable of detecting multiple features
+anywhere in its inputs.
+
+\textit{Now consider the connections between 3D convolutional layers (or even to a RGB input):}\newline
+A neuron located in row $i$, column $j$, feature map $k$, layer $l$ connects to...\newline
+neurons in layer $l-1$, for the corresponding rows and columns, \textbf{across all feature maps}.
+
+$\rightarrow$~You should now think of filters as 3D objects.\newline
+$\rightarrow$~This means the weights of a convolutional layer are a 4D object.
+
+Creating a convolutional layer in Keras:\newline
+\texttt{conv = keras.layers.Conv2D(filters=32, kernel\char`_size=3, strides=1,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~padding=\textquotesingle same\textquotesingle, activation=\textquotesingle relu\textquotesingle)}
+
+When \texttt{padding=\textquotesingle same\textquotesingle}
+the convolutional layer uses zero padding if necessary.\newline
+When \texttt{padding=\textquotesingle valid\textquotesingle}
+there is no zero padding (all receptive fields valid inside input).\newline
+
+\textbf{\underline{Pooling Layers}}
 
 
 \newpage

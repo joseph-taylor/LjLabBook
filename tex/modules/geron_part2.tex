@@ -863,7 +863,7 @@ The following diagram illustrates a convolutional layers (with zero padding and 
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.70\textwidth]{./images/conv_layer.jpg}
+\includegraphics[width=0.72\textwidth]{./images/conv_layer.png}
 \end{figure}
 
 \newpage
@@ -900,9 +900,161 @@ Creating a convolutional layer in Keras:\newline
 When \texttt{padding=\textquotesingle same\textquotesingle}
 the convolutional layer uses zero padding if necessary.\newline
 When \texttt{padding=\textquotesingle valid\textquotesingle}
-there is no zero padding (all receptive fields valid inside input).\newline
+there is no zero padding (all receptive fields valid inside input).\newline\newline
 
 \textbf{\underline{Pooling Layers}}
 
+The goal of a \textit{pooling layer} is to subsample (i.e.~shrink) the input image.\newline
+This reduces the computational load, the memory usage, and the number of parameters.\newline
+The downside is that it is obviously very destructive.
+
+Like in a convolutional layer,
+each neuron in a pooling layer is connected to the outputs of a limited number of neurons in the previous layer.
+You must define its kernel size, stride, and padding type.
+Unlike a convolutional layer, a pooling neuron has no weights,
+all it does is aggregate the inputs (it is most common to take the max).
+A pooling layer typically works on every input channel independently,
+so the output depth is the same as the input depth.
+
+Creating a max pooling layer:\newline
+\texttt{max\char`_pool = keras.layers.MaxPool2D(pool\char`_size=2)}\newline
+By default, the stride is set to the kernel size and padding is set to `valid'.\newline
+
+A \textit{global average pooling layer} computes the mean of each entire feature map.\newline
+Although this is extremely destructive,
+it can be useful as the output layer:\newline
+\texttt{global\char`_average\char`_pool = keras.layers.GlobalAvgPool2D()}
+
+\newpage
+\textbf{\underline{CNN Architectures}}
+
+Typical CNN architectures stack a few convolutional layers (each with a ReLU activation),
+then a pooling layer, then another few convolutional layers, then another pooling layer, and so on.
+
+$\rightarrow$ As it progresses through the network, the image gets smaller and smaller,
+but also deeper and deeper (i.e~it has more feature maps).
+This makes sense, since the number of low-level features is often fairly low,
+but there are many different ways to combine them into higher-level features.
+
+At the top of the stack,
+a regular feed-forward neural network is added, composed of a few fully connected layers.
+The final layer outputs the prediction.\newline
+
+An example of a simple CNN to tackle the Fashion MNIST dataset:\newline
+% 
+\texttt{model = keras.models.Sequential([\newline
+.~~~keras.layers.Conv2D(64, 7, activation=\textquotesingle relu\textquotesingle, padding=\textquotesingle same\textquotesingle,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~input\char`_shape=[28, 28, 1]),\newline
+.~~~keras.layers.MaxPooling2D(2),\newline
+.~~~keras.layers.Conv2D(128, 3, activation=\textquotesingle relu\textquotesingle, padding=\textquotesingle same\textquotesingle),\newline
+.~~~keras.layers.Conv2D(128, 3, activation=\textquotesingle relu\textquotesingle, padding=\textquotesingle same\textquotesingle),\newline
+.~~~keras.layers.MaxPooling2D(2),\newline
+.~~~keras.layers.Conv2D(256, 3, activation=\textquotesingle relu\textquotesingle, padding=\textquotesingle same\textquotesingle),\newline
+.~~~keras.layers.Conv2D(256, 3, activation=\textquotesingle relu\textquotesingle, padding=\textquotesingle same\textquotesingle),\newline
+.~~~keras.layers.MaxPooling2D(2),\newline
+.~~~keras.layers.Flatten(),\newline
+.~~~keras.layers.Dense(128, activation=\textquotesingle relu\textquotesingle),\newline
+.~~~keras.layers.Dropout(0.5),\newline
+.~~~keras.layers.Dense(64, activation=\textquotesingle relu\textquotesingle),\newline
+.~~~keras.layers.Dropout(0.5),\newline
+.~~~keras.layers.Dense(10, activation=\textquotesingle softmax\textquotesingle)\newline
+])}\newline
+
+\textbf{Notes:}
+
+A common mistake is to use convolutional kernels that are too large.
+For example, instead of using a convolutional layer with a 5$\times$5 kernel,
+stack two layers with 3$\times$3 kernels:
+it will use fewer parameters and require fewer computations.
+One exception is the first convolutional layer;
+because the input images will only have 1 or 3 channels,
+it can handle a larger kernel.
+
+Because the input images are not very large, we do not set a stride in the model above.
+
+It is common practice to double the number of filters after each pooling layer:
+since a pooling layer divides each spatial dimension by a factor of 2,
+we can afford to double the number of feature maps in the next layer
+without exploding the number of parameters, memory usage, or computational load.
+
+This model repeats the same structure twice:
+two convolutional layers followed by a max pooling layer.
+For larger images, we could repeat this structure several more times...
+
+\newpage
+\textbf{\underline{ResNet (Residual Network)}}
+
+ResNet is a state of the art image classifier.
+It is very deep, some variants have over 100 layers.
+
+The key to training such a deep network is to use \textit{skip connections} (or \textit{shortcut connections}):\newline
+the signal feeding into a layer is also added to the output of a layer located higher up the stack.
+
+If you use a skip connection,
+the network will be forced to model $f(\boldsymbol{x}) = h(\boldsymbol{x}) - \boldsymbol{x}$
+\newline rather than $h(\boldsymbol{x})$.
+This is called \textit{residual learning} (hence ResNet's name). Positives:\newline
+- At the start of training (when weights are small), skip connections model the identity function.\newline
+- Also, the network can start making progress even if several layers have not started learning.
+
+ResNet can be seen as a deep stack of \textit{residual units (RUs)},
+where each RU is a small neural network with a skip connection.
+Below is a diagram of the ResNet architecture.
+Note that $64,~7\!\times\!7 + 2(\textrm{S})$ represents 64 feature maps,
+using a $7\!\times\!7$ kernel, with stride 2 (using `same' padding):
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1.0\textwidth, angle=270]{./images/resnet.jpg}
+\end{figure}
+
+\newpage
+ResNet-34 is the ResNet with 34 layers (only counting convolutional layers and fully connected layers).
+It contains 3 RUs with 64 maps, 4 RUs with 128 maps, 6 RUs with 256 maps, and 3~RUs with 512 maps.
+It can be implemented from scratch using Keras:
+
+\texttt{class ResidualUnit(keras.layers.Layer):}\newline
+\texttt{.~~~def \char`_\char`_init\char`_\char`_(self, filters, strides=1, activation=\textquotesingle relu\textquotesingle, **kwargs):}\newline
+\texttt{.~~~~~~~super().\char`_\char`_init\char`_\char`_(**kwargs)}\newline
+\texttt{.~~~~~~~self.activation = keras.activations.get(activation)}\newline
+\texttt{.~~~~~~~self.main\char`_layers = [}\newline
+\texttt{.~~~~~~~~~~~keras.layers.Conv2D(filters, 3, strides=strides,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~padding=\textquotesingle same\textquotesingle, use\char`_bias=False),}\newline
+\texttt{.~~~~~~~~~~~keras.layers.BatchNormalization(),}\newline
+\texttt{.~~~~~~~~~~~self.activation,}\newline
+\texttt{.~~~~~~~~~~~keras.layers.Conv2D(filters, 3, strides=1,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~padding=\textquotesingle same\textquotesingle, use\char`_bias=False),}\newline
+\texttt{.~~~~~~~~~~~keras.layers.BatchNormalization()]}\newline
+\texttt{.~~~~~~~self.skip\char`_layers = []}\newline
+\texttt{.~~~~~~~if strides > 1:}\newline
+\texttt{.~~~~~~~~~~~self.skip\char`_layers = [}\newline
+\texttt{.~~~~~~~~~~~~~~~keras.layers.Conv2D(filters, 1, strides=strides,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~padding=\textquotesingle same\textquotesingle, use\char`_bias=False),}\newline
+\texttt{.~~~~~~~~~~~~~~~keras.layers.BatchNormalization()]}\newline
+\texttt{}\newline
+\texttt{.~~~def call(self, inputs):}\newline
+\texttt{.~~~~~~~Z = inputs}\newline
+\texttt{.~~~~~~~for layer in self.main\char`_layers:}\newline
+\texttt{.~~~~~~~~~~~Z = layer(Z)}\newline
+\texttt{.~~~~~~~skip\char`_Z = inputs}\newline
+\texttt{.~~~~~~~for layer in self.skip\char`_layers:}\newline
+\texttt{.~~~~~~~~~~~skip\char`_Z = layer(skip\char`_Z)}\newline
+\texttt{.~~~~~~~return self.activation(Z + skip\char`_Z)}\newline
+
+\texttt{model = keras.models.Sequential()}\newline
+\texttt{model.add(keras.layers.Conv2D(64, 7, strides=2,}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~input\char`_shape=[224, 224, 3],}\newline
+\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~padding=\textquotesingle same\textquotesingle, use\char`_bias=False))}\newline
+\texttt{model.add(keras.layers.BatchNormalization())}\newline
+\texttt{model.add(keras.layers.Activation(\textquotesingle relu\textquotesingle))}\newline
+\texttt{model.add(keras.layers.MaxPool2D(pool\char`_size=3, strides=2, padding=\textquotesingle same\textquotesingle))}\newline
+\texttt{prev\char`_filters = 64}\newline
+\texttt{for filters in [64] * 3 + [128] * 4 + [256] * 6 + [512] * 3:}\newline
+\texttt{.~~~strides = 1 if filters == prev\char`_filters else 2}\newline
+\texttt{.~~~model.add(ResidualUnit(filters, strides=strides))}\newline
+\texttt{.~~~prev\char`_filters = filters}\newline
+\texttt{model.add(keras.layers.GlobalAvgPool2D())}\newline
+\texttt{model.add(keras.layers.Flatten())}\newline
+\texttt{model.add(keras.layers.Dense(10, activation=\textquotesingle softmax\textquotesingle))}
 
 \newpage

@@ -1058,3 +1058,72 @@ It can be implemented from scratch using Keras:
 \texttt{model.add(keras.layers.Dense(10, activation=\textquotesingle softmax\textquotesingle))}
 
 \newpage
+\textbf{\underline{Using Pre-trained Models}}
+
+In general, you don't have to implement standard models manually:\newline
+\texttt{model = keras.applications.resnet50.ResNet50(weights=\textquotesingle imagenet\textquotesingle)}
+
+They are very easy to use...\newline
+\texttt{from matplotlib.image import imread}\newline
+\texttt{}\newline
+\texttt{image\char`_01 = imread(\textquotesingle /path/to/file\char`_01.jpeg\textquotesingle)}\newline
+\texttt{image\char`_01\char`_resized = tf.image.resize(image\char`_01, [224, 224])}\newline
+\texttt{...}\newline
+\texttt{image\char`_99 = imread(\textquotesingle /path/to/file\char`_99.jpeg\textquotesingle)}\newline
+\texttt{image\char`_99\char`_resized = tf.image.resize(image\char`_99, [224, 224])}\newline
+\texttt{}\newline
+\texttt{images = tf.stack([image\char`_01\char`_resized, ..., image\char`_99\char`_resized])}\newline
+\texttt{inputs = keras.applications.resnet50.preprocess\char`_input(images)}\newline
+\texttt{Y\char`_proba = model.predict(inputs)}\newline
+\texttt{}\newline
+\texttt{top\char`_K = keras.applications.resnet50.decode\char`_predictions(Y\char`_proba, top=5)}\newline
+\texttt{for info in top\char`_K: print(info); print()}\newline
+
+\textbf{\underline{Transfer Learning}}
+
+If you want to build an image classifier but you do not have enough training data,
+then it is often a good idea to reuse the lower layers of a pre-trained model.
+
+Load a dataset using TensorFlow Datasets:\newline
+\texttt{import tensorflow\char`_datasets as tfds}\newline
+\texttt{test\char`_splt,val\char`_splt,train\char`_splt = tfds.Split.TRAIN.subsplit([10,15,75])}\newline
+\texttt{test\char`_set  = tfds.load(\textquotesingle tf\char`_flowers\textquotesingle, split=test\char`_splt,  as\char`_supervised=True)}\newline
+\texttt{valid\char`_set = tfds.load(\textquotesingle tf\char`_flowers\textquotesingle, split=val\char`_splt, as\char`_supervised=True)}\newline
+\texttt{train\char`_set = tfds.load(\textquotesingle tf\char`_flowers\textquotesingle, split=train\char`_splt, as\char`_supervised=True)}
+
+Prepare the datasets:\newline
+\texttt{def preprocess(image, label):}\newline
+\texttt{.~~~resized\char`_im = tf.image.resize(image, [224, 224])}\newline
+\texttt{.~~~final\char`_im = keras.applications.xception.preprocess\char`_input(resized\char`_im)}\newline
+\texttt{.~~~return final\char`_im, label}
+
+\texttt{train\char`_set = train\char`_set.shuffle(1000)}\newline
+\texttt{train\char`_set = train\char`_set.map(preprocess).batch(32).prefetch(1)}\newline
+\texttt{valid\char`_set = valid\char`_set.map(preprocess).batch(32).prefetch(1)}\newline
+\texttt{test\char`_set = test\char`_set.map(preprocess).batch(32).prefetch(1)}
+
+Load a pre-trained Xception model (excluding the top of the network) and add a custom top:\newline
+\texttt{base\char`_model = keras.applications.xception.Xception(weights=\textquotesingle imagenet\textquotesingle,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~include\char`_top=False)}\newline
+\texttt{avg = keras.layers.GlobalAveragePooling2D()(base\char`_model.output)}\newline
+\texttt{output = keras.layers.Dense(5, activation=\textquotesingle softmax\textquotesingle)(avg)}\newline
+\texttt{model = keras.Model(inputs=base\char`_model.input, outputs=output)}
+
+Freeze the weights of the pre-trained layers at the beginning of training:\newline
+\texttt{for layer in base\char`_model.layers:}\newline
+\texttt{.~~~layer.trainable = False}
+
+\texttt{optimizer = keras.optimizers.SGD(lr=0.2, momentum=0.9, decay=0.01)}\newline
+\texttt{model.compile(loss=\textquotesingle sparse\char`_categorical\char`_crossentropy\textquotesingle, optimizer=optimizer,\newline
+.~~~~~~~~~~~~~metrics=[\textquotesingle accuracy\textquotesingle ])}\newline
+\texttt{history = model.fit(train\char`_set, epochs=5, validation\char`_data=valid\char`_set)}
+
+When the top layers are well trained, unfreeze all the layers and continue training\newline
+(this time using a much lower learning rate to avoid damaging the pre-trained weights):\newline
+\texttt{for layer in base\char`_model.layers:}\newline
+\texttt{.~~~layer.trainable = True}\newline
+\texttt{optimizer = keras.optimizers.SGD(lr=0.01, momentum=0.9, decay=0.001)}\newline
+\texttt{model.compile(...)}\newline
+\texttt{history = model.fit(...)}
+
+\newpage

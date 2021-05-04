@@ -63,6 +63,7 @@ class Child(Parent):
         return 18 - self._Parent__age
 
 
+# will NOT run this code if we import the classes
 if __name__ == '__main__':
 
     parent = Parent('John', 40, 1.8, 75) # create a Parent object instance

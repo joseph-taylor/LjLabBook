@@ -92,8 +92,3 @@ print()
 print(fish.name)
 print(fish.weight)
 print(fish.depth)
-
-
-##############
-# UNIT TESTS #
-##############

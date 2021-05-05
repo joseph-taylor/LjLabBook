@@ -17,6 +17,6 @@ child3 = Child('Max 3', 13, 1.13, 30, 'Yoyo')
 child3.display_verbose_info()
 
 # Version 4
-import fauxPackage.fauxFunctions as ff
+import faux_package.faux_functions as ff
 ff.say_hello()
 ff.say_bonjour()

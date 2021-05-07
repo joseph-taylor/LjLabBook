@@ -8,3 +8,5 @@
 *.toc
 *.out
 *~
+__pycache__
+.ipynb_checkpoints

@@ -1,6 +1,8 @@
 \section{PANDAS}
 
 \vspace{\baselineskip}
+\texttt{import pandas as pd}
+\newline\newline
 \texttt{axis=0} (default) represents rows.
 \newline
 \texttt{axis=1} represents columns.
@@ -17,31 +19,33 @@ Read / Write:
 Object Creation:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{s = pd.Series([1, 2, 3, 4])} ~-- create a Series (1D).
-& \texttt{s = pd.Series([1, 2, 3, 4], index=[\textquotesingle v01\textquotesingle , \textquotesingle v02\textquotesingle , \textquotesingle v03\textquotesingle , \textquotesingle v04\textquotesingle ])}
-& \texttt{df = pd.DataFrame([[1,2,3],[4,5,6]])} ~-- create a DataFrame (2D).
-& \texttt{df = pd.DataFrame(np.random.randn(2,3), index=[\textquotesingle v01\textquotesingle , \textquotesingle v02\textquotesingle ], columns=[\textquotesingle A\textquotesingle , \textquotesingle B\textquotesingle, \textquotesingle C\textquotesingle])}
-& \texttt{df = pd.DataFrame(\{\textquotesingle A\textquotesingle :[33,22,11], \textquotesingle B\textquotesingle :[\textquotesingle baa\textquotesingle , \textquotesingle moo\textquotesingle , \textquotesingle grr\textquotesingle ]\}) }
+% & \texttt{s = pd.Series([1, 2, 3, 4])} ~-- create a Series (1D).
+% & \texttt{s = pd.Series([1, 2, 3, 4], index=[\textquotesingle v01\textquotesingle , \textquotesingle v02\textquotesingle , \textquotesingle v03\textquotesingle , \textquotesingle v04\textquotesingle ])}
+& \texttt{df = pd.DataFrame([[1,2,3],[4,5,6]])} ~-- create a DataFrame.
+& \texttt{df = pd.DataFrame(np.random.randn(2,3), columns=[\textquotesingle A\textquotesingle , \textquotesingle B\textquotesingle, \textquotesingle C\textquotesingle])}
+& \texttt{df = pd.DataFrame(\{\textquotesingle A\textquotesingle :[33,17,68], \textquotesingle B\textquotesingle :[\textquotesingle baa\textquotesingle , \textquotesingle grr\textquotesingle , \textquotesingle moo\textquotesingle ]\}) }
 \end{easylist}
 
 Viewing Data:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{df} ~-- top and tails the DataFrame.
-& \texttt{df.head()} ~-- typical head.
-& \texttt{df.tail(10)} ~-- typical tail.
-& \texttt{df.index} ~-- get DataFrame index object.
-& \texttt{df.columns} ~-- get DataFrame columns object.
-& \texttt{df.shape} ~-- get shape of DataFrame.
-& \texttt{df.size} ~-- get number of DataFrame elements.
+& \texttt{df} ~-- top and tails a DataFrame.
+& \texttt{df.head()} and \texttt{df.tail(10)}~-- typical head and tail.
+% & \texttt{df.index} ~-- get DataFrame index object.
+& \texttt{df.info()} ~-- get an overview of a DataFrame.
+& \texttt{df.shape} ~-- get the shape of a DataFrame.
+& \texttt{df.size} ~-- get the number of DataFrame elements.
+& \texttt{df.columns} ~-- get the DataFrame columns object.
 & \texttt{df.dtypes} ~-- get the data types of the columns.
-& \texttt{df.A.unique()} ~-- get the unique entries for a given column.
 & \texttt{df.describe()} ~-- provides a basic statistical summary.
-& \texttt{df.T} ~-- transpose the DataFrame.
-& \texttt{df.to\char`_numpy()} ~-- convert DataFrame to a Numpy array.
-& \texttt{df.sort\char`_index(axis=1)} ~-- sort by axis (columns).
-& \texttt{df.sort\char`_index(ascending=False)} ~-- sort by axis (rows).
-& \texttt{df.sort\char`_values(by=\textquotesingle B\textquotesingle)} ~-- sort by values.
+& \texttt{df.A.unique()} ~-- get the unique entries for a given column.
+% & \texttt{df.T} ~-- transpose the DataFrame.
+% & \texttt{df.sort\char`_index(axis=1)} ~-- sort by axis (columns).
+% & \texttt{df.sort\char`_index(ascending=False)} ~-- sort by axis (rows).
+& \texttt{df.sort\char`_values(by=[\textquotesingle A\textquotesingle, \textquotesingle B\textquotesingle])} ~-- order by column values.
+& \texttt{df.A.value\char`_counts()} ~-- get the frequency of a column's values.
+& \texttt{df.sample(frac = 0.5)} ~-- get a fractional random sample from a DataFrame.
+& \texttt{df.sample(n = 10)} ~-- get `n' random rows from a DataFrame.
 \end{easylist}
 \vspace{\baselineskip}
 
@@ -51,18 +55,18 @@ Selection:
 & \texttt{df.A} ~-- get column A.
 & \texttt{df[\textquotesingle A\textquotesingle]} ~-- select column A.
 & \texttt{df[20:25]} ~-- select row slice.
-& \texttt{df[\textquotesingle A\textquotesingle][20:25]} ~-- select column and row slice.
-& \texttt{df.loc[25]} ~-- get row cross section.
-& \texttt{df.loc["2015-09-20 10:00:30"]} ~-- as above, if the rows have names.
-& \texttt{df.loc[25, [\textquotesingle A\textquotesingle,\textquotesingle B\textquotesingle]]} ~-- get row cross section for specified columns.
-& \texttt{df.loc[20:25, [\textquotesingle A\textquotesingle,\textquotesingle B\textquotesingle]]}~-- select row and column slice (endpoints are \textit{included}).
-& \texttt{df.loc["2015-09-20 10:00:30":"2015-09-20 10:00:40", :]}
-& \texttt{df.loc[25, \textquotesingle A\textquotesingle]} ~-- get a scalar value.
-& \texttt{df.at[25, \textquotesingle A\textquotesingle]} ~-- get fast access to a scalar value.
-& \texttt{df.iloc[3:5, 0:2]} ~-- as above but \textbf{specifically} using integer indexing.
-& \texttt{df.iloc[3:5, :]} ~-- slicing rows explicitly.
-& \texttt{df.iloc[:, 0:2]} ~-- slicing columns explicitly.
-& \texttt{df.iat[25, 10]} ~-- as above but \textbf{specifically} using integer indexing.
+& \texttt{df[\textquotesingle A\textquotesingle][20:25]} ~-- select column and row slice.\newline
+% & \texttt{df.loc[25]} ~-- get row cross section.
+% & \texttt{df.loc["2015-09-20 10:00:30"]} ~-- as above, if the rows have names.
+% & \texttt{df.loc[25, [\textquotesingle A\textquotesingle,\textquotesingle B\textquotesingle]]} ~-- get row cross section for specified columns.
+& \texttt{df.loc[20:25, [\textquotesingle B\textquotesingle,\textquotesingle C\textquotesingle]]}~-- select row and column slice (endpoints are \textit{included}).
+% & \texttt{df.loc["2015-09-20 10:00:30":"2015-09-20 10:00:40", :]}
+% & \texttt{df.loc[25, \textquotesingle A\textquotesingle]} ~-- get a scalar value.
+& \texttt{df.at[33, \textquotesingle A\textquotesingle]} ~-- get fast access to a scalar value.
+& \texttt{df.iloc[20:26, 1:3]} ~-- as above but \textbf{specifically} using integer indexing.
+% & \texttt{df.iloc[3:5, :]} ~-- slicing rows explicitly.
+% & \texttt{df.iloc[:, 0:2]} ~-- slicing columns explicitly.
+& \texttt{df.iat[33, 0]} ~-- as above but \textbf{specifically} using integer indexing.
 \end{easylist}
 \vspace{\baselineskip}
 
@@ -70,43 +74,44 @@ Boolean Indexing:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
 & \texttt{df[df.A > 0]} ~-- use a column's values to select data.
-& \texttt{df[df.A > 0.5 * (df.B + df.C)]} ~-- \textit{another example}.
-& \texttt{df[(df.A > 50) \& (df.B > 50)]} ~-- and \textit{another example}.
+% & \texttt{df[df.A > 0.5 * (df.B + df.C)]} ~-- \textit{another example}.
+& \texttt{df[(df.A > 50) \& (df.B > df.C)]} ~-- \textit{another example}.
 & \texttt{df[df > 1.0]} ~-- select values from a DataFrame where a boolean condition is met.
-& \texttt{(df > 1.0).sum()} ~-- \textit{little trick which combines techniques}.
+% & \texttt{(df > 1.0).sum()} ~-- \textit{little trick which combines techniques}.
 & \texttt{df.isin([11,22,33,\textquotesingle C\textquotesingle,\textquotesingle M\textquotesingle,\textquotesingle S\textquotesingle])} ~-- take note of the \textit{isin()} method.
 \end{easylist}
+\vspace{\baselineskip}
 
-\newpage
 Setting:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{df[\textquotesingle Z\textquotesingle] = [3, 2, 6, 4]} ~-- setting a new column.
-& \texttt{df[\textquotesingle Z\textquotesingle] = s} ~~-- NOTE if you use a Series, it doesn't have to be a perfect fit.
+% & \texttt{df[\textquotesingle Z\textquotesingle] = s} ~~-- NOTE if you use a Series, it doesn't have to be a perfect fit.
 & \texttt{df.at[7, \textquotesingle C\textquotesingle] = 888 } -- set scalar values by label.
 & \texttt{df.iat[7, 3] = 888 } -- set scalar values by index.
-& \texttt{df.loc[:, \textquotesingle D\textquotesingle] = np.array([5] * len(df))} -- set multiple values.
+% & \texttt{df.loc[:,~\textquotesingle D\textquotesingle] = np.array([5] * len(df))} -- set multiple values.
 & \texttt{df = df + 2 } ~-- operate on every DataFrame element.
 & \texttt{df = df1 + df2 } ~-- \textit{another example}.
 & \texttt{df[df < 0] = -df } ~-- can also set values using a boolean mask.
+& \texttt{df[\textquotesingle Z\textquotesingle] = [3, 2, 6, 4]} ~-- setting a new column.
 & \texttt{df[\textquotesingle A\textquotesingle] *= -1 } ~-- operate on every element in a column.
-& \texttt{df[\textquotesingle A\textquotesingle] = 2 * df[\textquotesingle B\textquotesingle] + df[\textquotesingle C\textquotesingle] } ~-- \textit{another example}. Better than df.apply.
+& \texttt{df[\textquotesingle A\textquotesingle] = 2 * df[\textquotesingle B\textquotesingle] + df[\textquotesingle C\textquotesingle] } ~-- \textit{another example}.
 & \texttt{df.loc[3] += 55 } ~-- operate on every element in a row.
 & \texttt{df.loc[3] = 2 * df.loc[4] + 55} ~-- \textit{another example}.
 \end{easylist}
+\vspace{\baselineskip}
 
-% \vspace{\baselineskip}
 Missing Data:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
 & \texttt{df.dropna()} ~-- drop any rows with missing data.
 & \texttt{df.dropna(axis=1)} ~-- drop any columns with missing data.
-& \texttt{df.dropna(how=\textquotesingle any\textquotesingle)} ~-- drop row if there is \textbf{any} NaN instance (default).
-& \texttt{df.dropna(how=\textquotesingle all\textquotesingle)} ~-- only drop row if \textbf{all} instances are NaN.
+% & \texttt{df.dropna(how=\textquotesingle any\textquotesingle)} ~-- drop row if there is \textbf{any} NaN instance (default).
+% & \texttt{df.dropna(how=\textquotesingle all\textquotesingle)} ~-- only drop row if \textbf{all} instances are NaN.
 & \texttt{df.fillna(value=55)} ~-- fill missing data with a value.
 & \texttt{df.isna()} ~-- get boolean mask where values are NaN.
 % & \texttt{df.isna().sum()} ~-- \textit{little trick which combines techniques}.
 \end{easylist}
+\vspace{\baselineskip}
 
 Operations:
 % Operations in general \textit{exclude} missing data.
@@ -116,20 +121,20 @@ Operations:
 & \texttt{df.mean(axis=1)} ~-- get the mean of each row.
 & \texttt{df.sum(), df.cumsum(), df.max()...} ~-- many different operations.
 & \texttt{df.A.sum()} ~-- operate on a single column.
-& \texttt{df.apply(lambda col: col.max() - col.min())} ~-- apply function    to cols.
-& \texttt{df.apply(lambda row: row.A + row.B, axis=1)} ~-- apply function to rows.
+& \texttt{df.apply(lambda col:~col.max()-col.min())} ~-- apply function to cols.
+& \texttt{df.apply(lambda row:~row.max()-row.min(), axis=1)} ~-- apply to rows.
 \end{easylist}
 
-Merge:
+\vspace{\baselineskip}
+Unions and Joins:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{df = pd.concat([df1, df2])} ~-- concatenate DataFrames.
-& \texttt{df = pd.concat([df1, df2], ignore\char`_index=True)} ~-- avoids index clash.
-& \texttt{df = pd.concat([df1, df2], axis=1)} -- concatenate DataFrames side-by-side.
-& \texttt{df1.append(df2.loc[5], ignore\char`_index=True)} ~-- append a new row.
-& \texttt{pd.merge(df1, df2, on=\textquotesingle A\textquotesingle)} ~-- merge DataFrames with same column elements.
-& \texttt{pd.merge(df1, df2, left\char`_on=\textquotesingle car\textquotesingle, right\char`_on=\textquotesingle vehicle\textquotesingle)}
-~-- merge like this when columns have different names.
+% & \texttt{df = pd.concat([df1, df2])} ~-- concatenate DataFrames.
+& \texttt{df = pd.concat([df1, df2], ignore\char`_index=True)} ~-- concatenate.
+& \texttt{df = pd.concat([df1, df2], axis=1)} -- concatenate side-by-side.
+& \texttt{df1.append(df2, ignore\char`_index=True)} ~-- append a new row(s).\newline
+& \texttt{pd.merge(df1, df2, how=\textquotesingle inner\textquotesingle, on=\textquotesingle A\textquotesingle)} ~-- join DataFrames.
+& \texttt{pd.merge(df1, df2, how=\textquotesingle inner\textquotesingle, left\char`_on=\textquotesingle B\textquotesingle, right\char`_on=\textquotesingle C\textquotesingle)}
 \end{easylist}
 
 \vspace{\baselineskip}
@@ -138,23 +143,26 @@ Group:
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
 & \texttt{df.groupby(\textquotesingle A\textquotesingle).max()}
 ~-- for all sets of rows with common column `A'~values,
-perform function on all remaining columns.
-& \texttt{df.groupby([\textquotesingle A\textquotesingle, \textquotesingle B\textquotesingle]).max()}
-~-- like above, but group by both column `A'~and then column `B'.
+perform an aggregation function on the remaining columns.
+& \texttt{df.groupby([\textquotesingle A\textquotesingle, \textquotesingle B\textquotesingle]).size()}
+~-- group by column `A'~and then column~`B'.
+& \texttt{df.groupby(\textquotesingle A\textquotesingle).agg({\textquotesingle C\textquotesingle:~np.mean, \textquotesingle D\textquotesingle:~np.max})}
+~-- apply different \newline aggregation functions to different columns.
 \end{easylist}
 
-\vspace{\baselineskip}
-Time Series:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{rng = pd.date\char`_range(\textquotesingle2015-09-20 10:00:00\textquotesingle,\newline .....................periods=100, freq=\textquotesingle S\textquotesingle)} -- creates datetime index.
-& \texttt{rng = pd.date\char`_range(start=\textquotesingle2015-09-20 10:00:00\textquotesingle,\newline ....................end=\textquotesingle2019-07-10 17:30:00\textquotesingle, periods=100)} %~-- alternative method.
-& \texttt{rng[90].year, rng[90].second} ~-- pull the specific numbers of a given date.
-& \texttt{(rng[90] - rng[0]).days} ~-- calculate differences between dates.
-& \texttt{df=pd.DataFrame(np.random.rand(100,3), index=rng, columns=list(\textquotesingle ABC\textquotesingle))} ~-- use datetime as a DataFrame index.
-\end{easylist}
+% \vspace{\baselineskip}
+% Time Series:
+% \begin{easylist}[itemize]
+% \ListProperties(Style*=$\bullet$ , FinalMark={)})
+% & \texttt{rng = pd.date\char`_range(\textquotesingle2015-09-20 10:00:00\textquotesingle,\newline .....................periods=100, freq=\textquotesingle S\textquotesingle)} -- creates datetime index.
+% & \texttt{rng = pd.date\char`_range(start=\textquotesingle2015-09-20 10:00:00\textquotesingle,\newline ....................end=\textquotesingle2019-07-10 17:30:00\textquotesingle, periods=100)} %~-- alternative method.
+% & \texttt{rng[90].year, rng[90].second} ~-- pull the specific numbers of a given date.
+% & \texttt{(rng[90] - rng[0]).days} ~-- calculate differences between dates.
+% & \texttt{df=pd.DataFrame(np.random.rand(100,3), index=rng, columns=list(\textquotesingle ABC\textquotesingle))} ~-- use datetime as a DataFrame index.
+% \end{easylist}
 
-\vspace{\baselineskip}
+\newpage
+
 Plotting:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
@@ -165,23 +173,21 @@ Plotting:
 & \texttt{df.hist(column=\textquotesingle A\textquotesingle, bins=50)} ~-- \textit{another example}.
 & \texttt{pd.plotting.scatter\char`_matrix(df[[\textquotesingle A\textquotesingle, \textquotesingle B\textquotesingle, \textquotesingle C\textquotesingle]])} ~-- scatter matrix plot.
 \end{easylist}
+\vspace{\baselineskip}
 
-\newpage
 Miscellaneous:
 \begin{easylist}[itemize]
 \ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{df2 = df1.copy()} ~-- copy a DataFrame.
+& \texttt{df.to\char`_numpy()} ~-- convert DataFrame to a Numpy array.
+& \texttt{df.reset\char`_index(drop=True)} ~-- remove redundancy in indices.\newline
 & \texttt{df.drop(\textquotesingle A\textquotesingle, axis=1)} ~-- drop column.
 & \texttt{df.drop([\textquotesingle A\textquotesingle, \textquotesingle B\textquotesingle], axis=1)} ~-- drop columns.
 & \texttt{df.reindex(columns=[\textquotesingle D\textquotesingle, \textquotesingle A\textquotesingle, \textquotesingle B\textquotesingle])} ~-- select and order columns.
-& \texttt{df.rename({\textquotesingle a\textquotesingle:\textquotesingle X\textquotesingle, \textquotesingle b\textquotesingle:\textquotesingle Y\textquotesingle}, axis=1)} ~-- change column names.
-& \texttt{df.reset\char`_index(drop=True)} ~-- remove redundancy in indices.
-\newline
-& \texttt{df.nlargest(10, 'A')} ~-- returns DataFrame ordered by largest column values.
-& \texttt{df.nsmallest(20, 'B')} ~-- returns DataFrame ordered by smallest column values.
-& \texttt{df.A.value\char`_counts()} ~-- get frequency of column values.
-\newline
-& \texttt{df.sample(frac = 0.5)} ~-- get fractional random sample from DataFrame.
-& \texttt{df.sample(n = 10)} ~-- get nRows random sample from DataFrame.
+& \texttt{df.rename(\{\textquotesingle a\textquotesingle:\textquotesingle X\textquotesingle, \textquotesingle b\textquotesingle:\textquotesingle Y\textquotesingle\}, axis=1)} ~-- change column names.\newline
+& \texttt{corr\char`_matrix = df.corr()} ~-- create a correlation matrix.
+
 \end{easylist}
+
 
 \newpage

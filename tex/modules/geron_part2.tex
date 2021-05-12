@@ -1105,7 +1105,7 @@ Load a pre-trained Xception model (excluding the top of the network) and add a c
 \texttt{base\char`_model = keras.applications.xception.Xception(weights=\textquotesingle imagenet\textquotesingle,\newline
 .~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~include\char`_top=False)}\newline
 \texttt{avg = keras.layers.GlobalAveragePooling2D()(base\char`_model.output)}\newline
-\texttt{output = keras.layers.Dense(5, activation=\textquotesingle softmax\textquotesingle)(avg)}\newline
+\texttt{output = keras.layers.Dense(n\char`_classes, activation=\textquotesingle softmax\textquotesingle)(avg)}\newline
 \texttt{model = keras.Model(inputs=base\char`_model.input, outputs=output)}
 
 Freeze the weights of the pre-trained layers at the beginning of training:\newline

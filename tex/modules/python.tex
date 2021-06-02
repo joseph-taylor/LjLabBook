@@ -11,12 +11,6 @@ Basics:
 \end{easylist}
 
 \vspace{\baselineskip}
-\textbf{ANACONDA}\newline
-Anaconda has access to over 1500 packages that can easily be installed with Anaconda's conda;
-a package, dependency, and environment manager.
-\texttt{https://www.anaconda.com/download/}
-
-\vspace{\baselineskip}
 \textbf{JUPITER NOTEBOOKS}\newline
 Jupiter notebooks run on your browser.
 They are like ipython sessions that can be saved.
@@ -27,5 +21,31 @@ They are like ipython sessions that can be saved.
 \newline Then start a new notebook or select an old \texttt{.ipynb} file.
 & \texttt{SHFT ENTER} -- run cell and select next.
 \end{easylist}
+
+\vspace{\baselineskip}
+\textbf{CONDA}
+is a package and environment management system:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)})
+& \texttt{conda info} -- verify conda is installed, check version number.
+% 
+& \texttt{conda env list} -- list all conda environments.
+& \texttt{conda create --name NEWENV} -- create a new conda environment.
+& \texttt{conda create --clone OLDENV --name NEWENV} -- clone a conda environment.
+& \texttt{conda env remove --name NEWENV} -- delete a conda environment.
+% 
+& \texttt{conda activate NEWENV} -- activate a conda environment.
+& \texttt{conda deactivate} -- deactivate the current conda environment.
+% 
+& \texttt{conda list} -- list all packages and versions (in the active environment).
+& \texttt{conda list --revisions} -- list the history of each change to the environment.
+& \texttt{conda install --revision N} -- restore environment to a previous version.
+% 
+& \texttt{conda install PACKAGENAME} -- install a new package.
+& \texttt{conda update PACKAGENAME} -- update an installed package.
+& \texttt{conda remove PACKAGENAME} -- remove a package.
+& \texttt{pip install PACKAGENAME} -- install a package directly from PyPI.
+\end{easylist}
+
 
 \newpage

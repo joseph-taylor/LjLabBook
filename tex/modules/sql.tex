@@ -1,127 +1,91 @@
 \section{SQL}
 
-% \vspace{\baselineskip}
-Creating Tables:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{CREATE TABLE customers (id INTEGER PRIMARY KEY \textit{AUTOINCREMENT},\newline name TEXT, age INTEGER, weight REAL);}
-\end{easylist}
-
-% \vspace{\baselineskip}
-Inserting Data:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{INSERT INTO customers VALUES (73, "Brian", 33, 67.5);}
-& \texttt{INSERT INTO customers (name, weight) VALUES ("Brian", 67.5);}
-\end{easylist}
+Creating Tables:\newline
+\texttt{DROP TABLE IF EXISTS lut;}\newline
+\texttt{CREATE TEMP TABLE lut (code TEXT, full\char`_string TEXT);}\newline
+\texttt{INSERT INTO lut VALUES (\textquotesingle inc\textquotesingle, \textquotesingle Included\textquotesingle);}\newline
+\texttt{INSERT INTO lut VALUES (\textquotesingle exc\textquotesingle, \textquotesingle Excluded\textquotesingle);}\newline
+\texttt{INSERT INTO lut VALUES (\textquotesingle n/a\textquotesingle, \textquotesingle Unspecified\textquotesingle);}
 
 \vspace{\baselineskip}
-Querying Data:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{SELECT * FROM customers;}
-& \texttt{SELECT * FROM customers LIMIT 5;}
-& \texttt{SELECT age, name FROM customers;}
-& \texttt{SELECT name, age + weight AS "calculation" FROM customers;}
-\newline
-& \texttt{SELECT * FROM customers WHERE age > 21;}
-& \texttt{SELECT * FROM customers WHERE age > 21 AND age < 30;}
-& \texttt{SELECT * FROM customers WHERE age > 21 OR name="Brian";}
-& \texttt{SELECT * FROM customers WHERE NOT name="Brian";}
-\newline
-& \texttt{SELECT * FROM customers WHERE name IN ("Bill", "Bob", "Brian");}
-& \texttt{SELECT * FROM customers WHERE name LIKE "B\%";}
-& \texttt{SELECT * FROM customers WHERE type IN (SELECT name FROM favorites);}
-\newline
-& \texttt{SELECT * FROM customers ORDER BY age DESC;}
-& \texttt{SELECT * FROM customers WHERE weight < 80.0 ORDER BY age;}
-\newline
-& \texttt{SELECT name,\newline
->~~~CASE\newline
->~~~~~~~WHEN age > 65 THEN "OAP"\newline
->~~~~~~~WHEN age > 18 THEN "adult"\newline
->~~~~~~~ELSE "minor"\newline
->~~~END AS "ageType"\newline
->~~~FROM customers;}
-\end{easylist}
+Manipulating Tables:\newline
+\texttt{DELETE FROM lut WHERE code = \textquotesingle n/a\textquotesingle;}\newline
+\texttt{ALTER TABLE lut ADD id INT;}\newline
+\texttt{UPDATE lut SET id = 1 WHERE code = \textquotesingle inc\textquotesingle;}\newline
+\texttt{UPDATE lut SET id = 2 WHERE code = \textquotesingle exc\textquotesingle;}
+
+\vspace{\baselineskip}
+Querying Tables:\newline
+\texttt{SELECT}\newline
+\texttt{*}\newline
+\texttt{, weight / (height * height) AS bmi}\newline
+\texttt{FROM customers}\newline
+\texttt{WHERE has\char`_gp = TRUE}\newline
+\texttt{AND weight > 75.0}\newline
+\texttt{AND height IS NOT NULL}\newline
+\texttt{AND age BETWEEN 16 AND 30}\newline
+\texttt{AND eye\char`_colour IN (\textquotesingle blue\textquotesingle, \textquotesingle grey\textquotesingle)}\newline
+\texttt{AND name LIKE \textquotesingle B\%\textquotesingle}\newline
+\texttt{ORDER BY name}\newline
+\texttt{LIMIT 1000}
+
+\vspace{\baselineskip}
+Combining Data:\newline
+\texttt{SELECT * FROM customers}\newline
+\texttt{UNION ALL}\newline
+\texttt{SELECT * FROM employees}
+
+\vspace{\baselineskip}
+Aggregating Data:\newline
+\texttt{SELECT}\newline
+\texttt{name}\newline
+\texttt{, COUNT(*) AS freq}\newline
+\texttt{, MAX(age) AS max\char`_age}\newline
+\texttt{, SUM(weight) AS total\char`_weight}\newline
+\texttt{, SUM(CASE WHEN age = 18 THEN 1 ELSE 0 END) AS freq\char`_age\char`_18}\newline
+\texttt{FROM customers}\newline
+\texttt{GROUP BY 1}\newline
+\texttt{ORDER BY 1}
 
 \newpage
-Aggregating Data:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{SELECT SUM(weight) AS "totalWeight" FROM customers;}
-& \texttt{SELECT \textbf{name}, COUNT(*) FROM students GROUP BY \textbf{name};}
-\newline
-& \texttt{SELECT \textbf{name}, MAX(age) AS "maxAge"\newline
->~~~FROM customers \textit{WHERE weight > 40.0}\newline
->~~~GROUP BY \textbf{name}\newline
->~~~HAVING maxAge > 50;}
-% >~~~\textit{ORDER BY maxAge;}\newline
-\newline
-& \texttt{SELECT name,\newline
->~~~~~~weight/(SELECT SUM(weight) FROM customers) AS "fracWeight"\newline
->~~~FROM customers;}
-\end{easylist}
+`IF' Statements:\newline
+\texttt{SELECT}\newline
+\texttt{>~~~COALESCE(eye\char`_colour, \textquotesingle unknown\textquotesingle) AS eye\char`_colour}\newline
+\texttt{>~~~, CASE}\newline
+\texttt{>~~~~~~~WHEN age > 65 THEN \textquotesingle OAP\textquotesingle}\newline
+\texttt{>~~~~~~~WHEN age > 17 THEN \textquotesingle Adult\textquotesingle}\newline
+\texttt{>~~~~~~~ELSE \textquotesingle Child\textquotesingle}\newline
+\texttt{>~~~END AS age\char`_cat}\newline
+\texttt{FROM customers}
 
-\vspace{\baselineskip}
-\vspace{\baselineskip}
-\vspace{\baselineskip}
 \vspace{\baselineskip}
 Inner Join:\newline
-\textit{Returns records that have matching values in both tables.\newline
-Table order does not matter.}
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{SELECT * FROM students\newline
->~~~JOIN student\char`_grades\newline
->~~~ON students.id = student\char`_grades.student\char`_id;}
-\end{easylist}
+\textit{Returns records that have matching values in both tables.}\newline
+\texttt{SELECT}\newline
+\texttt{clk.*}\newline
+\texttt{, pr.provider\char`_name}\newline
+\texttt{FROM holiday.fct\char`_click clk}\newline
+\texttt{INNER JOIN common.dim\char`_provider pr USING (provider\char`_id)}
 
 \vspace{\baselineskip}
-Outer Join:\newline
-\textit{Returns all records from the left table (first listed), and the matched records from the right table.\newline
-Table order DOES matter.}
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{SELECT students.first\char`_name, students.last\char`_name, student\char`_projects.title\newline
->~~~FROM students\newline
->~~~LEFT OUTER JOIN student\char`_projects\newline
->~~~ON students.id = student\char`_projects.student\char`_id;}
-\end{easylist}
+Left Join:\newline
+\textit{Returns \underline{all} records from the left table (first listed), and the matched records from the right table.}\newline
+\texttt{SELECT}\newline
+\texttt{*}\newline
+\texttt{FROM holiday.fct\char`_click clk}\newline
+\texttt{LEFT JOIN common.dim\char`_provider pr ON clk.provider\char`_id = pr.id}
 
 \vspace{\baselineskip}
-Self Join:\newline
-\textit{Use an alias to perform self joins.}
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{SELECT students.name, \textbf{buddies}.email AS "buddy\char`_email"\newline
->~~~FROM students\newline
->~~~JOIN students \textbf{buddies}\newline
->~~~ON students.buddy\char`_id = \textbf{buddies}.id;}
-\end{easylist}
+Full Join:\newline
+\textit{Returns \underline{all} records from the left and right tables.}\newline
+\texttt{SELECT}\newline
+\texttt{COALESCE(clk.date, bk.date) AS date}\newline
+\texttt{, COALESCE(clk.revenue, 0) + COALESCE(bk.revenue, 0) AS revenue}\newline
+\texttt{FROM click\char`_revenue clk}\newline
+\texttt{FULL OUTER JOIN booking\char`_revenue bk USING (date)}
 
-\newpage
-Updating Data:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{UPDATE customers SET age = 33 WHERE id = 73;}
-\end{easylist}
 
-\vspace{\baselineskip}
-Deleting Data:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{DELETE FROM customers WHERE id = 73;}
-\end{easylist}
 
-\vspace{\baselineskip}
-Add Column to Table:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{ALTER TABLE customers ADD nickname TEXT;}
-\end{easylist}
-
-\vspace{\baselineskip}
 The WITH clause is an optional prefix for SELECT.
 You can then use the results in the main SELECT statement:
 \begin{easylist}[itemize]
@@ -131,7 +95,6 @@ You can then use the results in the main SELECT statement:
 SELECT ...}
 \end{easylist}
 
-\vspace{\baselineskip}
 \underline{Window Functions:}\newline
 They perform calculations over a set of rows.
 They are indicated by the OVER clause.\newline

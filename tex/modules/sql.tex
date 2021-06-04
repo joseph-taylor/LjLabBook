@@ -59,7 +59,7 @@ Aggregating Data:\newline
 \texttt{FROM customers}
 
 \vspace{\baselineskip}
-Inner Join:\newline
+Inner Joins:\newline
 \textit{Returns records that have matching values in both tables.}\newline
 \texttt{SELECT}\newline
 \texttt{clk.*}\newline
@@ -68,7 +68,7 @@ Inner Join:\newline
 \texttt{INNER JOIN common.dim\char`_provider pr USING (provider\char`_id)}
 
 \vspace{\baselineskip}
-Left Join:\newline
+Left Joins:\newline
 \textit{Returns \underline{all} records from the left table (first listed), and the matched records from the right table.}\newline
 \texttt{SELECT}\newline
 \texttt{*}\newline
@@ -76,7 +76,7 @@ Left Join:\newline
 \texttt{LEFT JOIN common.dim\char`_provider pr ON clk.provider\char`_id = pr.id}
 
 \vspace{\baselineskip}
-Full Join:\newline
+Full Joins:\newline
 \textit{Returns \underline{all} records from the left and right tables.}\newline
 \texttt{SELECT}\newline
 \texttt{COALESCE(clk.date, bk.date) AS date}\newline
@@ -84,31 +84,25 @@ Full Join:\newline
 \texttt{FROM click\char`_revenue clk}\newline
 \texttt{FULL OUTER JOIN booking\char`_revenue bk USING (date)}
 
+\vspace{\baselineskip}
+The WITH clause is an optional prefix for SELECT:\newline
+\texttt{WITH sub\char`_query\char`_1 AS (<INSERT QUERY>),}\newline
+\texttt{sub\char`_query\char`_2 AS (<INSERT QUERY>)}\newline\newline
+\texttt{SELECT}\newline
+\texttt{*}\newline
+\texttt{FROM sub\char`_query\char`_1}\newline
+\texttt{LEFT JOIN sub\char`_query\char`_2 USING (date)}
 
+\newpage
 
-The WITH clause is an optional prefix for SELECT.
-You can then use the results in the main SELECT statement:
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{WITH query\char`_name (column\char`_name1, ...) AS\newline
->~~~(SELECT ...)\newline
-SELECT ...}
-\end{easylist}
+Window Functions:\newline
+\textit{Performs a calculation across a set of table rows that are somehow related to the current row.}
 
-\underline{Window Functions:}\newline
-They perform calculations over a set of rows.
-They are indicated by the OVER clause.\newline
-\newline
-Here is what it all means:\newline
+FUNCTION\newline
 OVER = using all rows\newline
 PARTITION BY = with the same...\newline
-ORDER BY = applying function sequentially ordered by...
-% 
-\begin{easylist}[itemize]
-\ListProperties(Style*=$\bullet$ , FinalMark={)})
-& \texttt{SELECT firstname, lastname, date\char`_started,\newline
->~~~COUNT(*) OVER (PARTITION BY year(date\char`_started)) AS NumPerYear\newline
->~~~FROM Employee;}
-\end{easylist}
+ORDER BY = applying function sequentially, ordered by...
+
+\texttt{ROW\char`_NUMBER() OVER (PARTITION BY enq\char`_id ORDER BY sequence) AS risn}
 
 \newpage

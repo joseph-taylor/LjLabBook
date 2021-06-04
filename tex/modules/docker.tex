@@ -1,0 +1,85 @@
+\section{DOCKER}
+
+You can think of a computer operating system as having two parts:
+\vspace{-3.5mm}
+\begin{itemize}
+\item
+\textbf{The Kernel:} talks to the hardware and the network. In general we don't touch this.\newline
+The kernel is accessed via APIs from \textit{Userland.}
+\vspace{-1.0mm}
+\item
+\textbf{Userland:} is where your programs/applications live. We do touch this!
+\end{itemize}
+
+Application Problems:
+\vspace{-3.5mm}
+\begin{itemize}
+\item
+Running distinct applications in Userland if they have different library dependencies.
+\vspace{-1.0mm}
+\item
+Running the same application, but on a different computer,
+if the Userlands have different library package versions.
+\end{itemize}
+
+These problems can be solved using Virtual Machines or Containers:
+\vspace{-3.5mm}
+\begin{itemize}
+\item
+\textbf{VMs} represent the Userland and Kernel of an OS required for an application.
+\vspace{-1.0mm}
+\item
+\textbf{Containers} represent just the Userland of an OS required for an application.\newline
+In Docker, the containers running share the host OS kernel, which is more efficient.
+\end{itemize}
+
+\textbf{Images} are essentially the instructions of how to build a Container (or VM).\newline
+- The Container is the thing you get when you build an Image.\newline
+- For example, you can instantiate multiple Docker Containers from the same Docker Image.\newline
+- Docker images are the thing that you would push/pull.\newline
+- Images can be built as layers on top of other images (you don't build them from scratch).
+
+Commands:
+\begin{easylist}[itemize]
+\ListProperties(Style*=$\bullet$ , FinalMark={)}) % FinalMark indicates the end of the list properties and must always be used
+
+& \texttt{docker images} -- prints information about all your docker images.
+
+& \texttt{docker pull supertest2014/nyan:latest} \newline -- download a docker image (if not stated, the `latest' tag is assumed).
+
+& \texttt{docker run supertest2014/nyan} or \texttt{<IMAGE-ID>}
+\newline -- creates a container instance of an image and runs it.
+\newline -- if you don't have the image it will download it (default from DockerHub).
+\newline -- it's like you've built the computer \textit{and} turned it on.
+
+& \texttt{docker rmi supertest2014/nyan} or \texttt{<IMAGE-ID>} -- delete a docker image.
+
+& \texttt{docker ps} -- list the docker containers that are running.
+
+& \texttt{docker stop <CONTAINER-ID>} or \texttt{<NAME>} -- stop a docker container running.
+
+& \texttt{docker ps -a} -- list \textit{all} the containers.
+\newline -- stopped containers are still tracked (if you turn off a computer, you still have it).
+
+& \texttt{docker start <CONTAINER-ID>} or \texttt{<NAME>} -- restart a docker container.
+
+& \texttt{docker rm <CONTAINER-ID>} or \texttt{<NAME>} -- delete a docker container.
+
+\end{easylist}
+
+
+
+
+
+
+
+
+
+A Dockerfile is a text document that contains all the commands required to assemble an image:\newline
+\texttt{docker build --tag python-app .}
+
+
+
+
+
+\newpage

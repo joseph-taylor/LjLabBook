@@ -1131,4 +1131,44 @@ When the top layers are well trained, unfreeze all the layers and continue train
 \texttt{model.compile(...)}\newline
 \texttt{history = model.fit(...)}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Processing Sequences Using RNNs}
+
+Recurrent neural networks (RNNs) are a class of nets that can predict the future.\newline
+They can work on sequences of arbitrary lengths, rather than on fixed-sized inputs.\newline
+RNNs look a lot like feedforward NNs,
+except they also have connections pointing backward.\newline
+
+\textbf{\underline{Recurrent Neurons}}
+
+A single recurrent neuron is the simplest possible RNN.
+At each \textit{timestep t} (also called a \textit{frame}),
+it receives inputs $\boldsymbol{x}_{(t)}$ as well as it's own output from the previous step, $y_{(t-1)}$.
+Since there is no previous output at the first time step, it is generally set to 0.
+The following diagram unrolls the network through time (note that it is the \underline{same} neuron represented once per timestep).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{./images/recurrent_neuron.png}
+\end{figure}
+
+\newpage
+\textbf{\underline{Recurrent Layers}}
+
+It is easy to extend the concept described above to create a layer of recurrent neurons.\newline
+At each timestep $t$, \underline{every} neuron receives both the input vector $\boldsymbol{x}_{(t)}$
+and the output vector\newline from the previous timestep $\boldsymbol{y}_{(t-1)}$.
+This output vector is formed from each neurons scalar output.
+
+Each recurrent neuron has two sets of weights: one for $\boldsymbol{x}_{(t)}$ and another for $\boldsymbol{y}_{(t-1)}$:\newline
+$y^{(t)}_i = \phi (w^x_{ij} \: x^{(t)}_j + w^y_{ij} \: y^{(t-1)}_j + b_i)$
+
+Note that the full sequence $\boldsymbol{x}_{(t)}$ is just a single training instance.
+
+\textbf{\underline{Memory Cells}}
+
 \newpage

@@ -1248,5 +1248,78 @@ Compile, fit, and evaluate:\newline
 \texttt{valid\char`_pred\char`_y = model.predict(valid\char`_X)}\newline
 \texttt{np.mean(keras.losses.mean\char`_squared\char`_error(valid\char`_y, valid\char`_pred\char`_y))}
 
+\newpage
+\textbf{\underline{Deep RNNs}}
+
+It is common to stack multiple layers of cells, giving you a \textit{Deep RNN}.\newline
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.75\textwidth]{./images/deep_RNN.png}
+\end{figure}
+
+\vspace{+4.0mm}
+\texttt{model = keras.models.Sequential([}\newline
+\texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
+\texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True),}\newline
+\texttt{keras.layers.SimpleRNN(1)}\newline
+\texttt{])}
+
+Note that sometimes it might be preferable to replace the output layer with a Dense layer.\newline
+
+\textbf{\underline{Unstable Gradients Problem}}
+
+To train an RNN on long sequences, we must run it over many time steps, making the unrolled RNN a very deep network.    
+Consequently, it may suffer from the unstable gradients problem:
+
+\vspace{-3.5mm}
+\begin{itemize}
+\item
+Due to the architecture of RNNs, they are more likely to suffer from exploding outputs and exploding gradients (rather than vanishing gradients).
+\item
+\vspace{-2.0mm}
+Consequently, saturating activation functions (e.g. hyperbolic tangent) are recommended.
+\item
+\vspace{-2.0mm}
+Batch Normalization doesn't really work, but the \textit{Layer Normalization} technique might.
+\end{itemize}
+
+
+\textbf{\underline{Short-Term Memory Problem}}
+
+When an RNN processes a long sequence, it will gradually forget the first inputs in the sequence.
+The cells we've looked at so far have a very short memory (about 10 timesteps).
+To tackle this, more complex cells with longer memory (about 100 steps) have been successfully introduced.
+These are the \textit{Long Short-Term Memory} (LSTM) cell and the \textit{Gated Recurrent Unit} GRU cell.
+
+\texttt{keras.layers.LSTM(20, return\char`_sequences=True)}\newline
+or\newline
+\texttt{keras.layers.GRU(20, return\char`_sequences=True)}
+
+Note that there is also some cool stuff combining 1D convolutional layers with RNNs.
+
+\newpage
+
+\textbf{\underline{Input and Output Sequences}}
+
+Our forecasting model was a \textit{sequence-to-vector} network (ignore all outputs except the last).
+% 
+E.g.~you feed it a value at 50 timesteps and it will predict the value for the next 10 timesteps.\newline
+E.g.~you feed it a sequence of words from a movie review and it will predict a semantic score.
+
+A \textit{sequence-to-sequence} network returns all the outputs.\newline
+E.g.~forecast the next 10 values at each and every timestep.
+The advantage of this technique is that the loss will contain a term for the output of the RNN at each timestep,
+creating many more error gradients flowing through the model,
+which stabilizes and speeds up training.
+
+The \texttt{TimeDistributed} layer allows you to wrap \underline{any} layer and apply it at every timestep:\newline
+\texttt{model = keras.models.Sequential([}\newline
+\texttt{keras.layers.LSTM(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
+\texttt{keras.layers.LSTM(20, return\char`_sequences=True),}\newline
+\texttt{keras.layers.TimeDistributed(keras.layers.Dense(10))}\newline
+\texttt{])}
+
+Note that preparing the target now becomes a bit more of a headache!
 
 \newpage

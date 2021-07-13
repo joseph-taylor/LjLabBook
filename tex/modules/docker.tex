@@ -67,7 +67,35 @@ Commands:
 
 \end{easylist}
 
-A Dockerfile is a text document that contains all the commands required to assemble an image:\newline
-\texttt{docker build --tag python-app .}
+\newpage
+A Dockerfile is a text document that contains all the commands required to assemble an image.
+
+Build the image with: \texttt{docker build --tag python-app <pathToDockerfile>}\newline
+Run the image with:~~~\texttt{docker run python-app}\newline
+
+\textbf{Dockerfile}\newline
+\texttt{\# tell docker what base image to use for the application\newline
+FROM python:3.8-slim-buster\newline
+\newline
+\# create a working dir (docker will use this as the default path)\newline
+WORKDIR /app\newline
+\newline
+\# copy local files into the image (app.py and requirements.txt)\newline
+COPY . .\newline
+\newline
+\# run pip install command into the image\newline
+RUN pip3 install -r requirements.txt\newline
+\newline
+\# execute python script\newline
+CMD ["python", "app.py"]}\newline
+
+\textbf{requirements.txt}\newline
+\texttt{numpy==1.20.3}\newline
+
+\textbf{app.py}\newline
+\texttt{import numpy as np\newline
+v = np.array([1,2,3])\newline
+print(v)\newline
+print(\textquotesingle Wahooo\textquotesingle)}
 
 \newpage

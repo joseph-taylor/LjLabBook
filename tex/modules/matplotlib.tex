@@ -1,0 +1,43 @@
+\section{MATPLOTLIB}
+
+\texttt{import matplotlib.pyplot as plt\newline
+import numpy as np}\newline
+
+\textbf{Demo 1}\newline
+\texttt{x = np.arange(0, 10, 0.2)\newline
+y = np.sin(x)\newline
+fig1, ax1 = plt.subplots()\newline
+ax1.plot(x, 20*y, label=\textquotesingle 20 * sine\textquotesingle)\newline
+ax1.plot(x, x, label=\textquotesingle linear\textquotesingle)\newline
+ax1.plot(x, x**2, label=\textquotesingle quadratic\textquotesingle)\newline
+ax1.set\char`_xlabel(\textquotesingle x label\textquotesingle)\newline
+ax1.set\char`_ylabel(\textquotesingle y label\textquotesingle)\newline
+ax1.set\char`_title(\textquotesingle Simple Plot\textquotesingle)\newline
+ax1.set\char`_xlim(0.0, 9.0)\newline
+ax1.legend()\newline
+fig1.savefig(\textquotesingle demo\char`_1.pdf\textquotesingle)\newline
+plt.close() \# to release memory for a figure}\newline
+
+\textbf{Demo 2}\newline
+\texttt{names = [\textquotesingle group\char`_a\textquotesingle, \textquotesingle group\char`_b\textquotesingle, \textquotesingle group\char`_c\textquotesingle]\newline
+values = [1, 10, 100]\newline
+fig2, ax2\char`_list = plt.subplots(1, 3, figsize=(9,3))\newline
+ax2\char`_list[0].bar(names, values)\newline
+ax2\char`_list[1].scatter(names, values)\newline
+ax2\char`_list[2].plot(names, values)\newline
+fig2.suptitle(\textquotesingle Categorical Plotting\textquotesingle)\newline
+fig2.savefig(\textquotesingle demo\char`_2.pdf\textquotesingle)\newline
+plt.close()}\newline
+
+\textbf{Demo 3}\newline
+\texttt{mu, sigma = 100, 15\newline
+z = mu + sigma * np.random.randn(10000)\newline
+fig3, ax3 = plt.subplots(1, 1)\newline
+n, bins, patches = ax3.hist(z, 50, density=1, facecolor=\textquotesingle g\textquotesingle, alpha=0.60)\newline
+ax3.set\char`_xlabel(\textquotesingle Smarts\textquotesingle)\newline
+ax3.set\char`_ylabel(\textquotesingle Probability\textquotesingle)\newline
+ax3.axis([40, 160, 0, 0.03])\newline
+ax3.grid(True)\newline
+ax3.text(60, .025, r\textquotesingle\$\textbackslash mu=100, \textbackslash sigma=15\$\textquotesingle) \# how to do latex text\newline
+fig3.savefig(\textquotesingle demo\char`_3.pdf\textquotesingle)\newline
+plt.close()}

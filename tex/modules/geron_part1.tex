@@ -138,6 +138,16 @@ By averaging out all the evaluations of a model,
 you get a much more accurate measure of its performance.
 \end{itemize}
 
+\vspace{+3.0mm}
+\underline{Data Augmentation}
+\begin{itemize}
+\vspace{-3.0mm}
+\item
+It can be interesting to explore the impact of artificially expanding the training set.
+\item
+One example would be to translate training images by one pixel in all directions.
+\end{itemize}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -363,7 +373,7 @@ The fraction of positive class predictions that are indeed positive in actuality
 
 \item
 $\textrm{Recall} = \textrm{TP} / (\textrm{TP}+\textrm{FN})$. (Also called sensitivity)\newline
-The fraction of actual positive classes that are detected.
+The fraction of actual positive classes that are correctly detected.
 
 \texttt{from sklearn.metrics import recall\char`_score}\newline
 \texttt{recall\char`_score(train\char`_y, cv\char`_pred\char`_y)}\newline
@@ -390,7 +400,7 @@ Plot precision against recall, or both as a function of the threshold.\newline
 \texttt{ax2.plot(thresh, recalls[:-1], \textquotesingle g--\textquotesingle, label=\textquotesingle recall\textquotesingle)}\newline
 
 \item
-Plot a ROC (Receiver Operating Characteristics) curve.\newline
+Plot a ROC (Receiver Operating Characteristic) curve.\newline
 This is the true-positive-rate (recall)
 vs the false-positive-rate (fall-out)
 $= \textrm{FP} / (\textrm{FP}+\textrm{TN})$.\newline

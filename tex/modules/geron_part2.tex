@@ -138,6 +138,7 @@ Number of hidden layers & Depends on the problem, but typically 1 to 5\\
 Number of neurons per hidden layer & Depends on the problem, but typically 10 to 100\\ 
 Hidden layer activation function & ReLU or SELU\\
 Number of output neurons & 1 (for binary classification)\\
+ & 1 per label (for multilabel binary classification)\\
  & 1 per class (for multiclass classification)\\
 Output activation function & Logistic (for binary classification)\\
  & Softmax (for multiclass classification)\\
@@ -695,7 +696,7 @@ and then adds this output to the original input (an example of a ResidualBlock l
 .~~~def \char`_\char`_init\char`_\char`_(self, n\char`_layers, n\char`_neurons, **kwargs):\newline
 .~~~~~~~super().\char`_\char`_init\char`_\char`_(**kwargs)\newline
 .~~~~~~~self.hidden = [keras.layers.Dense(n\char`_neurons, activation=\textquotesingle elu\textquotesingle)\newline
-.~~~~~~~~~~~~~~~~~~~~~~for \char`_ in range(n\char`_layers)]}
+.~~~~~~~~~~~~~~~~~~~~~~for \char`_~in range(n\char`_layers)]}
 
 \texttt{.~~~def call(self, inputs):\newline
 .~~~~~~~Z = inputs\newline

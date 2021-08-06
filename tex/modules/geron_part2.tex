@@ -1323,4 +1323,102 @@ The \texttt{TimeDistributed} layer allows you to wrap \underline{any} layer and 
 
 Note that preparing the target now becomes a bit more of a headache!
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Autoencoders}
+
+Autoencoders are neural networks capable of learning dense representations of the input data,
+called \textit{latent representations} or \textit{codings}, without any supervision. They are useful for:
+\vspace{-3.5mm}
+\begin{itemize}
+\item
+Dimensionality reduction.
+\item
+\vspace{-2.0mm}
+Unsupervised pretraining of DNNs.
+\item
+\vspace{-2.0mm}
+Generative models (randomly generating new data that looks like the training data).
+\end{itemize}
+
+\vspace{-2.5mm}
+Autoencoders simply learn to copy their inputs to their outputs.
+This may sound trivial,
+but you would typically limit the size of the latent representation
+or try to recover the original inputs after adding some noise,
+forcing the autoencoder to learn efficient ways of representing the data.
+
+Autoencoders are always composed of two parts:\newline
+- An \textit{encoder} (or \textit{recognition network}) that converts the inputs into a latent representation.\newline
+- A \textit{decoder} (or \textit{generative network}) that converts the internal representation into the outputs.\newline
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.60\textwidth]{./images/autoencoder.png}
+\end{figure}
+
+\texttt{encoder = keras.models.Sequential([keras.layers.Dense(2,input\char`_shape=[5])])}\newline
+\texttt{decoder = keras.models.Sequential([keras.layers.Dense(5,input\char`_shape=[2])])}\newline
+\texttt{autoencoder = keras.models.Sequential([encoder, decoder])}
+
+\texttt{autoencoder.compile(loss=\textquotesingle mse\textquotesingle, optimizer=keras.optimizers.SGD(lr=0.1))}\newline
+\texttt{history = autoencoder.fit(train\char`_X, train\char`_X, epochs=20)}\newline
+\texttt{codings = encoder.predict(train\char`_X)}
+
+Autoencoders with multiple hidden layers are called \textit{stacked} or \textit{deep autoencoders}.
+The architecture is typically symmetrical with respect to the central hidden layer (the coding layer).
+Note that this can be achieved for both CNN and RNN models (see the examples in the textbook).
+
+One way to ensure that an autoencoder is properly trained is to compare the inputs and the outputs from the validation set: the differences should not be too significant.
+Note that if you make the network too powerful, it will manage to make perfect reconstructions on the training data without having learned any useful patterns
+(and is unlikely to generalize well to new instances).
+
+Autoencoders make it possible to perform \textit{semantic interpolation}:\newline
+Instead of interpolating two images at the pixel level (which would look as if the two images were overlaid),
+we can interpolate at the codings level.\newline
+- First, run both images through the encoder.\newline
+- Next, interpolate the two codings.\newline
+- Finally, decode the interpolated coding to get the final image.\newline
+- Note that you can do all sorts of arithmetic in latent space!\newline
+
+\textbf{\underline{Unsupervised Pretraining}}
+
+If you have a large dataset but most of it is unlabeled,
+you can first train a stacked autoencoder using all the data,
+then reuse the lower layers to create a neural network for your actual task (and train it using the labeled data).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{./images/unsupervised_pretraining.png}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Generative Adversarial Networks (GANs)}
+
+GANs are composed of two neural networks that compete against each other during training.
+
+The \textit{Generator}:\newline
+Takes a random distribution as the input (typically Gaussian) and outputs some data.
+Its goal is to generate data that looks similar to the training data.
+You can think of the random inputs as the latent representations and the generator as a decoder.
+Once it is trained, you can feed the generator some Gaussian noise and it will output a brand-new `image'.
+
+The \textit{Discriminator}:\newline
+Takes either a fake image from the generator or a real image from the training set as an input,
+and must guess whether the image is fake or real.\newline
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.80\textwidth]{./images/gan.jpg}
+\end{figure}
+
+
+
 \newpage

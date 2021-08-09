@@ -441,7 +441,7 @@ an estimated value of the mean and standard deviation for each neuron is used.
 \textbf{*** Gradient Clipping ***}
 
 This technique ensures gradients never exceed some threshold during backpropagation.\newline
-It's typically used to mitigate exploding gradients in RNNs.
+It's typically used to mitigate exploding gradients in RNNs (where BN is tricky to implement).
 
 Each individual gradient component is clipped between -1.0 and 1.0:\newline
 \texttt{optimizer = keras.optimizers.SGD(clipvalue=1.0)}
@@ -502,13 +502,15 @@ you can reach a good solution faster than with the optimal constant learning rat
 
 \textbf{\underline{Avoid Overfitting Through Regularization}}
 
-We have already seen \textit{early stopping} and \textit{batch normalization} as forms of regularization.\newline
+We have already seen \textit{early stopping} and \textit{batch normalization} as forms of regularization.\newline\newline
 
 \underline{$l_1$ and $l_2$ regularization}\newline
 This applies an $l_2$ regularization (factor=0.01) to a layer's connection weights.\newline
 Note that you should typically to apply the same regularizer to all layers in your NN.\newline
 \texttt{keras.layers.Dense(300, activation=\textquotesingle relu\textquotesingle,\newline
-.~~~~~~~~~~~~~~~~~~kernel\char`_regularizer=keras.regularizers.l2(0.01)))}\newline
+.~~~~~~~~~~~~~~~~~~kernel\char`_regularizer=keras.regularizers.l2(0.01)))}
+
+You should use $l_1$ regularization if you want a sparse model (with many weights equal to 0).\newline\newline
 
 \underline{Dropout}\newline
 At every training step, every neuron (including the input neurons, but excluding the outputs)
@@ -517,7 +519,7 @@ The hyperparameter $p$ is called the \textit{dropout rate},
 and is typically set between 10\% and 50\%.
 After training, the neurons don't get dropped anymore (and each input connection weight is multiplied by $1-p$ to align the signal size with training).
 
-Neurons trained with dropout:\newline
+Neurons trained with Dropout:\newline
 - Cannot co-adapt with their neighboring neurons.\newline
 - Cannot rely excessively on just a few input neurons.\newline
 - Are less sensitive to slight changes in their inputs.
@@ -533,9 +535,12 @@ This results in a more robust network that generalizes better.\newline
 \texttt{...}\newline
 
 Notes:\newline
-- In practice, you only need to apply dropout to the top 1-3 layers (excluding the output layer).\newline
+- In practice, you only need to apply Dropout to the top 1-3 layers (excluding the output layer).\newline
+- The dropout rate is typically set to 20-30\% in RNNs and 40-50\% in CNNs.\newline
+- Dropout does slow down convergence, but usually results in a better model when tuned.\newline
 - Dropout means the loss evaluation during training can be misleading.\newline
-- You need to use \textit{alpha dropout} if you are using the SELU activation function.
+- You need to use \textit{Alpha Dropout} if you are using the SELU activation function.\newline
+- The MC Dropout technique can be used to provide a measure of a model's uncertainty.
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1129,7 +1134,7 @@ When the top layers are well trained, unfreeze all the layers and continue train
 \texttt{.~~~layer.trainable = True}
 
 \texttt{optimizer = keras.optimizers.SGD(lr=0.01, momentum=0.9, decay=0.001)}\newline
-\texttt{model.compile(...)}\newline
+\texttt{model.compile(...) \# always compile models after (un)freezing layers}\newline
 \texttt{history = model.fit(...)}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%

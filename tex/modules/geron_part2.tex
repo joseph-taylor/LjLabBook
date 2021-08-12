@@ -856,7 +856,7 @@ $j^{l} \rightarrow (j^{l-1} \times s_w)~~\textrm{to}~~(j^{l-1} \times s_w + f_w 
 
 where:\newline
 $f_h$ and $f_w$ are the height and width of the receptive field.\newline
-$s_h$ and $s_w$ are the vertical and horizontal strides (the shift one from receptive field to the next).
+$s_h$ and $s_w$ are the vertical and horizontal strides (the shift from one receptive field to the next).
 
 In order for a layer to have the same height and width as the previous layer,
 it is common to add zeros around the inputs. This is called \textit{zero padding}.
@@ -882,13 +882,13 @@ It will highlight the areas in an image that activate the filter the most (e.g.~
 In reality,
 unlike the 2D diagram above,
 a convolutional layer has multiple filters.\newline
-This means it is more like a 3D object,
-outputting one feature map per filter.
+This means convolutional layers are more like 3D objects,
+with one feature map per filter.
 
 $\rightarrow$~A convolutional layer is capable of detecting multiple features
 anywhere in its inputs.
 
-\textit{Now consider the connections between 3D convolutional layers (or even to a RGB input):}\newline
+\textit{Consider the connections between two 3D convolutional layers (or even to a RGB input):}\newline
 A neuron located in row $i$, column $j$, feature map $k$, layer $l$ connects to...\newline
 neurons in layer $l-1$, for the corresponding rows and columns, \textbf{across all feature maps}.
 
@@ -972,7 +972,7 @@ One exception is the first convolutional layer;
 because the input images will only have 1 or 3 channels,
 it can handle a larger kernel.
 
-Because the input images are not very large, we do not set a stride in the model above.
+% Because the input images are not very large, we do not set a stride in the model above.
 
 It is common practice to double the number of filters after each pooling layer:
 since a pooling layer divides each spatial dimension by a factor of 2,

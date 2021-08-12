@@ -718,12 +718,12 @@ and then adds this output to the original input (an example of a ResidualBlock l
 \subsection{TensorFlow: Data API}
 
 Deep Learning systems are often trained on very large datasets that will not fit into RAM.\newline
-TensorFlow's Data API: can ingest large datasets and preprocess them efficiently.
+Thankfully, TensorFlow's Data API can ingest large datasets and preprocess them efficiently...\newline
 
-\textbf{\underline{Transformations \& Shuffling}}
-
-Create a dummy dataset (each entry/item is just a scalar tensor 0, 1, 2, ..., 199):\newline
-\texttt{dataset = tf.data.Dataset.range(200)}
+\textbf{\underline{Transformations \& Shuffling}}\newline
+Create a (dummy) dataset from a tensor:\newline
+\texttt{X = tf.range(200)}\newline
+\texttt{dataset = tf.data.Dataset.from\char`_tensor\char`_slices(X)}
 
 Transform the dataset items:\newline
 \texttt{dataset = dataset.map(lambda x:~x * 2)}
@@ -740,10 +740,9 @@ Group the dataset items into batches:\newline
 \texttt{dataset = dataset.batch(32, drop\char`_remainder=True)}
 
 Look at a few items in a dataset:\newline
-\texttt{for item in dataset.take(5):\newline.~~~print(item)}\newline
+\texttt{for item in dataset.take(5):~print(item)}\newline
 
-\textbf{\underline{Reading from CSV}}
-
+\textbf{\underline{Reading from CSV}}\newline
 This only points to the data, it does not load it (i.e.~if the path does not exist, it will not crash).\newline
 Each item will just be a string corresponding to a line of the CSV:\newline
 \texttt{dataset = tf.data.TextLineDataset(\textquotesingle path/to/data.csv\textquotesingle).skip(1)}
@@ -768,8 +767,7 @@ And then the rest...\newline
 Prefetch: the dataset will work on preparing batch $n+1$ whilst training on batch $n$.
 
 \newpage
-\textbf{\underline{Preprocessing Input Features}}
-
+\textbf{\underline{Preprocessing Input Features}}\newline
 Include a preprocessing layer directly in your model:\newline
 \texttt{class Standardization(keras.layers.Layer):\newline
 .~~~def adapt(self, data\char`_sample):\newline
@@ -782,10 +780,9 @@ Include a preprocessing layer directly in your model:\newline
 std\char`_layer.adapt(data\char`_sample)}
 
 \texttt{model = keras.Sequential()\newline
-model.add(std\char`_layer) \# and then continue as normal...}
+model.add(std\char`_layer) \# and then continue as normal...}\newline
 
-\textbf{\underline{Encode Categorical Features Using One-Hot Vectors}}
-
+\textbf{\underline{Encode Categorical Features Using One-Hot Vectors}}\newline
 First, define the \textit{vocabulary} (the list of all possible categories)\newline
 and create a tensor with the corresponding indices:\newline
 \texttt{vocab = [\textquotesingle <1H OCEAN\textquotesingle, \textquotesingle INLAND\textquotesingle, \textquotesingle NEAR OCEAN\textquotesingle, \textquotesingle ISLAND\textquotesingle]}\newline
@@ -800,17 +797,16 @@ table = tf.lookup.StaticVocabularyTable(table\char`_init, num\char`_oov\char`_bu
 Use the lookup table to encode a small batch of categorical features to one-hot vectors:\newline
 \texttt{categories = tf.constant([\textquotesingle NEAR OCEAN\textquotesingle, \textquotesingle DESERT\textquotesingle, \textquotesingle INLAND\textquotesingle, \textquotesingle NOMAD\textquotesingle])\newline
 cat\char`_indices = table.lookup(categories)\newline
-cat\char`_one\char`_hot = tf.one\char`_hot(cat\char`_indices, depth=len(vocab) + num\char`_oov\char`_buckets)}
+cat\char`_one\char`_hot = tf.one\char`_hot(cat\char`_indices, depth=len(vocab) + num\char`_oov\char`_buckets)}\newline
 
-\textbf{\underline{Encode Categorical Features Using Embeddings}}
-
+\textbf{\underline{Encode Categorical Features Using Embeddings}}\newline
 An embedding is a trainable dense vector that represents a category.
 By default, embeddings are initialized randomly.
 As training progresses, the co-ordinates begin to \textit{represent} something.
 
 Create an \textit{embedding matrix} containing each category's embedding, initialized randomly:\newline
-\texttt{embedding\char`_dim = 2 \# hyperparameter needs to be tuned\newline
-embedding = keras.layers.Embedding(input\char`_dim=len(vocab)+num\char`_oov\char`_buckets\newline
+\texttt{embedding\char`_dim = 2 \# this hyperparameter needs to be tuned\newline
+embedding = keras.layers.Embedding(input\char`_dim=len(vocab)+num\char`_oov\char`_buckets,\newline
 .~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~output\char`_dim=embedding\char`_dim)}
 
 Using the Functional API, create a Keras model that can process categorical features

@@ -1060,8 +1060,7 @@ It can be implemented from scratch using Keras:
 \texttt{model.add(keras.layers.Dense(10, activation=\textquotesingle softmax\textquotesingle))}
 
 \newpage
-\textbf{\underline{Using Pre-trained Models}}
-
+\textbf{\underline{Using Pre-trained Models}}\newline
 In general, you don't have to implement standard models manually:\newline
 \texttt{model = keras.applications.resnet50.ResNet50(weights=\textquotesingle imagenet\textquotesingle)}
 
@@ -1081,17 +1080,16 @@ They are very easy to use...\newline
 \texttt{top\char`_K = keras.applications.resnet50.decode\char`_predictions(Y\char`_proba, top=5)}\newline
 \texttt{for info in top\char`_K: print(info); print()}\newline
 
-\textbf{\underline{Transfer Learning}}
-
+\textbf{\underline{Transfer Learning}}\newline
 If you want to build an image classifier but you do not have enough training data,
-then it is often a good idea to reuse the lower layers of a pre-trained model.
+then it is often a good idea to reuse the lower layers of a pre-trained model...
 
 Load a dataset using TensorFlow Datasets:\newline
 \texttt{import tensorflow\char`_datasets as tfds}\newline
 \texttt{data, info = tfds.load(\textquotesingle tf\char`_flowers\textquotesingle, split=[\textquotesingle train[:70\%]\textquotesingle, \textquotesingle train[70\%:]\textquotesingle],}\newline
 \texttt{.~~~~~~~~~~~~~~~~~~~~~~~with\char`_info=True, as\char`_supervised=True)}\newline
 \texttt{train\char`_set, valid\char`_set = data[0], data[1]}\newline
-\texttt{n\char`_classes = info.features[\textquotesingle label\textquotesingle].num\char`_classes}
+\texttt{n\char`_classes = info.features[\textquotesingle label\textquotesingle].num\char`_classes}\newline
 
 Prepare the datasets:\newline
 \texttt{def preprocess(image, label):}\newline
@@ -1101,7 +1099,7 @@ Prepare the datasets:\newline
 
 \texttt{train\char`_set = train\char`_set.shuffle(1000)}\newline
 \texttt{train\char`_set = train\char`_set.map(preprocess).batch(32).prefetch(1)}\newline
-\texttt{valid\char`_set = valid\char`_set.map(preprocess).batch(32).prefetch(1)}
+\texttt{valid\char`_set = valid\char`_set.map(preprocess).batch(32).prefetch(1)}\newline
 
 Load a pre-trained Xception model (excluding the top of the network) and add a custom top:\newline
 \texttt{base\char`_model = keras.applications.xception.Xception(weights=\textquotesingle imagenet\textquotesingle,\newline
@@ -1117,15 +1115,14 @@ Freeze the weights of the pre-trained layers at the beginning of training:\newli
 \texttt{optimizer = keras.optimizers.SGD(lr=0.2, momentum=0.9, decay=0.01)}\newline
 \texttt{model.compile(loss=\textquotesingle sparse\char`_categorical\char`_crossentropy\textquotesingle, optimizer=optimizer,\newline
 .~~~~~~~~~~~~~metrics=[\textquotesingle accuracy\textquotesingle])}\newline
-\texttt{save\char`_cb = keras.callbacks.ModelCheckpoint(\textquotesingle flower\char`_classifier.h5\textquotesingle,}\newline
-\texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~save\char`_best\char`_only=True)}\newline
-\texttt{history = model.fit(train\char`_set, epochs=5, validation\char`_data=valid\char`_set,}\newline
-\texttt{.~~~~~~~~~~~~~~~~~~~callbacks=[save\char`_cb])}
+% \texttt{save\char`_cb = keras.callbacks.ModelCheckpoint(\textquotesingle flower\char`_classifier.h5\textquotesingle,}\newline
+% \texttt{.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~save\char`_best\char`_only=True)}\newline
+\texttt{history = model.fit(train\char`_set, epochs=5, validation\char`_data=valid\char`_set)}\newline
+% \texttt{.~~~~~~~~~~~~~~~~~~~callbacks=[save\char`_cb])}
 
 When the top layers are well trained, unfreeze all the layers and continue training\newline
 (this time using a much lower learning rate to avoid damaging the pre-trained weights):\newline
-\texttt{model = keras.models.load\char`_model(\textquotesingle flower\char`_classifier.h5\textquotesingle)}
-
+% \texttt{model = keras.models.load\char`_model(\textquotesingle flower\char`_classifier.h5\textquotesingle)}
 \texttt{for layer in model.layers:}\newline
 \texttt{.~~~layer.trainable = True}
 

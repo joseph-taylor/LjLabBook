@@ -1128,7 +1128,7 @@ When the top layers are well trained, unfreeze all the layers and continue train
 
 \texttt{optimizer = keras.optimizers.SGD(lr=0.01, momentum=0.9, decay=0.001)}\newline
 \texttt{model.compile(...) \# always compile models after (un)freezing layers}\newline
-\texttt{history = model.fit(...)}
+\texttt{history = model.fit(...)}\newline
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1148,11 +1148,11 @@ A single recurrent neuron is the simplest possible RNN.
 At each \textit{timestep t} (also called a \textit{frame}),
 it receives inputs $\boldsymbol{x}_{(t)}$ as well as it's own output from the previous step, $y_{(t-1)}$.
 Since there is no previous output at the first time step, it is generally set to 0.
-The following diagram unrolls the network through time (note that it is the \underline{same} neuron represented once per timestep).
+The following diagram unrolls the network through time (note that it is the \underline{same} neuron represented once per timestep).\newline
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.80\textwidth]{./images/recurrent_neuron.png}
+\includegraphics[width=0.90\textwidth]{./images/recurrent_neuron.png}
 \end{figure}
 
 \newpage
@@ -1163,10 +1163,10 @@ At each timestep $t$, \underline{every} neuron receives both the input vector $\
 and the output vector\newline from the previous timestep $\boldsymbol{y}_{(t-1)}$.
 This output vector is formed from each neurons scalar output.
 
-Each recurrent neuron has two sets of weights: one for $\boldsymbol{x}_{(t)}$ and another for $\boldsymbol{y}_{(t-1)}$:\newline
+Each recurrent neuron has two sets of weights: one for $\boldsymbol{x}_{(t)}$ and another for $\boldsymbol{y}_{(t-1)}$\newline
 $y^{(t)}_i = \phi (w^x_{ij} \: x^{(t)}_j + w^y_{ij} \: y^{(t-1)}_j + b_i)$
 
-Note that the full sequence $\boldsymbol{x}_{(t)}$ is just a single training instance.\newline
+Note that the full $\boldsymbol{x}_{(t)}$ sequence is just a single training instance.\newline
 
 \textbf{\underline{Memory Cells}}
 
@@ -1174,11 +1174,11 @@ Since the output of a recurrent neuron at timestep $t$ is a function of all the 
 you could say it has a form of \textit{memory}.
 A part of a neural network that preserves some state across timesteps is called a \textit{memory cell}.
 % 
-A single layer of recurrent neurons is a very basis memory cell,
-capable of learning only short patterns (typically 10 steps long).
+A single layer of recurrent neurons is a very basic memory cell,
+capable of learning only short patterns (typically about 10 steps long).
 
-In general, a cell's (hidden) state at timestep $t$ is:~~~~~~$\boldsymbol{h}_{(t)} = f(\boldsymbol{h}_{(t-1)}, \boldsymbol{x}_{(t)})$\newline
-This is not necessarily the same as the cell's output: $\boldsymbol{y}_{(t)} = g(\boldsymbol{h}_{(t-1)}, \boldsymbol{x}_{(t)})$\newline
+In general, a cell's (hidden) state at timestep $t$ is:~~~~~~~$\boldsymbol{h}_{(t)} = f(\boldsymbol{h}_{(t-1)}, \boldsymbol{x}_{(t)})$\newline
+This is not necessarily the same as the cell's output:~~$\boldsymbol{y}_{(t)} = g(\boldsymbol{h}_{(t-1)}, \boldsymbol{x}_{(t)})$\newline
 
 \begin{figure}[ht]
 \centering
@@ -1222,11 +1222,11 @@ Input the first 50 steps and target the final step. (Note that the target will s
 \texttt{train\char`_X = series[:7500, :n\char`_steps]}\newline
 \texttt{train\char`_y = series[:7500, -1]}\newline
 \texttt{valid\char`_X = series[7500:, :n\char`_steps]}\newline
-\texttt{valid\char`_y = series[7500:, -1]}\newline
+\texttt{valid\char`_y = series[7500:, -1]}\newline\newline
 
 Create a \textit{naive forecasting} baseline metric (predict the last value in each series):\newline
 \texttt{valid\char`_pred\char`_y = valid\char`_X[:, -1]}\newline
-\texttt{np.mean(keras.losses.mean\char`_squared\char`_error(valid\char`_y, valid\char`_pred\char`_y))}\newline
+\texttt{np.mean(keras.losses.mean\char`_squared\char`_error(valid\char`_y, valid\char`_pred\char`_y))}\newline\newline
 
 Implement a Simple RNN:\newline
 \texttt{model = keras.models.Sequential()}\newline
@@ -1236,7 +1236,7 @@ Implement a Simple RNN:\newline
 - By default, it uses the hyperbolic tangent activation function.\newline
 - The first input dimension is set to `None', as it can process any number of timesteps.\newline
 - By default, recurrent layers in Keras only return the final output.\newline
-- To return one output per timestep, set \texttt{return\char`_sequences=True}
+- To return one output per timestep, set \texttt{return\char`_sequences=True}\newline
 
 Compile, fit, and evaluate:\newline
 \texttt{model.compile(loss=\textquotesingle mean\char`_squared\char`_error\textquotesingle, optimizer=\textquotesingle Adam\textquotesingle)}\newline
@@ -1264,7 +1264,17 @@ It is common to stack multiple layers of cells, giving you a \textit{Deep RNN}.\
 \texttt{keras.layers.SimpleRNN(1)}\newline
 \texttt{])}
 
-Note that sometimes it might be preferable to replace the output layer with a Dense layer.\newline
+Note that the hidden state of a single unit final layer is not very powerful
+and (due to its tanh activation function) its predictions must lie within -1 and 1. 
+Consequently, it might be preferable to replace the output layer with a Dense layer
+(also note the difference in the middle layer):
+
+\texttt{model = keras.models.Sequential([}\newline
+\texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
+\texttt{keras.layers.SimpleRNN(20),}\newline
+\texttt{keras.layers.Dense(1)}\newline
+\texttt{])}
+
 
 \textbf{\underline{Unstable Gradients Problem}}
 

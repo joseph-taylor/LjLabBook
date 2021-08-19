@@ -1217,8 +1217,10 @@ Let's create a model to forecast the value at the next timestep of 1000's of the
 \texttt{n\char`_steps = 50}\newline
 \texttt{series = generate\char`_time\char`_series(10000, n\char`_steps + 1)}
 
-Use 75\% of data for training and 25\% for validation.
-Input the first 50 steps and target the final step. (Note that the target will shape what the model is trying to do).\newline
+Use 75\% of data for training and 25\% for validation.\newline
+Input the first 50 steps and target the final step.
+Note that the target will shape what the model is trying to do.
+For example, this problem could be extended to predict the next $N$ timesteps.\newline
 \texttt{train\char`_X = series[:7500, :n\char`_steps]}\newline
 \texttt{train\char`_y = series[:7500, -1]}\newline
 \texttt{valid\char`_X = series[7500:, :n\char`_steps]}\newline
@@ -1236,7 +1238,9 @@ Implement a Simple RNN:\newline
 - By default, it uses the hyperbolic tangent activation function.\newline
 - The first input dimension is set to `None', as it can process any number of timesteps.\newline
 - By default, recurrent layers in Keras only return the final output.\newline
-- To return one output per timestep, set \texttt{return\char`_sequences=True}\newline
+- To return one output per timestep, set \texttt{return\char`_sequences=True}.
+This parameter is important for distinguishing between
+\textit{sequence-to-vector} and \textit{sequence-to-sequence} networks.\newline
 
 Compile, fit, and evaluate:\newline
 \texttt{model.compile(loss=\textquotesingle mean\char`_squared\char`_error\textquotesingle, optimizer=\textquotesingle Adam\textquotesingle)}\newline
@@ -1248,16 +1252,15 @@ Compile, fit, and evaluate:\newline
 \texttt{np.mean(keras.losses.mean\char`_squared\char`_error(valid\char`_y, valid\char`_pred\char`_y))}
 
 \newpage
-\textbf{\underline{Deep RNNs}}
-
-It is common to stack multiple layers of cells, giving you a \textit{Deep RNN}.\newline
+\textbf{\underline{Deep RNNs}}\newline
+It is common to stack multiple layers of cells, giving you a \textit{Deep RNN}.
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.75\textwidth]{./images/deep_RNN.png}
+\includegraphics[width=0.70\textwidth]{./images/deep_RNN.png}
 \end{figure}
 
-\vspace{+4.0mm}
+\vspace{+2.0mm}
 \texttt{model = keras.models.Sequential([}\newline
 \texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
 \texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True),}\newline
@@ -1265,7 +1268,7 @@ It is common to stack multiple layers of cells, giving you a \textit{Deep RNN}.\
 \texttt{])}
 
 Note that the hidden state of a single unit final layer is not very powerful
-and (due to its tanh activation function) its predictions must lie within -1 and 1. 
+and (due to its tanh activation function) its predictions must lie within $-1$ and $1$. 
 Consequently, it might be preferable to replace the output layer with a Dense layer
 (also note the difference in the middle layer):
 
@@ -1273,8 +1276,26 @@ Consequently, it might be preferable to replace the output layer with a Dense la
 \texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
 \texttt{keras.layers.SimpleRNN(20),}\newline
 \texttt{keras.layers.Dense(1)}\newline
-\texttt{])}
+\texttt{])}\newline
 
+\textbf{\underline{Input and Output Sequences}}\newline
+Our forecasting model was a \textit{sequence-to-vector} network (ignore all outputs except the last).
+% 
+E.g.~you feed it a value at 50 timesteps and it will predict the value for the next 10 timesteps.\newline
+E.g.~you feed it a sequence of words from a movie review and it will predict a semantic score.
+
+A \textit{sequence-to-sequence} network returns all the outputs.\newline
+E.g.~forecast the next 10 values at each and every timestep.
+The advantage of this technique is that the loss will contain a term for the output of the RNN at each timestep,
+creating many more error gradients flowing through the model,
+which stabilizes and speeds up training.
+
+The \texttt{TimeDistributed} layer allows you to wrap \underline{any} layer and apply it at every timestep:\newline
+\texttt{model = keras.models.Sequential([}\newline
+\texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
+\texttt{keras.layers.SimpleRNN(20, return\char`_sequences=True),}\newline
+\texttt{keras.layers.TimeDistributed(keras.layers.Dense(10))}\newline
+\texttt{])}
 
 \textbf{\underline{Unstable Gradients Problem}}
 
@@ -1290,6 +1311,9 @@ Due to the architecture of RNNs, they are more likely to suffer from exploding o
 Consequently, saturating activation functions (e.g. hyperbolic tangent) are recommended.
 \item
 \vspace{-2.0mm}
+You could monitor the size of the Gradients and decide whether to use Gradient Clipping.
+\item
+\vspace{-2.0mm}
 Batch Normalization doesn't really work, but the \textit{Layer Normalization} technique might.
 \end{itemize}
 
@@ -1303,33 +1327,41 @@ These are the \textit{Long Short-Term Memory} (LSTM) cell and the \textit{Gated 
 
 \texttt{keras.layers.LSTM(20, return\char`_sequences=True)}\newline
 or\newline
-\texttt{keras.layers.GRU(20, return\char`_sequences=True)}
+\texttt{keras.layers.GRU(20, return\char`_sequences=True)}\newline
 
-Note that there is also some cool stuff combining 1D convolutional layers with RNNs.
+
+\textbf{\underline{Using 1D Convolutional Layers to Process Sequences}}
+
+You can use 1D convolutional layers to downsample input sequences, helping the recurrent layers to detect longer patterns.
+But, even cooler, is to only use 1D convolutional layers and drop the recurrent layers entirely
+using a \textit{WaveNet} type architecture.\newline
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.99\textwidth]{./images/wavenet.png}
+\end{figure}
+
+\vspace{+2.0mm}
+The lower layers learn short-term patterns, while the higher layers learn long-term patterns.
+Thanks to the doubling dilation rate (how spread apart each neuron's inputs are),
+the network can process extremely large sequences very efficiently.
+
+In the WaveNet paper, the authors stacked 10 convolutional layers with dilation
+rates of 1,~2, 4,~8,~16,~32,~64,~128,~256,~512.
+They then stacked the same 10 layer block twice more.
+They justified this architecture by pointing out that the 10 layer block
+acts like a super-efficient convolutional layer with a kernel size of 1,024.
+
+model = keras.models.Sequential()
+model.add(keras.layers.InputLayer(input_shape=[None, 1]))
+for rate in (1, 2, 4, 8) * 2:
+    model.add(keras.layers.Conv1D(filters=20, kernel_size=2, padding='causal', activation='relu', dilation_rate=rate))
+model.add(keras.layers.Conv1D(filters=10, kernel_size=1))
+
 
 \newpage
 
-\textbf{\underline{Input and Output Sequences}}
 
-Our forecasting model was a \textit{sequence-to-vector} network (ignore all outputs except the last).
-% 
-E.g.~you feed it a value at 50 timesteps and it will predict the value for the next 10 timesteps.\newline
-E.g.~you feed it a sequence of words from a movie review and it will predict a semantic score.
-
-A \textit{sequence-to-sequence} network returns all the outputs.\newline
-E.g.~forecast the next 10 values at each and every timestep.
-The advantage of this technique is that the loss will contain a term for the output of the RNN at each timestep,
-creating many more error gradients flowing through the model,
-which stabilizes and speeds up training.
-
-The \texttt{TimeDistributed} layer allows you to wrap \underline{any} layer and apply it at every timestep:\newline
-\texttt{model = keras.models.Sequential([}\newline
-\texttt{keras.layers.LSTM(20, return\char`_sequences=True, input\char`_shape=[None,1]),}\newline
-\texttt{keras.layers.LSTM(20, return\char`_sequences=True),}\newline
-\texttt{keras.layers.TimeDistributed(keras.layers.Dense(10))}\newline
-\texttt{])}
-
-Note that preparing the target now becomes a bit more of a headache!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1352,16 +1352,19 @@ They then stacked the same 10 layer block twice more.
 They justified this architecture by pointing out that the 10 layer block
 acts like a super-efficient convolutional layer with a kernel size of 1,024.
 
-model = keras.models.Sequential()
-model.add(keras.layers.InputLayer(input_shape=[None, 1]))
-for rate in (1, 2, 4, 8) * 2:
-    model.add(keras.layers.Conv1D(filters=20, kernel_size=2, padding='causal', activation='relu', dilation_rate=rate))
-model.add(keras.layers.Conv1D(filters=10, kernel_size=1))
+Here is how to implement a simple WaveNet network:\newline
+\textit{The `causal' padding ensures that the convolutional layer does not peek into the future.}
 
+\texttt{model = keras.models.Sequential()}\newline
+\texttt{model.add(keras.layers.InputLayer(input\char`_shape=[None, 1]))}\newline
+\texttt{for rate in (1, 2, 4, 8) * 2:}\newline
+\texttt{.~~~model.add(keras.layers.Conv1D(filters=20, kernel\char`_size=2,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~activation=\textquotesingle relu\textquotesingle,\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\textbf{padding=\textquotesingle causal\textquotesingle},\newline
+.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\textbf{dilation\char`_rate=rate}))}\newline
+\texttt{model.add(keras.layers.Conv1D(filters=10, kernel\char`_size=1))}
 
-\newpage
-
-
+\vspace{+30.0mm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1397,7 +1400,7 @@ Autoencoders are always composed of two parts:\newline
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=0.60\textwidth]{./images/autoencoder.png}
+\includegraphics[width=0.75\textwidth]{./images/autoencoder.png}
 \end{figure}
 
 \texttt{encoder = keras.models.Sequential([keras.layers.Dense(2,input\char`_shape=[5])])}\newline
@@ -1406,7 +1409,7 @@ Autoencoders are always composed of two parts:\newline
 
 \texttt{autoencoder.compile(loss=\textquotesingle mse\textquotesingle, optimizer=keras.optimizers.SGD(lr=0.1))}\newline
 \texttt{history = autoencoder.fit(train\char`_X, train\char`_X, epochs=20)}\newline
-\texttt{codings = encoder.predict(train\char`_X)}
+\texttt{codings = encoder.predict(train\char`_X)}\newline
 
 Autoencoders with multiple hidden layers are called \textit{stacked} or \textit{deep autoencoders}.
 The architecture is typically symmetrical with respect to the central hidden layer (the coding layer).
@@ -1435,6 +1438,7 @@ then reuse the lower layers to create a neural network for your actual task (and
 \includegraphics[width=0.80\textwidth]{./images/unsupervised_pretraining.png}
 \end{figure}
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
